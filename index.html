@@ -4132,7 +4132,7 @@ render();
    Added atop V2.0.10. Existing curriculum, completion records, and embedded assets are unchanged. */
 (function(){
 'use strict';
-const V='2.1.0';
+const V='2.1.1';
 const h=v=>fusionEscape(String(v??''));
 const shuffle=a=>fusionRandomPool(a,a.length);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -4350,14 +4350,36 @@ window.addEventListener('click',function(ev){const el=ev.target.closest('[data-v
  if(el.hasAttribute('data-v21-close'))return closeModal();
  if(el.hasAttribute('data-v21-exit')){battle=null;stopMusic();closeModal();return}
  if(el.hasAttribute('data-v21-memory'))return pokemonMiniStart('memory');
- if(el.hasAttribute('data-v21-league')){battle=null;closeModal();setView('fusion-tarot-league');return}
- if(el.hasAttribute('data-v21-arcade')){battle=null;closeModal();setView('fusion-activities');return}
+ if(el.hasAttribute('data-v21-league')){closeModal();setView('fusion-tarot-league');return}
+ if(el.hasAttribute('data-v21-arcade')){closeModal();setView('fusion-activities');return}
 },true);
 // Source references kept separate from build provenance; no internet required in app.
 const oldNews=fusionNews;fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.1.0</span><h3>Regional Badge Quest & Battle Arcade</h3><ul><li>72 optional regional Gym Leader challenges, with real regional leaders and Alola Kahunas/Trial Captains; legacy awards remain intact.</li><li>One Arcade with pictured battle quizzes for evolution, type recognition, type advantage, Scene Detective, Card Chemistry and other multiple-choice activities.</li><li>Gym Leader badge achievements use the short badge jingle only; regular Pop Quizzes and Arcade victories keep selected victory music.</li><li>New Arcade question reviews, regional saved attempts and permanent badge awards without duplicate badges.</li></ul></article>')};fusionViews['fusion-news']=fusionNews;
 document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;
 const brand=document.querySelector('#sidebar .brand small');if(brand)brand.textContent='TAROT × ORACLE · V'+V;
 for(const arr of [FUSION_MENU,navItems]){for(const entry of arr){if(entry[0]==='fusion-tarot-league')entry[2]='Regional Badge Quest';if(entry[0]==='fusion-activities'||entry[0]==='games')entry[2]='Pokémon Arcade';}}
+// V2.1.1: Both the shared modal X and the in-battle Exit control must end battle music.
+// Original closeModal() stops the music only for legacy `quiz`, not our V2.1 Arcade `battle`.
+// Wrap the common close routine to also cover Escape and clicks on the backdrop.
+const v211PreviousCloseModal=closeModal;
+closeModal=function(){
+ if(battle){
+  battle=null;
+  stopMusic();
+  bgAudio.onended=null;
+ }
+ return v211PreviousCloseModal();
+};
+// The original X registered a direct reference to the OLD closeModal function.
+// Rebind it, otherwise the wrapper would be skipped only for that button.
+const v211ModalX=document.getElementById('modalClose');
+if(v211ModalX){
+ v211ModalX.removeEventListener('click',v211PreviousCloseModal);
+ v211ModalX.addEventListener('click',closeModal);
+}
+const v211OldNews=fusionNews;
+fusionNews=function(){return v211OldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.1.1</span><h3>Battle Exit Audio Hotfix</h3><p>Closing an Arcade or Regional Trainer battle with ×, Exit, Escape, or by clicking outside now stops its music immediately. Exit-to-Arcade and exit-to-Region also stop playback. No save data changed.</p></article>')};
+fusionViews['fusion-news']=fusionNews;
 window.__ua21={launch,leaders,earnedCount,eligibleBadge,arcadeQuestions,review,get active(){return battle},version:V};
 render();
 })();
