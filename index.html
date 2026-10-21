@@ -4447,6 +4447,12 @@ function battleFinish(){const b=battle;if(!b)return;const win=b.score>= (b.mode=
  <div class="v21-result-duo"><img src="${trainerSprite(b.opponent.key)}" alt="${h(b.opponent.name)}"><img src="${spriteSafe(b.opponent.ace)}" alt="${h(b.opponent.ace)}"></div>
  ${reg?ua220Bubble(reg,win?'win':'lose'): ''}${review(b)}<div class="v21-actions"><button class="btn" data-v21-retry>↻ Rematch</button>${next}<button class="btn ghost" data-v21-exit>Close</button></div></div>`);
 }
+// V2.2.4: read-only readiness bridge for the completion announcement feature.
+window.__ua224RegionalStatus=()=>leaders.map(b=>({
+ id:b.id, key:b.key, leader:b.leader, region:b.region, badge:b.badge, ace:b.ace,
+ line:ua220LeaderLine(b,'intro'), ready:!!eligibleBadge(b).ok && !earnedRecord(b)
+}));
+window.__ua224OpenRegional=id=>badgeDetail(Number(id));
 window.__ua220LeagueCount=()=>leaders.filter(b=>!!earnedRecord(b)).length;
 window.__ua220Leaderboard=()=>leaders.map(b=>({region:b.region,badge:b.badge,leader:b.leader,earned:!!earnedRecord(b)}));
 const oldLeague=fusionTarotLeague;
@@ -5671,7 +5677,7 @@ for(const collection of [FUSION_MENU,navItems]){
  for(const row of collection){if(row[0]==='fusion-collection')row[2]='Tarot / Oracle Cards';}
 }
 const oldRender=render;
-render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.3');}all();return ret;};
+render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.4');}all();return ret;};
 const oldShow=showModal;
 showModal=function(...args){const ret=oldShow.apply(this,args);if(german())localize(document.getElementById('modal'));return ret;};
 const oldNews=fusionNews;
@@ -5685,8 +5691,113 @@ const observer=new MutationObserver(mutations=>{
  for(const record of mutations){for(const n of record.addedNodes){if(n.nodeType===1&&(n.closest?.('#content,#modal,#sidebar,#desktopTopNav,#bottomNav')||n.matches?.('#content,#modal,#sidebar,#desktopTopNav,#bottomNav')))localize(n);}}
 });
 observer.observe(document.body,{childList:true,subtree:true});
-window.__ua221={version:'2.2.2',translate:lookup,localize,apply:all};
+window.__ua221={version:'2.2.4',translate:lookup,localize,apply:all};
 render();
-document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.3';
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.4';
+})();
+</script><style id="ua224-unlock-styles">
+.ua224-ready-shell{max-width:780px;margin:auto;color:var(--ink)}
+.ua224-ready-title{text-align:center;font:700 clamp(22px,3vw,30px) Georgia,serif;margin:6px 0 7px}
+.ua224-ready-sub{text-align:center;color:var(--sub);font-size:13px;margin:0 0 17px;line-height:1.55}
+.ua224-ready-list{display:grid;gap:10px;max-height:min(54vh,500px);overflow:auto;padding:3px}
+.ua224-ready-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:14px;min-width:0}
+.ua224-ready-item img{width:62px;height:73px;object-fit:contain;flex:none}.ua224-ready-item img.ua224-ready-pokemon{width:50px;height:64px}
+.ua224-ready-person{min-width:0;flex:1;display:grid;gap:3px}.ua224-ready-person strong{font-size:15px}
+.ua224-ready-person small{font-size:11px;color:var(--sub);line-height:1.45}
+.ua224-ready-person em{color:var(--ink);font-size:12px;line-height:1.45}
+.ua224-ready-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:18px}
+.ua224-ready-item .btn{font-size:11px;padding:9px 12px;flex:none}
+@media(max-width:610px){.ua224-ready-item{flex-wrap:wrap;gap:9px}.ua224-ready-item img{width:46px;height:58px}.ua224-ready-item .btn{width:100%}}
+</style>
+<script id="ua224-gym-unlock-announcements">
+(function(){
+'use strict';
+const VERSION='2.2.4', STORAGE='pokemon_ultimate_academy_gym_unlock_alerts_v224';
+const safe=v=>fusionEscape(String(v??''));
+const german=()=>S?.settings?.uaLanguage==='de';
+const t=(en,de)=>german()?de:en;
+const isModalOpen=()=>document.getElementById('modal')?.classList.contains('open');
+const displayName=()=>S?.profile?.nickname||'Trainer';
+const readyStatuses=()=>{
+ const regionalRoster=window.__ua224RegionalStatus?.()||[];
+ const academy=FUSION_TAROT_COURSE.map(sec=>{
+  const gym=fusionV206GymInfo(sec);
+  if(!gym.checkpoint||FUSION.progress['tarotCrest:'+sec.id]||!gym.required.every(l=>fusionTarotLegacyDone(l.id)))return null;
+  return {id:'academy:'+sec.id,kind:'academy',section:sec.id,key:gym.key,leader:gym.name,region:gym.region,subject:sec.title,icon:gym.icon,ace:regionalRoster.find(b=>b.region===gym.region&&b.key===gym.key)?.ace||null,
+    line:gym.challenge||`${gym.name} is ready to battle!`};
+ }).filter(Boolean);
+ const regional=regionalRoster.filter(b=>b.ready).map(b=>({
+  id:'regional:'+b.id,kind:'regional',battleId:b.id,key:b.key,leader:b.leader,region:b.region,
+  subject:`${b.badge} ${b.region==='Alola'?'Challenge':'Badge'}`,ace:b.ace,
+  line:b.line||`${b.leader} is ready to test what you have learned!`
+ }));
+ const oracle=Object.entries(FAMILY_GYM).map(([family,key])=>{
+  if(S.badges?.[family]||learnedFamilyCards(family).length!==6)return null;
+  return {id:'spirit:'+family,kind:'spirit',family,key,leader:trainerName(key),region:'Spirit Oracle',ace:regionalRoster.find(b=>b.key===key)?.ace||null,subject:`${family} · ${FAM[family]?.badge||'Spirit Emblem'}`,
+   line:`You've studied all six ${family} Spirits. Let's see what you've learned!`};
+ }).filter(Boolean);
+ return [...academy,...regional,...oracle];
+};
+let seen, pending=[], showing=false, scanScheduled=false, armed=false;
+function persist(){try{localStorage.setItem(STORAGE,JSON.stringify([...seen]))}catch(e){/* Use session memory if storage is blocked */}}
+try{const raw=localStorage.getItem(STORAGE);const data=raw===null?null:JSON.parse(raw);
+ if(Array.isArray(data)){seen=new Set(data);armed=true}
+}catch(e){}
+if(!seen){ // Migration baseline: do not flood existing players with every already-ready leader.
+ seen=new Set(readyStatuses().map(x=>x.id)); persist(); armed=true;
+}
+function scan(){
+ if(!armed)return;
+ let changed=false;
+ for(const status of readyStatuses()){
+  if(seen.has(status.id))continue;
+  seen.add(status.id);changed=true;pending.push(status);
+ }
+ if(changed){persist();drain();}
+}
+function scheduleScan(){
+ if(scanScheduled)return;scanScheduled=true;
+ queueMicrotask(()=>{scanScheduled=false;scan()});
+}
+function drain(){
+ if(showing||!pending.length||isModalOpen())return;
+ showing=true;
+ const batch=pending.splice(0); // One modal even if several leaders unlock with one lesson.
+ const html=`<section class="ua224-ready-shell"><div class="ua224-ready-title">${batch.length>1?t('New Gym challenges unlocked!','Neue Arena-Herausforderungen freigeschaltet!'):t('A Gym Leader is ready to battle!','Ein Arenaleiter ist kampfbereit!')}</div>
+  <p class="ua224-ready-sub">${t('Your lessons unlocked the challenge. The badge is awarded only after a qualifying victory.','Deine Lektionen haben die Herausforderung freigeschaltet. Den Orden erhältst du erst nach einem erfolgreichen Kampf.')}</p>
+  <div class="ua224-ready-list">${batch.map((b,i)=>`<article class="ua224-ready-item"><img src="${safe(trainerSprite(b.key))}" alt="${safe(b.leader)}">${b.ace?`<img class="ua224-ready-pokemon" src="${safe(sprite(b.ace))}" alt="${safe(b.ace)}">`: ''}<div class="ua224-ready-person"><strong>${safe(b.leader)}</strong><small>${safe(b.region)} · ${safe(b.subject)}</small><em>“${safe(b.line.replaceAll('{trainer}',displayName()))}”</em></div><button type="button" class="btn" data-ua224-go="${i}">${t('⚔ Challenge','⚔ Kämpfen')}</button></article>`).join('')}</div>
+  <div class="ua224-ready-actions"><button type="button" class="btn ghost" data-ua224-later>${t('Maybe later','Vielleicht später')}</button></div></section>`;
+ // Never close, replace or interrupt an active lesson, battle or result screen.
+ showModal(t('Gym Challenge Unlocked','Arena-Herausforderung freigeschaltet'),html);
+ const chosen=batch.slice();
+ window.__ua224CurrentBatch=chosen;
+}
+function release(){showing=false;window.__ua224CurrentBatch=null;if(pending.length)setTimeout(drain,0)}
+const originalSave=save;
+save=function(...args){const result=originalSave.apply(this,args);scheduleScan();return result};
+const originalFusionSave=fusionSave;
+fusionSave=function(...args){const result=originalFusionSave.apply(this,args);scheduleScan();return result};
+const originalRender=render;
+render=function(...args){const result=originalRender.apply(this,args);scheduleScan();return result};
+const originalClose=closeModal;
+closeModal=function(...args){const wasAnnouncement=showing&&!!document.querySelector('#modal.open [data-ua224-later]');const result=originalClose.apply(this,args);if(wasAnnouncement)release();else setTimeout(drain,0);return result};
+const originalSilentClose=closeModalSilently;
+closeModalSilently=function(...args){const result=originalSilentClose.apply(this,args);setTimeout(drain,0);return result};
+// Handle our controls in capture, before legacy generic handlers.
+window.addEventListener('click',function(event){const btn=event.target.closest('[data-ua224-go],[data-ua224-later]');if(!btn)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(btn.hasAttribute('data-ua224-later')){closeModal();return}
+ const b=window.__ua224CurrentBatch?.[Number(btn.dataset.ua224Go)];if(!b)return;
+ closeModal();
+ if(b.kind==='regional'){window.__ua224OpenRegional?.(b.battleId)}
+ else if(b.kind==='academy'){const sec=FUSION_TAROT_COURSE.find(s=>s.id===b.section);if(sec)fusionV206TarotGymIntro(sec)}
+ else if(b.kind==='spirit'){battleOpen(b.family)}
+},true);
+// For passive closing methods (X, Escape, overlay) the closeModal() wrapper above releases the notification.
+const previousNews=fusionNews;
+fusionNews=function(){return previousNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.4</span><h3>Gym Leader Ready Alerts</h3><ul><li>One-time unlock popups for Regional Gym Leaders, Academy chapter checkpoints and Spirit family Gym Leaders.</li><li>Announcements appear after a finished lesson window closes, not on top of teaching or quiz content.</li><li>Ready messages show trainer sprites and offer Challenge or Later without awarding any badges or XP automatically.</li><li>Existing unlocked challenges are silently registered on upgrade; several simultaneous unlocks share one popup.</li><li>The original Adventure Tree, save data and Gym eligibility rules remain unchanged.</li></ul></article>`)};
+fusionViews['fusion-news']=fusionNews;
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VERSION;
+window.__ua224={version:VERSION,scan,readyStatuses,pending:()=>pending.length,seen:()=>seen.size};
 })();
 </script></body></html>
