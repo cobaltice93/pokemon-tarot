@@ -2782,7 +2782,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button,[data-fu
  else if(key==='data-fusion-tarot-answer')fusionTarotAnswer(el.dataset.fusionTarotAnswer);
  else if(key==='data-fusion-tarot-quiz-next')fusionRenderTarotQuiz();
  if(key==='data-fusion-tarot-lesson'){const [section,id]=el.dataset.fusionTarotLesson.split('|');fusionOpenTarotLesson(section,id)}
- else if(key==='data-fusion-open-dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn')}
+ else if(key==='data-fusion-open-dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn');setTimeout(()=>document.querySelector('#content .fusion-v20-unitbar')?.scrollIntoView({behavior:'smooth',block:'start'}),70)}
  else if(key==='data-fusion-family'){const f=el.dataset.fusionFamily;setView('academy');const idx=FAMILY_ORDER.indexOf(f)+1;setTimeout(()=>document.getElementById('tree-unit-'+idx)?.scrollIntoView({block:'start'}),50)}
  else if(key==='data-fusion-dual-lesson')fusionDualLesson(el.dataset.fusionDualLesson);
  else if(key==='data-fusion-dual-next')fusionDualNext(+el.dataset.fusionDualNext,el.textContent.includes('Skip'));
@@ -3434,7 +3434,7 @@ if(w.step<4){w.step++;oracleV2WizardRender()}};
 
 /* A capturing handler avoids collision with legacy click handlers. */
 window.addEventListener('click',function(e){const el=e.target.closest('[data-v204-badges],[data-v204-new-trainer]');if(!el)return;e.preventDefault();e.stopImmediatePropagation();
-if(el.hasAttribute('data-v204-badges')){const which=el.dataset.v204Badges;if(which==='oracle')setView('fusion-spirit-league');else if(which==='tarot')setView('fusion-tarot-gyms');else if(which==='regional')setView('fusion-tarot-league');else if(which==='dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn')}else setView('fusion-league');return}
+if(el.hasAttribute('data-v204-badges')){const which=el.dataset.v204Badges;if(which==='oracle')setView('fusion-spirit-league');else if(which==='tarot')setView('fusion-tarot-gyms');else if(which==='regional')setView('fusion-tarot-league');else if(which==='dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn');setTimeout(()=>{const node=document.querySelector('#content .fusion-v20-unitbar')||document.querySelector('#content .fusion-v20-node.current');node?.scrollIntoView({behavior:'smooth',block:'start'});},70)}else setView('fusion-league');return}
 if(oracleWizard&&document.querySelector('#modal.wizard-modal')){oracleV2SaveNote();const cur=oracleWizard.coach?.key;let coach=oraclePickGuide(),attempts=0;while(coach?.key===cur&&attempts++<20)coach=oraclePickGuide();oracleWizard.coach=coach;oracleWizard.supportCoaches=null;oracleV2WizardRender();return}
 if(FUSION_LESSON&&(FUSION_LESSON.type==='tarot'||FUSION_LESSON.type==='dual')){const a=FUSION_LESSON,t=document.getElementById(a.type==='tarot'?'fusionTarotReflection':'fusionReflection');if(t){FUSION.reflections[a.type+':'+a.id]=t.value;fusionSave()}fusionV17NewTeam();return}
 if(oracleWizard){oracleV2SaveNote();const cur=oracleWizard.coach?.key;let coach=oraclePickGuide(),attempts=0;while(coach?.key===cur&&attempts++<20)coach=oraclePickGuide();oracleWizard.coach=coach;oracleWizard.supportCoaches=null;oracleV2WizardRender();return}
@@ -5645,19 +5645,22 @@ for(const collection of [FUSION_MENU,navItems]){
  for(const row of collection){if(row[0]==='fusion-collection')row[2]='Tarot / Oracle Cards';}
 }
 const oldRender=render;
-render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.1');}all();return ret;};
+render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.2');}all();return ret;};
 const oldShow=showModal;
 showModal=function(...args){const ret=oldShow.apply(this,args);if(german())localize(document.getElementById('modal'));return ret;};
 const oldNews=fusionNews;
 fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.1</span><h3>Tarot / Oracle Cards &amp; Expanded German UI</h3><ul><li>Renamed Both Card Decks to Tarot / Oracle Cards in the main navigation.</li><li>Expanded the English/German language selector to cover navigation, course titles, regional navigation, progress, quizzes and Reading Studio controls.</li><li>Kept established card names and interpretation passages in English where reviewed German translations are not yet available, avoiding inaccurate educational claims.</li><li>Language changes affect presentation only; save data, quiz grading, XP, badges and the Adventure Tree layout remain unchanged.</li></ul></article>`);};
+fusionViews['fusion-news']=fusionNews;
+const ua222OldNews=fusionNews;
+fusionNews=function(){return ua222OldNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.2</span><h3>Dual Mastery Navigation Hotfix</h3><ul><li>Dual progress shortcut now opens the Dual Mastery course and scrolls to its chapter, including when already on the same Academy page.</li><li>Dual Mastery shortcut in the Pokémon League Hall now also brings the next chapter into view.</li><li>Adventure Tree, quiz mechanics, badges, XP, settings and saved lesson progress are unchanged.</li></ul></article>`);};
 fusionViews['fusion-news']=fusionNews;
 const observer=new MutationObserver(mutations=>{
  if(!german())return;
  for(const record of mutations){for(const n of record.addedNodes){if(n.nodeType===1&&(n.closest?.('#content,#modal,#sidebar,#desktopTopNav,#bottomNav')||n.matches?.('#content,#modal,#sidebar,#desktopTopNav,#bottomNav')))localize(n);}}
 });
 observer.observe(document.body,{childList:true,subtree:true});
-window.__ua221={version:'2.2.1',translate:lookup,localize,apply:all};
+window.__ua221={version:'2.2.2',translate:lookup,localize,apply:all};
 render();
-document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.1';
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.2';
 })();
 </script></body></html>
