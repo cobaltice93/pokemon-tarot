@@ -4923,4 +4923,245 @@ window.__ua216={version:'2.1.6',preview:preview216,spreads:()=>fusionSpreadOptio
 .ua216-guidance-break{flex:0 0 100%;text-align:center;font-size:11px;font-weight:750;color:var(--sub);border-top:1px dashed var(--line);padding-top:8px;margin-top:1px}
 
 </style>
+
+<style>/* V2.1.7: physical spread geometry in previews and saved reading results */
+.ua217-preview{min-width:0}
+.ua217-board{display:grid;gap:12px;justify-items:center;min-width:0;width:100%}
+.ua217-simple{display:grid;gap:12px;justify-content:center;align-items:start;grid-template-columns:repeat(var(--cols,3),minmax(0,93px));max-width:100%;width:100%}
+.ua217-simple.layout-short{--cols:3}
+.ua217-simple.layout-six{--cols:3}
+.ua217-simple.layout-many{--cols:4}
+.ua217-simple.layout-four{--cols:2}
+.ua217-simple.layout-tableau{--cols:3}
+.ua217-simple.layout-year{--cols:4}
+.ua217-simple.layout-five{--cols:3}
+.ua217-simple.layout-five>.ua217-item:nth-child(1){grid-column:2}
+.ua217-simple.layout-five>.ua217-item:nth-child(2){grid-column:1;grid-row:2}
+.ua217-simple.layout-five>.ua217-item:nth-child(3){grid-column:3;grid-row:2}
+.ua217-simple.layout-five>.ua217-item:nth-child(4){grid-column:2;grid-row:2}
+.ua217-simple.layout-five>.ua217-item:nth-child(5){grid-column:2;grid-row:3}
+.ua217-item{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;min-width:0;color:var(--ink);line-height:1.25;font-size:10px;max-width:110px}
+.ua217-cardframe{position:relative;flex:none;height:81px;width:53px}
+.ua217-cardback,.ua217-face{display:block;width:53px;height:81px;object-fit:contain;border:2px solid #d6ac5b;border-radius:6px;background:linear-gradient(145deg,#163755,#0a243e);color:#edd095;box-shadow:0 2px 5px #0002}
+.ua217-cardback{display:grid;place-items:center;font:26px Georgia,serif}
+.ua217-cardback.oracle{background:linear-gradient(145deg,#347c72,#174c4c);border-color:#80c7a8;color:#d5f6d9}
+.ua217-face{object-fit:contain;background:transparent;border-width:1px}
+.ua217-face.ua217-reversed{transform:rotate(180deg)}
+.ua217-num{position:absolute;top:-8px;left:-9px;border-radius:100%;background:#e9bb67;color:#10283a;font-size:11px;font-weight:900;padding:2px 5px;border:1px solid #fff;z-index:2}
+.ua217-item-label{font-size:10px;font-weight:750;max-width:105px;overflow-wrap:anywhere}
+.ua217-item>small{font-size:9px;color:var(--sub);overflow-wrap:anywhere}
+.ua217-oracle-panel{width:100%;padding-top:13px;border-top:1px dashed var(--line);display:grid;gap:9px;justify-items:center}
+.ua217-oracle-panel>strong{font-size:12px;color:var(--teal)}
+.ua217-oracle-panel .layout-oracle{--cols:4;max-width:550px}
+.ua217-celtic{display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,55px);width:100%;max-width:580px;min-width:0}
+.ua217-cross{display:grid;grid-template-columns:repeat(3,minmax(60px,100px));grid-template-rows:repeat(3,116px);justify-items:center;align-items:center;position:relative;flex:1 1 auto;max-width:330px}
+.ua217-place{display:grid;place-items:center;position:relative;min-width:0;min-height:0}
+.ua217-place.p5{grid-column:2;grid-row:1}
+.ua217-place.p4{grid-column:1;grid-row:2}
+.ua217-place.p1{grid-column:2;grid-row:2;z-index:1}
+.ua217-place.p6{grid-column:3;grid-row:2}
+.ua217-place.p3{grid-column:2;grid-row:3}
+.ua217-crossing{position:absolute;z-index:4;left:36px;top:11px;width:70px;height:73px;pointer-events:none}
+.ua217-crossing .ua217-cardframe{transform:rotate(90deg);filter:drop-shadow(0 3px 4px #0007);width:53px;height:81px}
+.ua217-crossing .ua217-item-label{position:absolute;top:76px;left:1px;min-width:85px;font-size:10px;background:var(--card);border-radius:4px;padding:2px}
+.ua217-staff{display:grid;grid-template-columns:1fr;gap:3px;justify-items:center;align-items:center;padding-left:13px;border-left:2px dashed var(--line);flex:0 0 105px}
+.ua217-staff>.ua217-item,.ua217-staff>div{min-width:0}
+.ua217-diagram-foot{text-align:center;color:var(--sub);font-size:11px;margin:4px 0 0}
+.ua217-formed{display:grid;grid-template-columns:repeat(7,minmax(0,90px));grid-template-rows:repeat(3,114px);gap:2px;justify-items:center;align-items:center;width:100%;justify-content:center;max-width:700px}
+.ua217-horseshoe>.h1{grid-column:1;grid-row:3}.ua217-horseshoe>.h2{grid-column:2;grid-row:2}.ua217-horseshoe>.h3{grid-column:3;grid-row:1}.ua217-horseshoe>.h4{grid-column:4;grid-row:1}.ua217-horseshoe>.h5{grid-column:5;grid-row:1}.ua217-horseshoe>.h6{grid-column:6;grid-row:2}.ua217-horseshoe>.h7{grid-column:7;grid-row:3}
+.ua217-result-map{border:1px solid var(--line);border-radius:14px;padding:16px 12px;background:var(--card);min-width:0}
+.ua217-result-map h3{font-size:20px;margin-bottom:12px;text-align:center}
+.ua217-result-map .ua217-cardframe,.ua217-result-map .ua217-face{width:60px;height:95px}
+.ua217-result-map .ua217-crossing .ua217-cardframe{width:60px;height:95px}
+.ua217-result-map .ua217-crossing{left:35px;top:12px}
+.ua217-result-map .ua217-cross{grid-template-rows:repeat(3,134px)}
+@media(max-width:560px){
+ .ua217-celtic{gap:8px}.ua217-cross{grid-template-columns:repeat(3,minmax(51px,75px));grid-template-rows:repeat(3,110px)}.ua217-staff{flex-basis:75px;padding-left:6px}.ua217-crossing{left:20px;top:11px}.ua217-crossing .ua217-item-label{top:75px;left:-6px;min-width:67px}
+ .ua217-simple{grid-template-columns:repeat(var(--cols,3),minmax(0,78px));gap:8px}
+ .ua217-simple.layout-year,.ua217-simple.layout-many{--cols:3}
+ .ua217-result-map{padding:11px 3px}
+ .ua217-result-map .ua217-cardframe,.ua217-result-map .ua217-face{width:48px;height:74px}
+ .ua217-result-map .ua217-crossing{left:22px}
+ .ua217-result-map .ua217-crossing .ua217-cardframe{width:48px;height:74px}
+ .ua217-result-map .ua217-cross{grid-template-rows:repeat(3,110px)}
+ .ua217-formed{grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(3,97px)}.ua217-formed .ua217-cardframe{width:36px;height:60px}.ua217-formed .ua217-cardback{width:36px;height:60px}.ua217-formed .ua217-item-label{font-size:9px}
+}
+.ua217-preview{container-type:inline-size}
+.ua217-celtic .ua217-item-label{display:none}
+.ua217-position-key{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 13px;width:100%;max-width:510px;margin:4px auto 6px;padding:9px;border:1px solid var(--line);border-radius:10px;font-size:10px;color:var(--sub)}
+.ua217-position-key span{min-width:0;overflow-wrap:anywhere}
+.ua217-position-key b{display:inline-grid;place-items:center;width:17px;height:17px;background:var(--gold);color:#162538;border-radius:50%;font-size:10px;margin-right:3px}
+.ua217-oracle-panel .layout-oracle{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+@container (max-width:425px){
+ .ua217-celtic{gap:7px}
+ .ua217-cross{grid-template-columns:repeat(3,minmax(51px,67px));grid-template-rows:repeat(3,100px);flex:0 1 207px;max-width:207px}
+ .ua217-staff{flex-basis:59px;padding-left:4px}
+ .ua217-cardframe,.ua217-cardback{height:69px;width:44px}
+ .ua217-crossing{left:26px;top:9px}
+ .ua217-crossing .ua217-cardframe{width:44px;height:69px}
+ .ua217-staff .ua217-cardframe,.ua217-staff .ua217-cardback{width:40px;height:57px}
+ .ua217-staff{gap:2px}
+ .ua217-staff .ua217-num{font-size:9px}
+ .ua217-board{gap:9px}
+}
+</style>
+<script>/* Ultimate Academy V2.1.7 — accurate spread counts, named layouts and Celtic Cross diagram */
+(()=>{
+'use strict';
+const fmt=s=>fusionEscape(String(s??''));
+const olderOptions217=fusionSpreadOptions;
+const olderRead217=fusionRead;
+const olderShow217=fusionShowReading;
+const olderNews217=fusionNews;
+const olderRender217=render;
+const onlyHybrid217=()=>FUSION_READING.mode==='hybrid'&&FUSION_READING.tarot>0&&FUSION_READING.oracle>0;
+const max217=()=>FUSION_READING.mode==='hybrid'?13:12;
+const charPrefix217=(role,index,label)=>`${role} ${index+1} · ${label}`;
+const oracleHint217=count=>Array.from({length:count},(_,i)=>charPrefix217('Oracle guidance',i,count===1?'Guidance & integration':`Guidance ${i+1}`));
+function tally217(){
+ const r=FUSION_READING;
+ r.tarot=Math.max(0,Math.min(12,Number(r.tarot)||0));
+ r.oracle=Math.max(0,Math.min(12,Number(r.oracle)||0));
+ if(r.mode==='tarot'){r.oracle=0;r.tarot=Math.max(1,r.tarot);}
+ else if(r.mode==='oracle'){r.tarot=0;r.oracle=Math.max(1,r.oracle);}
+ else {r.tarot=Math.max(1,r.tarot);r.oracle=Math.max(1,r.oracle);}
+ const ceiling=max217();if(r.tarot+r.oracle>ceiling){
+  if(r.mode==='oracle')r.oracle=ceiling;
+  else if(r.mode==='tarot')r.tarot=ceiling;
+  else r.oracle=Math.max(1,ceiling-r.tarot);
+ }
+}
+fusionNormalizeCounts=tally217;
+function makeOptions217(){
+ if(!onlyHybrid217())return olderOptions217();
+ const r=FUSION_READING,cap=max217();
+ const custom={id:'custom',name:`Custom · ${r.tarot} Tarot + ${r.oracle} Oracle guidance`,kind:'custom',tarotCount:r.tarot,oracleCount:r.oracle,positions:[...Array.from({length:r.tarot},(_,i)=>charPrefix217('Tarot',i,`Position ${i+1}`)),...oracleHint217(r.oracle)]};
+ const t=FUSION_TAROT_SPREADS.filter(x=>x.count+r.oracle<=cap).map(x=>({id:'t-'+x.id,name:x.name,kind:'tarot',layout:x.id,tarotCount:x.count,oracleCount:r.oracle,positions:[...x.positions.map((name,i)=>charPrefix217('Tarot',i,name)),...oracleHint217(r.oracle)]}));
+ const o=spreads.filter(x=>x.n+r.tarot<=cap).map(x=>({id:'o-'+x.name,name:x.name,kind:'oracle',tarotCount:r.tarot,oracleCount:x.n,positions:[...Array.from({length:r.tarot},(_,i)=>charPrefix217('Tarot',i,'Context')), ...x.positions.map((name,i)=>charPrefix217('Oracle guidance',i,name))]}));
+ const special=FUSION_HYBRID_SPREADS.filter(x=>x.count===r.tarot+r.oracle&&x.positions.filter(p=>p.startsWith('Tarot')).length===r.tarot&&x.positions.filter(p=>p.startsWith('Oracle')).length===r.oracle).map(x=>({id:x.id,name:x.name,kind:'hybrid',tarotCount:r.tarot,oracleCount:r.oracle,positions:[...x.positions.slice(0,r.tarot).map((p,i)=>charPrefix217('Tarot',i,p.replace(/^Tarot\s*[·:-]\s*/,'').trim())),...x.positions.slice(r.tarot).map((p,i)=>charPrefix217('Oracle guidance',i,p.replace(/^Oracle\s*[·:-]\s*/,'').trim()))]}));
+ return [custom,...t,...o,...special];
+}
+fusionSpreadOptions=makeOptions217;
+function cardElement217(number,role,label,face){
+ const oracle=role==='oracle',name=role==='tarot'?'Tarot':'Oracle';
+ const img=face?.c?`<img class="ua217-face ${face.row?.reversed?'ua217-reversed':''}" loading="lazy" src="${face.row.deck==='oracle'?(ASSETS.cards[Number(face.c.id.slice(2))]?.[face.row.art]||face.c.img):face.c.img}" alt="${fmt(face.c.name)}">`:`<span class="ua217-cardback ${oracle?'oracle':''}">${oracle?'✦':'✧'}</span>`;
+ return `<div class="ua217-item ${oracle?'is-oracle':'is-tarot'}" title="${fmt(label)}"><div class="ua217-cardframe">${img}<span class="ua217-num">${number}</span></div><span class="ua217-item-label">${fmt(label)}</span>${face?.c?`<small>${fmt(face.c.name)}</small>`:''}</div>`;
+}
+function diagram217(sp,faces){
+ const positions=sp.positions||[],nt=sp.tarotCount??FUSION_READING.tarot,no=sp.oracleCount??FUSION_READING.oracle,layout=sp.layout||String(sp.id||'').replace(/^t-/,'');
+ const tiles=Array.from({length:nt},(_,i)=>cardElement217(i+1,'tarot',String(positions[i]||`Position ${i+1}`).replace(/^Tarot\s*\d*\s*·\s*/,''),faces?.[i]));
+ const guides=Array.from({length:no},(_,i)=>cardElement217(nt+i+1,'oracle',String(positions[nt+i]||'Guidance').replace(/^Oracle guidance\s*\d*\s*·\s*/,''),faces?.[nt+i]));
+ let board='';
+ if(layout==='celtic'&&nt===10){
+  // Standard Celtic Cross: 1 centre, 2 horizontally crossed; 3 below; 4 past/left; 5 above; 6 future/right.
+  // Cards 7,8,9,10 form the right-side staff from bottom to top.
+  board=`<div class="ua217-celtic" aria-label="Celtic Cross: six-card cross and four-card staff"><div class="ua217-cross">
+  <div class="ua217-place p5">${tiles[4]}</div><div class="ua217-place p4">${tiles[3]}</div><div class="ua217-place p1">${tiles[0]}<div class="ua217-crossing" aria-label="Card 2 crosses card 1">${tiles[1]}</div></div><div class="ua217-place p6">${tiles[5]}</div><div class="ua217-place p3">${tiles[2]}</div>
+  </div><div class="ua217-staff"><div>${tiles[9]}</div><div>${tiles[8]}</div><div>${tiles[7]}</div><div>${tiles[6]}</div></div></div><p class="ua217-diagram-foot">Card 2 crosses Card 1. The right-hand staff runs 7 → 10 from bottom to top.</p>`;
+ }else if(layout==='horseshoe'&&nt===7){
+  board=`<div class="ua217-formed ua217-horseshoe">${tiles.map((x,i)=>`<div class="ua217-shape-slot h${i+1}">${x}</div>`).join('')}</div>`;
+ }else if(layout==='tableau9'&&nt===9){board=`<div class="ua217-simple layout-tableau">${tiles.join('')}</div>`;}
+ else if(layout==='year'&&nt===12){board=`<div class="ua217-simple layout-year">${tiles.join('')}</div>`;}
+ else if(layout==='four'&&nt===4){board=`<div class="ua217-simple layout-four">${tiles.join('')}</div>`;}
+ else if(layout==='crossroads'&&nt===5){board=`<div class="ua217-simple layout-five">${tiles.join('')}</div>`;}
+ else if(nt>0){board=`<div class="ua217-simple ${nt<=3?'layout-short':nt<=6?'layout-six':'layout-many'}">${tiles.join('')}</div>`;}
+ const positionKey=(layout==='celtic'&&nt===10)?`<div class="ua217-position-key" aria-label="Celtic Cross card meanings">${positions.slice(0,10).map((x,i)=>`<span><b>${i+1}</b> ${fmt(String(x).replace(/^Tarot\s*\d*\s*·\s*/,''))}</span>`).join('')}</div>`:'';
+ const oraclePanel=guides.length?`<div class="ua217-oracle-panel"><strong>↓ Oracle guidance · ${guides.length} card${guides.length===1?'':'s'}</strong><div class="ua217-simple layout-oracle">${guides.join('')}</div></div>`:'';
+ return `<div class="ua217-board">${board}${positionKey}${oraclePanel}</div>`;
+}
+function newPreview217(){
+ const r=FUSION_READING,sp=fusionSpread(),count=r.tarot+r.oracle;
+ const normalized={...sp,tarotCount:onlyHybrid217()?(sp.tarotCount??r.tarot):r.tarot,oracleCount:onlyHybrid217()?(sp.oracleCount??r.oracle):r.oracle};
+ return `<section class="ua216-spread-preview ua217-preview" id="ua216SpreadPreview" aria-live="polite"><div class="ua216-preview-top"><strong>🃏 Spread preview · ${fmt(sp?.name||'Custom')}</strong><small>${r.mode==='hybrid'?'Tarot spread + separate Oracle guidance':r.mode==='tarot'?'Tarot only':'Oracle only'}</small></div>${diagram217(normalized)}<p>${r.mode==='hybrid'?`${r.tarot} Tarot positions + ${r.oracle} separate Oracle guidance card${r.oracle===1?'':'s'} (${count} physical cards total).`:`${count} card${count===1?'':'s'} in this spread.`}</p></section>`;
+}
+function putControls217(html){
+ // Replace the V2.1.6 flat-card preview with a true positional illustration.
+ const start=html.indexOf('<section class="ua216-spread-preview"');
+ if(start>=0){const end=html.indexOf('</section>',start);if(end>=0)html=html.slice(0,start)+newPreview217()+html.slice(end+'</section>'.length);}
+ // Distinguish the number of Tarot spread positions from the physical number including guidance.
+ const r=FUSION_READING,n=r.tarot+r.oracle;
+ if(onlyHybrid217()){
+  html=html.replace(`<label>Spread (${n} cards)</label>`,`<label>Tarot spread (${r.tarot} positions) + ${r.oracle} Oracle guidance</label>`);
+ }
+ html=html.replace(`${n} of 12 card slots selected`,`${n} of ${max217()} card slots selected`);
+ html=html.replace(`width:${Math.round(n/12*100)}%`,`width:${Math.min(100,Math.round(n/max217()*100))}%`);
+ return html;
+}
+fusionRead=function(){tally217();return putControls217(olderRead217());};
+fusionViews['fusion-read']=fusionRead;
+function refresh217(){const scroll=window.scrollY;render();requestAnimationFrame(()=>window.scrollTo(0,scroll));}
+// Intercept at window capture before legacy Fusion's delegated document handler resets spread, counts, and names.
+window.addEventListener('click',function(e){
+ const el=e.target.closest('button');if(!el||view!=='fusion-read')return;
+ if(el.matches('[data-fusion-tab="read-mode"]')){
+  e.preventDefault();e.stopImmediatePropagation();fusionSyncReading();const r=FUSION_READING,mode=el.dataset.value,prior=r.spread;
+  r.mode=mode;
+  if(mode==='tarot'){r.oracle=0;r.tarot=Math.max(1,r.tarot);}
+  else if(mode==='oracle'){r.tarot=0;r.oracle=Math.max(1,r.oracle);}
+  else{r.tarot=Math.max(1,r.tarot||2);r.oracle=Math.max(1,r.oracle||1);}
+  tally217();r.spread=makeOptions217().some(x=>x.id===prior)?prior:'custom';refresh217();return;
+ }
+ if(el.hasAttribute('data-fusion-count')){
+  e.preventDefault();e.stopImmediatePropagation();fusionSyncReading();const r=FUSION_READING,[type,raw]=el.dataset.fusionCount.split(':'),inc=Number(raw);
+  if(!['tarot','oracle'].includes(type)||![-1,1].includes(inc))return;
+  if(r.mode==='tarot'&&type==='oracle'&&inc>0)r.mode='hybrid';
+  if(r.mode==='oracle'&&type==='tarot'&&inc>0)r.mode='hybrid';
+  const limit=13;
+  let next=Math.max(0,r[type]+inc);
+  if(inc>0&&r.tarot+r.oracle>=limit){toast(`Maximum ${limit} cards in mixed readings.`);return;}
+  r[type]=Math.min(12,next);
+  if(r.mode==='hybrid'&&r.tarot===0&&r.oracle>0)r.mode='oracle';
+  else if(r.mode==='hybrid'&&r.oracle===0&&r.tarot>0)r.mode='tarot';
+  tally217();const candidate=makeOptions217().find(x=>x.id===r.spread);
+  if(!candidate||(candidate.tarotCount!=null&&candidate.tarotCount!==r.tarot)||(candidate.oracleCount!=null&&candidate.oracleCount!==r.oracle))r.spread='custom';
+  refresh217();return;
+ }
+},true);
+window.addEventListener('change',function(e){
+ if(e.target?.id!=='fusionSpreadSelect'||view!=='fusion-read')return;
+ e.stopImmediatePropagation();fusionSyncReading();const r=FUSION_READING,x=makeOptions217().find(s=>s.id===e.target.value);
+ if(!x)return;
+ r.spread=x.id;
+ if(onlyHybrid217()){
+  r.tarot=x.tarotCount;
+  r.oracle=x.oracleCount;
+  tally217();
+ }
+ refresh217();
+},true);
+// In "Traditional spread positions" results, draw the actual positional map, not a linear list.
+fusionShowReading=function(rec){
+ const result=olderShow217(rec);
+ if(rec?.mode==='hybrid'&&Array.isArray(rec.rows)){
+  // V2.1.3 grouped the cards correctly but discarded the selected spread's NAME from the result heading.
+  const t=rec.rows.filter(x=>x.deck==='tarot').length,o=rec.rows.length-t;
+  const label=String(rec.spread||'Custom spread');
+  const heading=document.querySelector('#modalBody .stack > .row h2');
+  if(heading){heading.textContent=label;heading.insertAdjacentHTML('afterend',`<p class="ua217-result-role">${t} Tarot positions + ${o} Oracle guidance card${o===1?'':'s'}</p>`);}
+  const modalTitle=document.getElementById('modalTitle');if(modalTitle)modalTitle.textContent=`Reading · ${label}`;
+ }
+ const stage=document.querySelector('#modalBody > .stack');
+ if(!stage)return result;
+ if(rec.layout==='spread'||String(rec.spread).trim()==='Celtic Cross'){
+  const tarot=rec.rows.filter(r=>r.deck==='tarot').length;
+  const oracle=rec.rows.length-tarot;
+  const chosen=FUSION_TAROT_SPREADS.find(x=>x.name===rec.spread&&x.count===tarot);
+  const sp={id:chosen?.id||'custom',layout:chosen?.id||'custom',tarotCount:tarot,oracleCount:oracle,positions:rec.rows.map(x=>x.position)};
+  const faces=rec.rows.map(row=>({row,c:fusionCard(row.id)}));
+  const title=stage.querySelector(':scope > .row');
+  const section=`<section class="ua217-result-map"><h3>Physical card positions · ${fmt(rec.spread)}</h3>${diagram217(sp,faces)}</section>`;
+  if(title)title.insertAdjacentHTML('afterend',section);
+  else stage.insertAdjacentHTML('afterbegin',section);
+ }
+ return result;
+};
+// Keep the patch notes as a real list, and preserve earlier fixes.
+fusionNews=function(){return olderNews217().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry fusion-v19-notes"><span class="kicker">ULTIMATE ACADEMY V2.1.7</span><h3>Hybrid Spread & Layout Accuracy</h3><ul><li>Hybrid readings retain the original named Tarot spreads and their Tarot-card counts.</li><li>Oracle guidance is shown separately instead of changing the number of Tarot spread positions.</li><li>Changing a named spread updates the required Tarot count automatically while preserving Oracle guidance.</li><li>Celtic Cross now displays the authentic crossed center, six-card cross, and four-card staff.</li><li>Horseshoe, four-corner, nine-card tableau and year-ahead previews use distinctive layouts.</li><li>Traditional spread results show the corresponding physical card arrangement.</li><li>Existing readings, badges, sound settings, XP and lessons are preserved.</li></ul></article>');};
+fusionViews['fusion-news']=fusionNews;
+render=function(...args){const ret=olderRender217.apply(this,args);document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(n=>{if(n.textContent?.includes('V2.1.6'))n.textContent=n.textContent.replace('V2.1.6','V2.1.7')});return ret;};
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.1.7';
+render();
+window.__ua217={version:'2.1.7',options:makeOptions217,preview:newPreview217,diagram:diagram217};
+})();
+</script>
 </body></html>
