@@ -3374,7 +3374,7 @@ if(w.step<4){w.step++;oracleV2WizardRender()}};
 
 /* A capturing handler avoids collision with legacy click handlers. */
 window.addEventListener('click',function(e){const el=e.target.closest('[data-v204-badges],[data-v204-new-trainer]');if(!el)return;e.preventDefault();e.stopImmediatePropagation();
-if(el.hasAttribute('data-v204-badges')){const which=el.dataset.v204Badges;if(which==='oracle')setView('fusion-spirit-league');else if(which==='tarot'||which==='regional')setView('fusion-tarot-league');else if(which==='dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn')}else setView('fusion-league');return}
+if(el.hasAttribute('data-v204-badges')){const which=el.dataset.v204Badges;if(which==='oracle')setView('fusion-spirit-league');else if(which==='tarot')setView('fusion-tarot-gyms');else if(which==='regional')setView('fusion-tarot-league');else if(which==='dual'){FUSION_COURSE_TAB='dual';setView('fusion-learn')}else setView('fusion-league');return}
 if(oracleWizard&&document.querySelector('#modal.wizard-modal')){oracleV2SaveNote();const cur=oracleWizard.coach?.key;let coach=oraclePickGuide(),attempts=0;while(coach?.key===cur&&attempts++<20)coach=oraclePickGuide();oracleWizard.coach=coach;oracleWizard.supportCoaches=null;oracleV2WizardRender();return}
 if(FUSION_LESSON&&(FUSION_LESSON.type==='tarot'||FUSION_LESSON.type==='dual')){const a=FUSION_LESSON,t=document.getElementById(a.type==='tarot'?'fusionTarotReflection':'fusionReflection');if(t){FUSION.reflections[a.type+':'+a.id]=t.value;fusionSave()}fusionV17NewTeam();return}
 if(oracleWizard){oracleV2SaveNote();const cur=oracleWizard.coach?.key;let coach=oraclePickGuide(),attempts=0;while(coach?.key===cur&&attempts++<20)coach=oraclePickGuide();oracleWizard.coach=coach;oracleWizard.supportCoaches=null;oracleV2WizardRender();return}
@@ -4252,7 +4252,8 @@ function eligibleBadge(b){const totalT=FUSION_TAROT_COURSE.reduce((n,unit)=>n+un
 function regionStore(){if(!FUSION.regionalQuest||typeof FUSION.regionalQuest!=='object')FUSION.regionalQuest={earned:{},attempts:{}};
  if(!FUSION.regionalQuest.earned)FUSION.regionalQuest.earned={};if(!FUSION.regionalQuest.attempts)FUSION.regionalQuest.attempts={};return FUSION.regionalQuest;}
 function historicRecord(b){const p=fusionTarotProgress();return p.log?.[b.region+'|'+b.badge]||null}
-function earnedRecord(b){return regionStore().earned[b.region+'|'+b.badge]||historicRecord(b)}
+// V2.1.9: Only a recorded Regional Quest battle victory counts as a new regional badge.
+function earnedRecord(b){return regionStore().earned[b.region+'|'+b.badge]||null}
 function earnedCount(region){return leaders.filter(b=>b.region===region&&earnedRecord(b)).length}
 function launch(mode, badgeId){let questions=[],opp,region=null;
  if(mode==='region'){
@@ -4303,7 +4304,7 @@ function review(b){return `<details class="v21-review" open><summary>📚 Review
 function battleFinish(){const b=battle;if(!b)return;const win=b.score>= (b.mode==='region'?5:4),reg=b.badge;
  let awarded=false;if(reg){const key=reg.region+'|'+reg.badge;const rec=earnedRecord(reg);
   const old=regionStore().attempts[key]||{plays:0,best:0};regionStore().attempts[key]={plays:old.plays+1,best:Math.max(old.best||0,b.score),latest:new Date().toISOString()};
-  if(win&&!rec){regionStore().earned[key]={date:new Date().toISOString(),score:b.score,leader:reg.leader,ace:reg.ace};awarded=true;}
+  if(win&&!rec){regionStore().earned[key]={date:new Date().toISOString(),score:b.score,leader:reg.leader,ace:reg.ace,source:'regional-quest-victory'};awarded=true;}
  }
  if(win)S.xp+=b.score*5;
  if(!reg){
@@ -4322,7 +4323,7 @@ function battleFinish(){const b=battle;if(!b)return;const win=b.score>= (b.mode=
 }
 const oldLeague=fusionTarotLeague;
 fusionTarotLeague=function(){const allEarned=leaders.filter(b=>earnedRecord(b)).length;
- return `${fusionHeading('Regional Badge Quest','Face actual regional Gym Leaders in optional six-question knowledge battles. Alola features island Kahunas and Trial Captains.')}<div class="v21-league-intro"><div><strong>🏅 ${allEarned} / 72 badges earned</strong><p>Challenges unlock as you study Tarot and Spirit Oracle cards. Win 5 of 6 questions to collect a badge. Your historical records remain intact.</p></div><button class="btn ghost sm" data-fusion-course-tarot>Continue Academy</button></div>
+ return `${fusionHeading('Regional Badge Quest','Face actual regional Gym Leaders in optional six-question knowledge battles. Alola features island Kahunas and Trial Captains.')}<div class="v21-league-intro"><div><strong>🏅 ${allEarned} / 72 badges earned</strong><p>Challenges unlock as you study Tarot and Spirit Oracle cards. Win 5 of 6 questions to collect a badge. Historical records are kept in a separate Legacy Archive.</p></div><button class="btn ghost sm" data-fusion-course-tarot>Continue Academy</button></div>
  <div class="v21-regions">${regionNames.map(region=>`<details class="v21-region" ${region==='Kanto'?'open':''}><summary><b>${h(region)}</b><span>${earnedCount(region)}/8 badges <span class="v21-caret">⌄</span></span></summary><div class="v21-region-grid">${leaders.filter(b=>b.region===region).map(b=>{
   const owned=!!earnedRecord(b),elig=eligibleBadge(b),stats=regionStore().attempts[b.region+'|'+b.badge];return `<button type="button" class="v21-badge ${owned?'earned':elig.ok?'ready':'locked'}" data-v21-badge="${b.id}"><span class="v21-symbol">${owned?b.symbol:elig.ok?'⚔':'🔒'}</span><strong>${h(b.badge)}${b.region==='Alola'?'':''}</strong><span>${h(b.leader)}</span><img src="${trainerSprite(b.key)}" alt="" loading="lazy"><small>${owned?'✓ Earned':elig.ok?'Ready to battle':'Locked · '+h(elig.need)}</small>${stats?`<small>Best ${stats.best}/6</small>`:''}</button>`;}).join('')}</div></details>`).join('')}</div>
  <p class="v21-note">Alola’s existing stamps and trials are Academy-exclusive rewards, not official eight-Gym badges. Unova and Galar use one of several game-version leader variants. No historical dates are invented.</p>`;
@@ -4330,7 +4331,7 @@ fusionTarotLeague=function(){const allEarned=leaders.filter(b=>earnedRecord(b)).
 fusionViews['fusion-tarot-league']=fusionTarotLeague;
 function badgeDetail(id){const b=leaders[id];if(!b)return;const rec=earnedRecord(b),gate=eligibleBadge(b),stats=regionStore().attempts[b.region+'|'+b.badge];const already=!!rec;
  showModal(`${b.region} · ${b.badge}`,`<div class="v21-badge-detail"><div class="v21-symbol large">${already?b.symbol:gate.ok?'⚔':'🔒'}</div><h2>${h(b.badge)} ${b.region==='Alola'?'Challenge':'Badge'}</h2><p>${h(b.region)} · ${h(b.leader)} ${b.region==='Alola'?'(Kahuna / Trial Captain)':'(Gym Leader)'}</p><div class="v21-result-duo"><img src="${trainerSprite(b.key)}" alt="${h(b.leader)}"><img src="${spriteSafe(b.ace)}" alt="${h(b.ace)}"></div><p><b>${already?'Badge collected':gate.ok?'Ready to challenge':'Locked'}</b> · ${h(gate.need)}</p>
- <p>Six questions from foundations and studied Tarot/Oracle material. Earn at least five correct answers.</p>${already?`<p class="v21-note">${rec.date?'Recorded: '+h(new Date(rec.date).toLocaleDateString()):'Historical date not recorded'} · This badge cannot be awarded twice.</p>`:''}${stats?`<p class="v21-note">${stats.plays} previous attempt(s) · Best ${stats.best}/6</p>`:''}
+ <p>Six questions from foundations and studied Tarot/Oracle material. Earn at least five correct answers.</p>${already?`<p class="v21-note">${rec.date?'Recorded: '+h(new Date(rec.date).toLocaleDateString()):'Date not recorded'} · This victory cannot award the badge twice.</p>`:''}${stats?`<p class="v21-note">${stats.plays} previous attempt(s) · Best ${stats.best}/6</p>`:''}
  <div class="v21-actions"><button class="btn" data-v21-launch-badge="${id}" ${!already&&!gate.ok?'disabled':''}>${already?'⚔ Rematch':'⚔ Challenge Gym Leader'}</button><button class="btn ghost" data-v21-close>Back</button></div></div>`);
 }
 // Consolidate the Arcade. Original Tarot Games was incorrectly linked to the badge gallery.
@@ -5302,5 +5303,92 @@ window.__ua217={version:'2.1.7',options:makeOptions217,preview:newPreview217,dia
  render();
 })();
 
+</script>
+
+<style id="ua219-styles">
+.ua219-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px;margin:16px 0}
+.ua219-panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0}
+.ua219-panel h3{font:700 20px Georgia,serif;margin:0 0 8px}.ua219-panel p{font-size:13px;line-height:1.55;color:var(--sub)}
+.ua219-panel .btn{margin-top:11px}.ua219-legacy{margin:16px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 16px}
+.ua219-legacy summary{cursor:pointer;font-weight:850}.ua219-legacy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px;margin-top:12px}
+.ua219-record{border:1px solid var(--line);border-radius:10px;padding:11px;background:var(--paper);display:grid;gap:3px;font-size:12px}
+.ua219-record small{font-size:10px;color:var(--sub)}
+.ua219-statline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin:10px 0}
+.ua219-statline strong{margin-right:auto}.ua219-legend{font-size:12px;color:var(--sub);line-height:1.6}
+</style>
+<script>
+/* V2.1.9 — Provenance-safe earned badges, distinct gallery navigation and XP visibility. */
+(function(){
+'use strict';
+// New regional victories are stored by the V2.1 quest engine under FUSION.regionalQuest.earned.
+// Legacy badgeLog is intentionally NOT copied into that object or deleted.
+const regionalStore=()=> FUSION.regionalQuest&&typeof FUSION.regionalQuest.earned==='object'&&FUSION.regionalQuest.earned?FUSION.regionalQuest.earned:{};
+const regionalWinCount=()=>Object.values(regionalStore()).filter(Boolean).length;
+const gymEarned=()=>FUSION_TAROT_COURSE.filter(sec=>!!FUSION.progress['tarotCrest:'+sec.id]);
+const legacyLog=()=>fusionTarotProgress().log||{};
+const historicCount=()=>Object.values(legacyLog()).filter(Boolean).length;
+const spiritCount=()=>Object.values(S.badges||{}).filter(Boolean).length;
+const dualCount=()=>FUSION_DUAL_LESSONS.filter((_,i)=>!!FUSION.progress['dual:'+i]).length;
+const safe=x=>fusionEscape(String(x??''));
+const formatDate=record=>{const t=record&&typeof record==='object'?(record.date||record.earnedAt||record.timestamp):null;if(!t)return 'Original date unknown';const d=new Date(t);return Number.isFinite(d.getTime())?d.toLocaleDateString():'Original date unknown';};
+function legacyArchive(){const entries=Object.entries(legacyLog()).filter(([,v])=>!!v);
+ return `<details class="ua219-legacy"><summary>📚 Legacy Archive · ${entries.length} original regional badge record(s)</summary>
+ <p class="ua219-legend">These were saved by the original Tarot application. They remain available for reference but do not count as victories against Regional Badge Quest Gym Leaders. None have been removed or converted.</p>
+ ${entries.length?`<div class="ua219-legacy-grid">${entries.map(([key,record])=>`<div class="ua219-record"><strong>🏅 ${safe(key.split('|').pop())}</strong><small>${safe(key.includes('|')?key.split('|')[0]:'Imported badge')}</small><small>${safe(formatDate(record))}</small></div>`).join('')}</div>`:'<p class="muted small">No historical badges were recorded in this browser save.</p>'}
+ </details>`;
+}
+const distinctGymView=function(){const current=gymEarned().length;
+ return `${fusionHeading('Tarot Academy Gym Badges','Ten chapter-specific Gym Leader checkpoints. Study the lessons, then pass the eight-question checkpoint with at least six correct answers to earn each badge.')}
+ <div class="ua219-statline"><strong>⭐ ${current}/10 Tarot Gym Badges</strong><button class="btn ghost sm" data-fusion-course-tarot>Continue Tarot Academy</button></div>
+ <div class="fusion-v206-gym-gallery">${fusionV206GemList()}</div>
+ <p class="ua219-legend">Academy Gym Badges, Regional Quest badges, and Spirit Emblems are separate rewards. Opening a gallery or studying alone does not award badges.</p>
+ ${legacyArchive()}`;
+};
+// Register a genuine separate view without redesigning the existing gym-checkpoint UI.
+if(!navItems.some(e=>e[0]==='fusion-tarot-gyms'))navItems.push(['fusion-tarot-gyms','⭐','Tarot Gym Badges']);
+if(!FUSION_MENU.some(e=>e[0]==='fusion-tarot-gyms'))FUSION_MENU.push(['fusion-tarot-gyms','⭐','Tarot Gym Badges']);
+FUSION_VIEW_IDS.add('fusion-tarot-gyms');
+fusionViews['fusion-tarot-gyms']=distinctGymView;
+// No change to the active Regional Quest engine: it now reads battle-only earnedRecord,
+// and existing battle attempts and earned records continue to work as before.
+const oldRegionalView=fusionTarotLeague;
+fusionTarotLeague=function(){return oldRegionalView()+`<div class="ua219-statline"><span>⭐ ${gymEarned().length}/10 Academy Gym Badges</span><span>📚 ${historicCount()} legacy record(s), kept separately</span><button class="btn ghost sm" data-go="fusion-tarot-gyms">View Tarot Gym Badges</button></div>${legacyArchive()}`;};
+fusionViews['fusion-tarot-league']=fusionTarotLeague;
+// Rebuild the compact badge counter shelf using actual achievements, not the old
+// completion-percentage-derived milestones or badgeLog.
+const oldRankBar=fusionV202BadgeBar;
+fusionV202BadgeBar=function(){return oldRankBar()
+ .replace(/(<button[^>]*data-v204-badges="tarot"[^>]*>)[\s\S]*?(<\/button>)/,'$1⭐ '+gymEarned().length+' Tarot Gym Badges$2')
+ .replace(/(<button[^>]*data-v204-badges="regional"[^>]*>)[\s\S]*?(<\/button>)/,'$1🎖️ '+regionalWinCount()+' Regional$2')
+ .replace('Regional badges follow the older-overall-course milestones system.','Regional badges require their own Gym Leader victories.')
+ .replace('Regional badges follow the older overall-course milestones system.','Regional badges require their own Gym Leader victories.');};
+// Restore an accurate League Hall. The original tile mistakenly pointed Tarot
+// Gym Badges at the Regional Quest gallery.
+fusionLeague=function(){return `${fusionHeading('Pokémon League Hall','Four separate achievement collections. No badge is granted just for viewing a page.')}
+ <div class="ua219-tiles">
+ <section class="ua219-panel"><h3>⭐ Tarot Academy Gym Badges</h3><p><strong>${gymEarned().length}/10</strong> earned from Academy chapter checkpoints (6 of 8 correct).</p><button class="btn" data-go="fusion-tarot-gyms">Open Tarot Gym Badges</button></section>
+ <section class="ua219-panel"><h3>🏅 Regional Badge Quest</h3><p><strong>${regionalWinCount()}/72</strong> earned by beating named regional Gym Leaders (5 of 6 correct). Lessons unlock battles only.</p><button class="btn" data-go="fusion-tarot-league">Open Regional Quest</button></section>
+ <section class="ua219-panel"><h3>🌿 Spirit Oracle Emblems</h3><p><strong>${spiritCount()}/10</strong> earned through Spirit family checkpoints.</p><button class="btn" data-go="fusion-spirit-league">Open Spirit Gallery</button></section>
+ <section class="ua219-panel"><h3>💜 Dual Mastery</h3><p><strong>${dualCount()}/${FUSION_DUAL_LESSONS.length}</strong> lessons completed.</p><button class="btn" data-fusion-open-dual>Continue Dual Academy</button></section>
+ </div>
+ <div class="ua219-statline"><strong>🎓 Academy Trainer XP: ${fusionV202XP().toLocaleString()}</strong><span>${Math.max(0,Number(FUSION.xp)||0).toLocaleString()} Academy + ${Math.max(0,Number(S.xp)||0).toLocaleString()} Spirit/Arcade</span><button class="btn ghost sm" data-go="fusion-trainer">Trainer Profile</button></div>
+ <p class="ua219-legend">A historical badge or a lesson unlock does not automatically award XP. Winning a Regional Quest battle earns XP according to the existing battle rules; older imported records do not retroactively award XP.</p>
+ ${legacyArchive()}`};
+fusionViews['fusion-league']=fusionLeague;
+// Reinforce relevant shortcuts on the league/profile and let users navigate directly.
+const oldTrainerView=fusionTrainer;
+fusionTrainer=function(){return oldTrainerView()+`<div class="ua219-statline"><strong>Badge galleries</strong><button class="btn ghost sm" data-go="fusion-tarot-gyms">⭐ Tarot Gym Badges</button><button class="btn ghost sm" data-go="fusion-tarot-league">🏅 Regional Quest</button></div>`;};
+fusionViews['fusion-trainer']=fusionTrainer;
+const oldNews219=fusionNews;
+fusionNews=function(){return oldNews219().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.1.9</span><h3>Honest Badge Counts &amp; Separate Galleries</h3><ul><li>Regional Quest counts only the badges earned by winning their actual named Gym Leader battle, at least 5/6 answers correct.</li><li>Original Tarot regional badge records remain safely in a separate Legacy Archive without automatically unlocking Regional Quest rewards.</li><li>Tarot Academy Gym Badges now open their own ten-chapter gallery from the Badge Shelf and Pokémon League Hall.</li><li>Regional Badge Quest, Tarot Gym Badges, Spirit Emblems and Dual progress remain independent.</li><li>Trainer XP totals show Academy and Spirit/Arcade portions to distinguish genuine recorded rewards from legacy badge records.</li><li>Existing save keys, XP, past regional battle attempts and legitimate badge victories are preserved.</li></ul></article>`);};
+fusionViews['fusion-news']=fusionNews;
+// Point the League Hall counters and quick navigation at their own destinations.
+// Original V2.0.4 capture handler is fixed in-source for these two counters.
+const prevRender219=render;
+render=function(...args){const output=prevRender219.apply(this,args);document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{if(el.textContent&&/V2\.1\.[0-8]/.test(el.textContent))el.textContent=el.textContent.replace(/V2\.1\.[0-8]/g,'V2.1.9')});return output;};
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.1.9';
+window.__ua219={version:'2.1.9',regionalWinCount,legacyCount:historicCount,tarotGymCount:()=>gymEarned().length, xpTotal:fusionV202XP};
+render();
+})();
 </script>
 </body></html>
