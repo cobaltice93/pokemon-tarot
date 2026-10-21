@@ -4456,20 +4456,26 @@ const uaVisuals={
 'read-context':{cards:['The Hermit','Two of Cups','Two of Wands','Four of Cups','The Chariot'],focus:'One card can answer two different kinds of questions without changing its core meaning.',worked:'The Hermit for a study question may emphasize time to concentrate; for a friendship question it may suggest reflecting on the space you need. The underlying theme remains introspection.'},
 'read-position':{cards:['The Hermit','Four of Cups','The Chariot','Justice','The Moon'],focus:'Compare an identical card in the “Resource” and “Challenge” positions.',worked:'The Hermit as Resource: time alone supports reflection. As Challenge: withdrawal might be preventing helpful conversation. Position changes the angle, not the card’s identity.'},
 'read-synthesis':{cards:['The Fool','Justice','The Hermit','Temperance','The Chariot','The Moon'],focus:'Combine two Tarot cards into one coherent interpretation rather than stacking disconnected keywords.',worked:'The Fool as Opportunity + Justice as Advice: consider the new direction, but make a fair, informed choice before acting. End with one realistic next step.'},
-'minor-overview':{cards:['Ace of Wands','Two of Cups','Three of Swords','Four of Pentacles'],focus:'The Minor Arcana consists of four suits with 14 cards each: Ace through Ten, then Page, Knight, Queen and King.',worked:'Wands concerns drive and creativity; Cups feelings and relationships; Swords thoughts and conflict; Pentacles practical resources and stability.'},
+'minor-overview':{cards:['Ace of Wands','Ace of Cups','Ace of Swords','Ace of Pentacles'],focus:'The Minor Arcana consists of four suits with 14 cards each: Ace through Ten, then Page, Knight, Queen and King.',worked:'Wands concerns drive and creativity; Cups feelings and relationships; Swords thoughts and conflict; Pentacles practical resources and stability.'},
 'minor-suits':{cards:['Ace of Wands','Ace of Cups','Ace of Swords','Ace of Pentacles'],focus:'Compare the four suits side by side: same rank, different domain.',worked:'An Ace signals an opening. In Wands this may be creative energy; Cups emotional connection; Swords new clarity; Pentacles a practical opportunity.'},
-'minor-ace-two':{cards:['Ace of Wands','Two of Wands','Ace of Cups','Two of Cups'],focus:'Keep the suit fixed when comparing Ace with Two.',worked:'Ace of Wands: the initial creative spark. Two of Wands: choose a direction and plan what to do with that energy. Rank changes the stage, not the suit.'},
-'minor-three-four':{cards:['Three of Wands','Four of Wands','Three of Cups','Four of Cups'],focus:'Compare the developing momentum of Three with the settling or structure of Four in the same suit.',worked:'Three of Wands: expanding horizons. Four of Wands: a stable milestone or shared celebration. Context determines how those stages matter.'},
-'minor-five-six':{cards:['Five of Wands','Six of Wands','Five of Cups','Six of Cups'],focus:'Study how Five introduces friction or disruption while Six responds through adjustment or rebalancing.',worked:'Five of Wands can show conflicting efforts; Six of Wands can show recognition after effort. These are suit-specific expressions, not universal promises.'},
-'minor-seven-eight':{cards:['Seven of Wands','Eight of Wands','Seven of Pentacles','Eight of Pentacles'],focus:'Seven asks for assessment, persistence or a test; Eight usually introduces deliberate movement, skill or sustained practice.',worked:'Seven of Wands may require holding a position; Eight of Wands emphasizes momentum. In Pentacles, Seven reviews progress while Eight develops skill.'},
-'minor-nine-ten':{cards:['Nine of Wands','Ten of Wands','Nine of Cups','Ten of Cups'],focus:'Nine approaches a culmination; Ten shows what comes with completion, including fulfillment or burden.',worked:'Nine of Wands reflects perseverance despite fatigue; Ten of Wands can reveal the weight of accumulated commitments. Completion is not always easy.'},
-'minor-courts':{cards:['Page of Wands','Knight of Wands','Queen of Wands','King of Wands'],focus:'All four Court ranks belong to the same suit here, so compare their ways of expressing Wands energy.',worked:'Page = curious learner; Knight = active explorer; Queen = confident inner mastery; King = responsible leadership. These are archetypal roles, not literal genders.'}
+'minor-ace-two':{cards:['Ace of Wands','Two of Wands','Ace of Cups','Two of Cups','Ace of Swords','Two of Swords','Ace of Pentacles','Two of Pentacles'],focus:'Keep the suit fixed when comparing Ace with Two.',worked:'Ace of Wands: the initial creative spark. Two of Wands: choose a direction and plan what to do with that energy. Rank changes the stage, not the suit.'},
+'minor-three-four':{cards:['Three of Wands','Four of Wands','Three of Cups','Four of Cups','Three of Swords','Four of Swords','Three of Pentacles','Four of Pentacles'],focus:'Compare the developing momentum of Three with the settling or structure of Four in the same suit.',worked:'Three of Wands: expanding horizons. Four of Wands: a stable milestone or shared celebration. Context determines how those stages matter.'},
+'minor-five-six':{cards:['Five of Wands','Six of Wands','Five of Cups','Six of Cups','Five of Swords','Six of Swords','Five of Pentacles','Six of Pentacles'],focus:'Study how Five introduces friction or disruption while Six responds through adjustment or rebalancing.',worked:'Five of Wands can show conflicting efforts; Six of Wands can show recognition after effort. These are suit-specific expressions, not universal promises.'},
+'minor-seven-eight':{cards:['Seven of Wands','Eight of Wands','Seven of Cups','Eight of Cups','Seven of Swords','Eight of Swords','Seven of Pentacles','Eight of Pentacles'],focus:'Seven asks for assessment, persistence or a test; Eight usually introduces deliberate movement, skill or sustained practice.',worked:'Seven of Wands may require holding a position; Eight of Wands emphasizes momentum. In Pentacles, Seven reviews progress while Eight develops skill.'},
+'minor-nine-ten':{cards:['Nine of Wands','Ten of Wands','Nine of Cups','Ten of Cups','Nine of Swords','Ten of Swords','Nine of Pentacles','Ten of Pentacles'],focus:'Nine approaches a culmination; Ten shows what comes with completion, including fulfillment or burden.',worked:'Nine of Wands reflects perseverance despite fatigue; Ten of Wands can reveal the weight of accumulated commitments. Completion is not always easy.'},
+'minor-courts':{cards:['Page of Wands','Knight of Wands','Queen of Wands','King of Wands','Page of Cups','Knight of Cups','Queen of Cups','King of Cups','Page of Swords','Knight of Swords','Queen of Swords','King of Swords','Page of Pentacles','Knight of Pentacles','Queen of Pentacles','King of Pentacles'],focus:'All four Court ranks belong to the same suit here, so compare their ways of expressing Wands energy.',worked:'Page = curious learner; Knight = active explorer; Queen = confident inner mastery; King = responsible leadership. These are archetypal roles, not literal genders.'}
 };
 function uaChooseVisuals(l){
  const entry=uaVisuals[l.id];if(!entry)return null;
  const matches=entry.cards.map(n=>FUSION_TAROT_CARDS.find(c=>c.name===n)).filter(Boolean);
- const n=entry.cards.length===4&&['minor-overview','minor-suits','minor-courts'].includes(l.id)?4:3;
+ const n=l.id.startsWith('minor-')?4:3;
  const v=FUSION_LESSON?.variant||0;
+ // Section 3 uses coherent sets, never three random ranks or mixed-suit pairs.
+ if(l.id.startsWith('minor-')){
+   const groups=Math.max(1,Math.floor(matches.length/4));
+   const group=((v%groups)+groups)%groups;
+   return {entry,cards:matches.slice(group*4,group*4+4)};
+ }
  const offset=((v%Math.max(1,matches.length))+matches.length)%matches.length;
  return {entry,cards:matches.slice(offset).concat(matches.slice(0,offset)).slice(0,n)};
 }
@@ -4477,7 +4483,7 @@ function uaRenderVisual(l,compact=false){
  const examples=uaChooseVisuals(l);if(!examples)return '';
  const {entry,cards}=examples;
  const canReroll=entry.cards.length>cards.length;
- return `<div class="ua213-study-visual ${compact?'ua213-compact':''}"><div class="ua213-visual-heading"><div><strong>🔎 Illustrated learning guide</strong><p>${uaEscape(entry.focus)}</p></div>${!compact&&canReroll?'<button class="fusion-soft-btn" type="button" data-ua213-reroll aria-label="Show three different example cards">↻ Other examples</button>':''}</div><div class="ua213-visual-cards">${cards.map(c=>`<figure><img loading="lazy" src="${c.image}" alt="Illustrated ${uaEscape(c.name)} featuring ${uaEscape(c.pokemon)}"><figcaption><strong>${uaEscape(c.name)}</strong><span>${uaEscape(c.pokemon)} · ${uaEscape(c.suit)}</span>${compact?'':`<p><b>Upright:</b> ${uaEscape(c.upright)}</p>`}</figcaption></figure>`).join('')}</div>${!compact?`<div class="ua213-worked"><b>Worked interpretation</b><p>${uaEscape(entry.worked)}</p></div><small class="muted">These are visual examples of the framework. You will study each individual card in its own lesson later.</small>`:''}</div>`;
+ return `<div class="ua213-study-visual ${compact?'ua213-compact':''}"><div class="ua213-visual-heading"><div><strong>🔎 Illustrated learning guide</strong><p>${uaEscape(entry.focus)}</p></div>${!compact&&canReroll?'<button class="fusion-soft-btn" type="button" data-ua213-reroll aria-label="Show another relevant set of example cards">↻ Other examples</button>':''}</div><div class="ua213-visual-cards">${cards.map(c=>`<figure><img loading="lazy" src="${c.image}" alt="Illustrated ${uaEscape(c.name)} featuring ${uaEscape(c.pokemon)}"><figcaption><strong>${uaEscape(c.name)}</strong><span>${uaEscape(c.pokemon)} · ${uaEscape(c.suit)}</span>${compact?'':`<p><b>Upright:</b> ${uaEscape(c.upright)}</p>`}</figcaption></figure>`).join('')}</div>${!compact?`<div class="ua213-worked"><b>Worked interpretation</b><p>${uaEscape(entry.worked)}</p></div><small class="muted">These are visual examples of the framework. You will study each individual card in its own lesson later.</small>`:''}</div>`;
 }
 const uaOldTarotConcept=fusionV204TarotConcept;
 fusionV204TarotConcept=function(l,cards){const original=uaOldTarotConcept(l,cards);return uaVisuals[l.id]?original+uaRenderVisual(l,true):original;};
@@ -4684,4 +4690,81 @@ render();
 window.__ua214={version,get confirm(){return ua214DefaultConfirm()},get lang(){return ua214Lang()},localize};
 })();
 </script>
+
+<script>
+/* Ultimate Academy V2.1.5: Section 3 card relevance and four-suit visual guide. */
+(()=>{
+'use strict';
+const UA215_MINOR={
+ 'minor-overview':{kind:'suits'},
+ 'minor-suits':{kind:'suits'},
+ 'minor-ace-two':{kind:'pair',ranks:['Ace','Two']},
+ 'minor-three-four':{kind:'pair',ranks:['Three','Four']},
+ 'minor-five-six':{kind:'pair',ranks:['Five','Six']},
+ 'minor-seven-eight':{kind:'pair',ranks:['Seven','Eight']},
+ 'minor-nine-ten':{kind:'pair',ranks:['Nine','Ten']},
+ 'minor-courts':{kind:'courts'}
+};
+const UA215_SUITS=['Wands','Cups','Swords','Pentacles'];
+const UA215_RANKS=['Page','Knight','Queen','King'];
+const UA215_BY_NAME=new Map(FUSION_TAROT_CARDS.map(card=>[card.name,card]));
+function ua215Cards(lesson){
+ const spec=UA215_MINOR[lesson?.id];
+ if(!spec)return null;
+ const variant=Math.max(0,Number(FUSION_LESSON?.variant)||0);
+ let names=[];
+ if(spec.kind==='suits')names=UA215_SUITS.map(suit=>'Ace of '+suit);
+ else if(spec.kind==='courts')names=UA215_RANKS.map(rank=>rank+' of '+UA215_SUITS[variant%4]);
+ else{
+   const suits=variant%2===0?['Wands','Cups']:['Swords','Pentacles'];
+   names=suits.flatMap(suit=>spec.ranks.map(rank=>rank+' of '+suit));
+ }
+ const found=names.map(name=>UA215_BY_NAME.get(name));
+ if(found.some(card=>!card)){
+   console.warn('Missing Section 3 visual examples:',names.filter(name=>!UA215_BY_NAME.get(name)));
+   return null;
+ }
+ return found;
+}
+const ua215OldCards=fusionV14CardsForLesson;
+fusionV14CardsForLesson=function(lesson){return ua215Cards(lesson)||ua215OldCards(lesson);};
+const ua215OldExplore=fusionV204TarotExplore;
+fusionV204TarotExplore=function(lesson,cards,selected){
+ if(!UA215_MINOR[lesson?.id])return ua215OldExplore(lesson,cards,selected);
+ const source=ua215Cards(lesson)||cards;
+ const selectedIndex=Math.min(Math.max(0,Number(FUSION_LESSON?.focus)||0),source.length-1);
+ const current=source[selectedIndex];
+ const spec=UA215_MINOR[lesson.id];
+ const isSuit=spec.kind==='suits';
+ const caption=isSuit?'One Ace from each of the four suits — Wands, Cups, Swords and Pentacles. Same rank, four different life domains.':
+    spec.kind==='courts'?'Four distinct Court ranks in one suit: Page, Knight, Queen and King. Compare how each expresses the same suit.':
+    `Compare ${spec.ranks[0]} and ${spec.ranks[1]} within each suit. The ranks change the stage; the suit remains the life domain.`;
+ const switchable=!isSuit;
+ const row=source.map((card,index)=>`<button type="button" class="ua215-example ${index===selectedIndex?'selected':''}" data-fusion-tarot-focus="${index}" aria-pressed="${index===selectedIndex}"><img loading="lazy" src="${card.image}" alt="${fusionEscape(card.name)}"><b>${fusionEscape(card.name)}</b><small>${fusionEscape(card.pokemon||card.suit)}</small></button>`).join('');
+ const label=switchable?'<button type="button" class="fusion-soft-btn" data-ua213-reroll aria-label="Switch to another suit, keeping the same ranks">↻ Other suits</button>':'';
+ return `<section class="fusion-v204-main ua215-explore"><div class="ua213-visual-heading"><div><h3>Look at all ${source.length} relevant cards</h3><p>${fusionEscape(caption)}</p></div>${label}</div><div class="ua215-examples" aria-label="Cards matching the current lesson">${row}</div><h3>Visual study · ${fusionEscape(current.name)}</h3>${fusionV14VisualGuide(lesson,source,current)}<p class="fusion-v204-mini-prompt">Choose any illustrated card above to inspect its symbolism. Each example belongs to this lesson's suit/rank topic.</p></section>`;
+};
+// In the existing V2.1.3 concept-page grid, all Section 3 previews now show four cards,
+// and alternate examples rotate only between complete, relevant suit groupings.
+const ua215OldNews=fusionNews;
+fusionNews=function(){return ua215OldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.1.5</span><h3>Section 3 artwork accuracy</h3><p>Four Suits lessons now show all four suits. Aces/Twos and every other rank-pair lesson display only the appropriate ranks in matched suits; Court rank examples are likewise restricted. Changing the example suit never substitutes an unrelated card. Saved progress is unchanged.</p></article>');};
+fusionViews['fusion-news']=fusionNews;
+const ua215OldRender=render;
+render=function(...args){const result=ua215OldRender.apply(this,args);const brand=document.querySelector('#sidebar .brand small');if(brand)brand.textContent='TAROT × ORACLE · V2.1.5';const tree=document.querySelector('.tree-brand small');if(tree)tree.textContent='TAROT × ORACLE · V2.1.5';return result;};
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.1.5';
+render();
+window.__ua215={version:'2.1.5',cardsForLesson:ua215Cards};
+})();
+</script>
+<style>
+/* Section 3: show every relevant card with clearly selectable art and no arbitrary cropping. */
+.ua215-examples{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 17px}
+.ua215-example{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;border:2px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);padding:9px 5px;cursor:pointer;text-align:center}
+.ua215-example.selected{border-color:#d4aa5b;background:color-mix(in srgb,var(--card) 85%,#d4aa5b 15%)}
+.ua215-example img{height:138px;max-width:100%;object-fit:contain;display:block}
+.ua215-example b{font-size:12px;line-height:1.3}
+.ua215-example small{font-size:10px;color:var(--sub)}
+.ua215-explore>.fusion-v14-guide{margin:5px 0 10px}
+@media(max-width:540px){.ua215-examples{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ua215-example img{height:125px}}
+</style>
 </body></html>
