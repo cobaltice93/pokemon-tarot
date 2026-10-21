@@ -6008,7 +6008,7 @@ window.addEventListener('input',ev=>{
 const oldNotes=fusionViews['fusion-news'];
 fusionViews['fusion-news']=function(){return oldNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.5</span><h3>Gym Leader Avatars & Popup Music</h3><ul><li>Choose a different embedded Trainer sprite for each of the 72 Regional Gym Leader and trial opponents in Trainer Profile.</li><li>Saved avatar choices appear in the League gallery, Gym battles, introductions, victory scenes and new-challenge popups.</li><li>Added three user-provided MP3s to all music selectors, including two full Gym battle remixes and a short Trainers' Eyes Meet cue.</li><li>Added independent music settings for Gym introduction popups and Gym unlock announcements, with preview and silent options.</li><li>Unchanged: challenge requirements, Academy Adventure Tree, earned badges, XP, and existing music preferences.</li></ul></article>`)};
 const ua226OlderNotes=fusionViews['fusion-news'];
-fusionViews['fusion-news']=function(){return ua226OlderNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.7</span><h3>Stop Music & Tarot Wallpaper</h3><ul><li>Added Stop Music buttons in Music & Sound, the Music screen and the top navigation.</li><li>Page navigation stops previous tracks; Back, close and popup dismissal stop encounter and unlock music.</li><li>Card wallpaper now offers Spirit Oracle, Tarot or a mixed collage, with the original Oracle wallpaper retained as the default.</li><li>Saved badges, progress, imported audio and other music assignments are preserved.</li></ul></article>`)};
+fusionViews['fusion-news']=function(){return ua226OlderNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.6</span><h3>Stop Music & Tarot Wallpaper</h3><ul><li>Added Stop Music buttons in Music & Sound, the Music screen and the top navigation.</li><li>Page navigation stops previous tracks; Back, close and popup dismissal stop encounter and unlock music.</li><li>Card wallpaper now offers Spirit Oracle, Tarot or a mixed collage, with the original Oracle wallpaper retained as the default.</li><li>Saved badges, progress, imported audio and other music assignments are preserved.</li></ul></article>`)};
 document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.7';
 document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{
  if(el.textContent&&/V2\.\d+\.\d+/.test(el.textContent))el.textContent=el.textContent.replace(/V2\.\d+\.\d+/g,'V2.2.7');
@@ -6028,4 +6028,37 @@ window.__ua225={version:VERSION,roster:()=>roster().length,slots:()=>FUSION_V206
 .ua226-stop-top:hover,.ua226-stop-top:focus-visible{background:#2d556d;outline-offset:2px}
 .ua226-stop-settings{background:#d6a454;color:#132539;font-weight:900}
 @media(max-width:550px){.ua226-stop-top{width:29px;height:29px;font-size:14px}}
-</style></body></html>
+</style>
+<script id="ua228-version-release-notes-hotfix">
+/* V2.2.8 — correctly separated V2.2.6, V2.2.7 and V2.2.8 notes,
+   and one authoritative visible version applied after each render. */
+(()=>{
+ 'use strict';
+ const CURRENT_VERSION='V2.2.8';
+ const prevNews=fusionViews['fusion-news'];
+ fusionViews['fusion-news']=function(...args){
+   const old=prevNews.apply(this,args);
+   const entry=`<article class="fusion-news-entry ua228-release"><span class="kicker">ULTIMATE ACADEMY V2.2.8</span><h3>Version Display &amp; Release Notes Hotfix</h3><ul><li>Fixed the sidebar and Adventure Tree build label reverting to V2.2.4 after opening Patch Notes or navigating elsewhere.</li><li>Corrected the V2.2.7 release entry to describe the actual Oracle battle and card-image changes.</li><li>Restored the Stop Music &amp; Tarot Wallpaper changes to their proper V2.2.6 entry.</li><li>No changes to lesson progression, XP, Gym Badges, music preferences or saved data.</li></ul></article>
+   <article class="fusion-news-entry ua227-release"><span class="kicker">ULTIMATE ACADEMY V2.2.7</span><h3>Oracle Trainer Battles &amp; Card Visuals</h3><ul><li>Improved the Oracle Pop Quiz battle interface: removed the white Trainer/team caption overlay from the battlefield.</li><li>Cleaned up opponent Pokémon names and made randomly generated Trainer teams more appropriate to the Trainer class or Oracle family.</li><li>Added embedded Oracle card illustrations alongside relevant description, Message, Shadow, Integration and imagery questions in Oracle Foundation, individual-card and family quiz battles.</li><li>Preserved the existing Tarot, Dual and Regional battle systems, sounds, XP and saved achievements.</li></ul></article>`;
+   return old.replace('<div class="fusion-news-list">','<div class="fusion-news-list">'+entry);
+ };
+ function syncVersion(){
+   const versionText='TAROT × ORACLE · '+CURRENT_VERSION;
+   document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{
+     if(el.textContent?.trim()!==versionText)el.textContent=versionText;
+   });
+   document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy '+CURRENT_VERSION;
+ }
+ const oldRender=render;
+ render=function(...args){
+   const result=oldRender.apply(this,args);
+   syncVersion();
+   return result;
+ };
+ // Single explicit diagnostic constant for this final build, rather than
+ // relying on a locale-specific legacy wrapper's hardcoded version string.
+ window.__ultimateAcademyVersion='2.2.8';
+ syncVersion();
+})();
+</script>
+</body></html>
