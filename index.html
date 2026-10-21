@@ -4767,4 +4767,160 @@ window.__ua215={version:'2.1.5',cardsForLesson:ua215Cards};
 .ua215-explore>.fusion-v14-guide{margin:5px 0 10px}
 @media(max-width:540px){.ua215-examples{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ua215-example img{height:125px}}
 </style>
+
+<script>
+/* Ultimate Academy V2.1.6 — regression repair and reading UX */
+(()=>{
+'use strict';
+const escape216=(s)=>fusionEscape(String(s??''));
+const originalSpreadOptions216=fusionSpreadOptions;
+function hybrid216(){return FUSION_READING.mode==='hybrid'&&FUSION_READING.tarot>0&&FUSION_READING.oracle>0}
+function roles216(positions){
+ if(!hybrid216())return positions;
+ const count=FUSION_READING.tarot+FUSION_READING.oracle;
+ return Array.from({length:count},(_,i)=>{
+  const label=String(positions[i]||`Position ${i+1}`).replace(/^(?:Tarot\s*\d*\s*[·:-]\s*|Oracle(?: guidance)?\s*\d*\s*[·:-]\s*)/i,'');
+  return i<FUSION_READING.tarot?`Tarot ${i+1} · ${label}`:`Oracle guidance ${i-FUSION_READING.tarot+1} · ${label}`;
+ });
+}
+fusionSpreadOptions=function(){
+ if(!hybrid216())return originalSpreadOptions216();
+ const r=FUSION_READING,n=r.tarot+r.oracle;
+ const custom={id:'custom',name:`Custom ${r.tarot} Tarot + ${r.oracle} Oracle guidance`,positions:roles216(Array.from({length:n},(_,i)=>`Position ${i+1}`))};
+ const templates=FUSION_HYBRID_SPREADS.filter(x=>x.count===n&&x.positions.filter(p=>p.startsWith('Tarot')).length===r.tarot&&x.positions.filter(p=>p.startsWith('Oracle')).length===r.oracle).map(x=>({id:x.id,name:x.id==='hy-path'?'Two Tarot cards + Oracle guidance':x.name,positions:roles216(x.positions)}));
+ // All traditional Tarot spreads remain selectable even when the reading includes Oracle guidance.
+ const tarot=FUSION_TAROT_SPREADS.filter(x=>x.count===n).map(x=>({id:'t-'+x.id,name:x.name,positions:roles216(x.positions)}));
+ const oracle=spreads.filter(x=>x.n===n).map(x=>({id:'o-'+x.name,name:x.name,positions:roles216(x.positions)}));
+ const result=[...templates,...tarot,...oracle,custom];
+ const unique=new Set();return result.filter(x=>!unique.has(x.id)&&unique.add(x.id));
+};
+function preview216(){
+ const r=FUSION_READING,sp=fusionSpread(),n=r.tarot+r.oracle;
+ const chosen=sp?.positions||[];
+ const blocks=Array.from({length:n},(_,i)=>{
+  const tarot=i<r.tarot,position=String(chosen[i]||`Card ${i+1}`);
+  const item=`<div class="ua216-position ${tarot?'tarot':'oracle'}"><span class="ua216-cardback" aria-hidden="true">${tarot?'✧':'✦'}</span><b>${tarot?'Tarot '+(i+1):'Oracle '+(i-r.tarot+1)}</b><small>${escape216(position.replace(/^(?:Tarot|Oracle guidance)\s*\d*\s*·\s*/,''))}</small></div>`;
+  return hybrid216()&&i===r.tarot?'<div class="ua216-guidance-break">↓ Oracle guidance</div>'+item:item;
+ }).join('');
+ return `<section class="ua216-spread-preview" id="ua216SpreadPreview" aria-live="polite"><div class="ua216-preview-top"><strong>🃏 Spread preview · ${escape216(sp?.name||'Custom')}</strong><small>Tarot = gold · Oracle = green</small></div><div class="ua216-preview-cards">${blocks}</div>${hybrid216()?'<p>Oracle cards provide guidance alongside the selected spread positions—not extra Tarot cards.</p>':''}</section>`;
+}
+const oldRead216=fusionRead;
+fusionRead=function(){
+ const html=oldRead216();
+ return html.replace('<div class="fusion-field"><label>Question or intention</label>',preview216()+'<div class="fusion-field"><label>Question or intention</label>');
+};
+fusionViews['fusion-read']=fusionRead;
+window.addEventListener('change',e=>{if(e.target?.id!=='fusionSpreadSelect')return;
+ FUSION_READING.spread=e.target.value;const host=document.getElementById('ua216SpreadPreview');if(host)host.outerHTML=preview216();
+},true);
+// Let a user restore a traditional spread even after changing the Tarot/Oracle counts.
+const oldNormalize216=fusionNormalizeCounts;
+fusionNormalizeCounts=function(){const original=FUSION_READING.spread;oldNormalize216();if(fusionSpreadOptions().some(x=>x.id===original))FUSION_READING.spread=original;};
+// Card selection should not jump to the top or swap out the Trainer mid-lesson.
+let previousLesson216=null;
+const oldTarotRender216=fusionRenderTarotLesson;
+fusionRenderTarotLesson=function(...args){
+ const a=FUSION_LESSON,oldBody=document.getElementById('modalBody');
+ const prev=previousLesson216;
+ const same=!!(a?.type==='tarot'&&prev&&prev.id===a.id&&prev.step===a.step&&oldBody&&document.getElementById('modal')?.classList.contains('open'));
+ const y=same?oldBody.scrollTop:0;
+ const oldCast=a?.cast;
+ const result=oldTarotRender216.apply(this,args);
+ if(a?.type==='tarot'&&oldCast)a.cast=oldCast;
+ if(same){const next=document.getElementById('modalBody');if(next)next.scrollTop=y;}
+ if(a?.type==='tarot')previousLesson216={id:a.id,step:a.step};
+ return result;
+};
+let oraclePrev216=null;
+const oldOracleRender216=oracleV2WizardRender;
+oracleV2WizardRender=function(...args){
+ const w=oracleWizard,container=document.getElementById('modalBody'),old=oraclePrev216;
+ const same=!!(w&&old&&old.id===w.id&&old.step===w.step&&container&&document.getElementById('modal')?.classList.contains('open'));
+ const y=same?container.scrollTop:0;
+ const coach=w?.coach;
+ const result=oldOracleRender216.apply(this,args);
+ // New Trainer is an explicit user action and should remain supported.
+ if(w?.coach!==coach&&coach&&same&&w?.coach==null)w.coach=coach;
+ if(same&&document.getElementById('modalBody'))document.getElementById('modalBody').scrollTop=y;
+ if(w)oraclePrev216={id:w.id,step:w.step};
+ return result;
+};
+// Always play the short earned-level 'dadada' on reaching Recap once per lesson opening.
+const oldRecap216=fusionV204TarotRecap;
+fusionV204TarotRecap=function(l,cards,already){
+ const a=FUSION_LESSON;
+ if(a&&!a.__ua216RecapPlayed){a.__ua216RecapPlayed=true;if(already)playSfx('level');}
+ return oldRecap216(l,cards,already);
+};
+let previousDual216=null;
+const oldDualRender216=fusionRenderDualLesson;
+fusionRenderDualLesson=function(...args){
+ const a=FUSION_LESSON,container=document.getElementById('modalBody');
+ const same=!!(a?.type==='dual'&&previousDual216&&previousDual216.id===a.id&&previousDual216.step===a.step&&container&&document.getElementById('modal')?.classList.contains('open'));
+ const y=same?container.scrollTop:0;
+ if(a?.type==='dual'&&a.step===3&&!a.__ua216RecapPlayed){a.__ua216RecapPlayed=true;if(!!FUSION.progress['dual:'+a.id])playSfx('level');}
+ const result=oldDualRender216.apply(this,args);
+ if(same&&document.getElementById('modalBody'))document.getElementById('modalBody').scrollTop=y;
+ if(a?.type==='dual')previousDual216={id:a.id,step:a.step};
+ return result;
+};
+const oldOracleNext216=oracleV2NextStep;
+oracleV2NextStep=function(...args){
+ const w=oracleWizard;
+ if(w?.step===3&&S.completed[w.id]&&!w.__ua216RecapPlayed){w.__ua216RecapPlayed=true;playSfx('level');}
+ return oldOracleNext216.apply(this,args);
+};
+// Badge music must never be layered under a long victory theme.
+const oldBattleEnd216=battleEndMusic;
+battleEndMusic=function(won){
+ const isGym=!!(FUSION_TAROT_QUIZ?.checkpoint||quiz?.family&&quiz?.checkpointEligible);
+ if(won&&isGym){stopMusic();bgAudio.onended=null;return;}
+ return oldBattleEnd216(won);
+};
+// Suppress longer victory music when replaying a pre-earned Tarot crest as well.
+window.addEventListener('click',function(e){const el=e.target.closest('[data-v206-badge-info]');if(!el)return;
+ const sec=FUSION_TAROT_COURSE.find(s=>s.id===el.dataset.v206BadgeInfo);
+ if(sec&&FUSION.progress['tarotCrest:'+sec.id]){
+   e.preventDefault();e.stopImmediatePropagation();stopMusic();bgAudio.onended=null;
+   fusionV19ShowCrest(sec,FUSION.progress['tarotCrest:'+sec.id]);
+ }
+},true);
+const oldNotes216=fusionNews;
+fusionNews=function(){
+ const temp=document.createElement('div');temp.innerHTML=oldNotes216();
+ temp.querySelectorAll('article.fusion-news-entry').forEach(article=>{
+  const paragraphs=[...article.querySelectorAll(':scope > p')];if(!paragraphs.length)return;
+  const list=document.createElement('ul');
+  for(const p of paragraphs){
+   const pieces=p.textContent.trim().split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean);
+   for(const text of pieces){const li=document.createElement('li');li.textContent=text;list.appendChild(li);}
+   p.remove();
+  }
+  if(list.childElementCount)article.appendChild(list);
+ });
+ return temp.innerHTML.replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry fusion-v19-notes"><span class="kicker">ULTIMATE ACADEMY V2.1.6</span><h3>Regression Repairs & Reading Preview</h3><ul><li>Restored standard Tarot spread templates in mixed Tarot and Oracle readings.</li><li>Added role-colored spread previews that update when a layout is selected.</li><li>Preserved lesson scroll position and Trainer when changing illustrated cards.</li><li>Restored the level-up sound when revisiting completed lessons.</li><li>Separated Gym Badge sounds from long victory music and formatted patch notes as bullets.</li></ul></article>');
+};
+fusionViews['fusion-news']=fusionNews;
+const oldRender216=render;
+render=function(...args){const result=oldRender216.apply(this,args);const sidebar=document.querySelector('#sidebar .brand small');if(sidebar)sidebar.textContent='TAROT × ORACLE · V2.1.6';const tree=document.querySelector('.tree-brand small');if(tree)tree.textContent='TAROT × ORACLE · V2.1.6';return result;};
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.1.6';
+render();
+window.__ua216={version:'2.1.6',preview:preview216,spreads:()=>fusionSpreadOptions().map(x=>x.name)};
+})();
+
+</script>
+<style>
+/* V2.1.6 live layout preview; original reading studio preserved */
+.ua216-spread-preview{border:1px solid var(--line);border-radius:13px;padding:13px;background:color-mix(in srgb,var(--card) 93%,var(--gold) 7%);display:grid;gap:11px}
+.ua216-preview-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}.ua216-preview-top strong{font-size:13px}.ua216-preview-top small{font-size:11px;color:var(--sub)}
+.ua216-preview-cards{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;justify-content:center}.ua216-position{width:clamp(70px,12%,112px);min-width:66px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;color:var(--ink)}
+.ua216-cardback{height:75px;width:49px;border-radius:6px;display:grid;place-items:center;font-size:26px;font-family:Georgia,serif;color:#edd095;background:linear-gradient(145deg,#163755,#0a243e);border:2px solid #d6ac5b;box-shadow:0 3px 6px #09172522}
+.ua216-position.oracle .ua216-cardback{background:linear-gradient(145deg,#347c72,#174c4c);color:#d5f6d9;border-color:#80c7a8}
+.ua216-position b{font-size:11px}.ua216-position small{font-size:10px;line-height:1.25;overflow-wrap:anywhere;color:var(--sub)}
+.ua216-spread-preview>p{font-size:11px;color:var(--sub);margin:0;text-align:center}
+@media(max-width:540px){.ua216-position{width:72px}.ua216-cardback{height:65px;width:43px}}
+
+.ua216-guidance-break{flex:0 0 100%;text-align:center;font-size:11px;font-weight:750;color:var(--sub);border-top:1px dashed var(--line);padding-top:8px;margin-top:1px}
+
+</style>
 </body></html>
