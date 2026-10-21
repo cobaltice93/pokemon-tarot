@@ -1063,7 +1063,7 @@ function newLessonArt(){if(!currentLesson)return;let prev=currentLesson.art;curr
 function setLessonPart(part){if(!currentLesson)return;currentLesson.part=part;playSfx('flip');renderLesson(true)}
 function setLessonLayout(layout){if(!['focus','split','gallery'].includes(layout))return;S.settings.lessonLayout=layout;save();if(currentLesson){currentLesson.layout=layout;renderLesson(true)}else render()}
 // Questions deliberately use contrasting Oracle themes from the same family rather than silly throwaway distractors.
-function buildQuestions(candidates){let q=[];for(let c of candidates){let peers=shuffle(cards.filter(p=>p.number!==c.number&&(p.family===c.family||p.title===c.comparison_card)));if(peers.length<3)peers=shuffle(cards.filter(p=>p.number!==c.number));q.push({id:c.number+'-scenario',question:`Which Oracle card best matches this situation? “${c.teaching_scenario}”`,answer:c.title,opts:shuffle([c.title,...peers.slice(0,3).map(x=>x.title)]),explain:`${c.title} — ${c.message_draft}`});q.push({id:c.number+'-shadow',question:`Which card's Shadow is most closely described by this? “${c.shadow_draft}”`,answer:c.title,opts:shuffle([c.title,...peers.slice(0,3).map(x=>x.title)]),explain:`The shadow of ${c.title}: ${c.shadow_draft}`});q.push({id:c.number+'-integration',question:`Which guidance most specifically belongs to ${c.title} in Integration?`,answer:c.integration_draft,opts:shuffle([c.integration_draft,...peers.slice(0,3).map(x=>x.integration_draft)]),explain:`${c.title} invites: ${c.integration_draft}`})}return shuffle(q)}
+function buildQuestions(candidates){let q=[];for(let c of candidates){let peers=shuffle(cards.filter(p=>p.number!==c.number&&(p.family===c.family||p.title===c.comparison_card)));if(peers.length<3)peers=shuffle(cards.filter(p=>p.number!==c.number));const visual=quizVisualMeta(c);q.push({id:c.number+'-scenario',question:`Which Oracle card best matches this situation? “${c.teaching_scenario}”`,answer:c.title,opts:shuffle([c.title,...peers.slice(0,3).map(x=>x.title)]),explain:`${c.title} — ${c.message_draft}`,visual});q.push({id:c.number+'-shadow',question:`Which card's Shadow is most closely described by this? “${c.shadow_draft}”`,answer:c.title,opts:shuffle([c.title,...peers.slice(0,3).map(x=>x.title)]),explain:`The shadow of ${c.title}: ${c.shadow_draft}`,visual});q.push({id:c.number+'-integration',question:`Which guidance most specifically belongs to ${c.title} in Integration?`,answer:c.integration_draft,opts:shuffle([c.integration_draft,...peers.slice(0,3).map(x=>x.integration_draft)]),explain:`${c.title} invites: ${c.integration_draft}`,visual})}return shuffle(q)}
 function legacyBattleOpen(family=null,quickId=null,game=false){let pool=family?cards.filter(c=>c.family===family):quickId?[cardById[quickId]]:shuffle(cards).slice(0,6);let questions=buildQuestions(pool);let chosen=[],seen=new Set();for(const item of questions){let ci=item.id.split('-')[0];if(!seen.has(ci)){chosen.push(item);seen.add(ci)}if(chosen.length===5)break}if(quickId){chosen=questions.slice(0,4)}if(!chosen.length)return toast('No questions available');const coach=family?FAMILY_GYM[family]:choose(Object.keys(ASSETS.trainers).filter(k=>/acetrainer|psychic|youngster|backpacker|pokemonranger|hiker/.test(k)));const enemyTeam=shuffle(Object.keys(ASSETS.pokemon).filter(k=>!k.includes('mega')&&!k.includes('gmax')&&!k.includes('totem')&&!k.includes('-f'))).slice(0,1+rand(6));quiz={family,quickId,game,questions:chosen,index:0,score:0,locked:false,choice:null,team:enemyTeam,enemyIndex:0,coach,ally:(S.profile.team||[])[0]||'eevee',allyHP:100,enemyHP:100,done:false};closeModalSilently();battleStartMusic(!!family);renderBattle()}
 function closeModalSilently(){$('modal').classList.remove('open');document.body.style.overflow='';lastModalRenderer=null;readingFlow=null}
 
@@ -1100,9 +1100,9 @@ function oracleBadgeCeremony(f,b){const coach=oracleGymSprite(f,b),crew=(b?.supp
 }
 function oracleOpenBadgeDetails(f){const b=S.badges[f];if(!b)return false;showModal(`${FAM[f].badge} · Achievement`,oracleBadgeCeremony(f,b).replace(/<div class="row wrap" style="justify-content:center"><button class="btn" data-act="battle-done">Awesome! ✓<\/button><button class="btn ghost" data-act="battle-retry">Replay checkpoint<\/button><\/div>/,'<button class="btn" data-act="badge-close">Close</button>'));return true}
 
-function renderBattle(){if(!quiz)return;const q=quiz,one=q.questions[q.index],outcome=q.choice,answer=one?.answer,correct=outcome===answer,enemy=q.team[Math.min(q.enemyIndex,q.team.length-1)];const head=`<div class="row between wrap"><span class="pill">${q.family?`${familyIcon[q.family]} ${q.family} ${q.checkpointEligible?'Family Checkpoint':'Practice · studied cards only'}`:q.coreId?'Foundation Pop Quiz':q.game?'Mini Game · Trainer Battle':'Card Pop Quiz'}</span><span class="pill">${q.done?'Match complete':`Question ${q.index+1}/${q.questions.length}`}</span></div><div class="progress" style="margin:10px 0"><div style="width:${q.done?100:q.index/q.questions.length*100}%"></div></div>`;
- const field=`<div class="battlefield"><div class="battle-top"><div class="hpbox enemyhp">${esc(enemy.replace(/-/g,' '))} <span style="float:right">Lv. ${21+q.index}</span><div class="hpbar"><div style="width:${q.enemyHP}%"></div></div></div><img class="enemy" src="${sprite(enemy)}" alt="Opponent Pokémon"><img class="opponent" src="${trainerSprite(q.coach)}" alt="Opponent trainer"></div><div class="battle-bottom"><img class="trainer" src="${trainerSprite(S.profile.avatar)}" alt="Your trainer"><img class="ally" src="${sprite(q.ally)}" alt="Your partner Pokémon"><div class="hpbox allyhp">${esc(q.ally.replace(/-/g,' '))}<div class="hpbar"><div style="width:${q.allyHP}%"></div></div></div><div class="caption">${esc(trainerName(q.coach))} · Team ${q.team.length} Pokémon</div></div>`;
- let body='';if(!q.done){body=`<div class="quiz-stage"><div class="uppercase" style="color:#a7d9e0">Trainer question</div><h3>${esc(one.question)}</h3><div class="question-options">${one.opts.map((v,i)=>`<button data-answer="${i}" ${q.locked?'disabled':''} class="${q.locked?(v===answer?'correct':v===outcome?'wrong':''):''}"><b>${'ABCD'[i]}</b> ${esc(v)}</button>`).join('')}</div></div><div class="battle-message">${q.locked?`<b>${correct?'Super effective answer!':'Not quite!'}</b><p style="margin:5px 0">${esc(one.explain)}</p><button class="btn sm navy" data-act="battle-next">${q.index===q.questions.length-1?'See battle result':'Next question →'}</button>`:`What will ${esc(q.ally.replace(/-/g,' '))} do? Choose one move.`}</div>`}else{let won=(q.checkpointEligible?q.score>=Math.ceil(q.questions.length*.75):q.score>=Math.ceil(q.questions.length*.6));body=`<div class="pad" style="text-align:center"><h2>${won?'🏆 Battle Victory!':'⚔ Training complete'}</h2><p style="margin-top:10px">${q.score}/${q.questions.length} correct. ${won?(q.coreId?'You demonstrated the concepts from this Foundation lesson.':q.family&&!q.checkpointEligible?'Great practice! Your family emblem will become available after all six card lessons.':'You demonstrated the meanings covered in this lesson or challenge.'):'Review this lesson and try again whenever you like.'}</p>${won&&q.family&&q.checkpointEligible?`<div class="badge-token">${familyIcon[q.family]} ${esc(FAM[q.family].badge)} Unlocked!</div>`:''}<div class="row wrap" style="justify-content:center;margin-top:15px"><button class="btn" data-act="battle-done">Done</button><button class="btn ghost" data-act="battle-retry">Replay battle</button></div></div>`}
+function renderBattle(){if(!quiz)return;const q=quiz,one=q.questions[q.index],outcome=q.choice,answer=one?.answer,correct=outcome===answer,enemy=q.team[Math.min(q.enemyIndex,q.team.length-1)],visual=one?.visual?quizVisualBlock(one.visual):'';const head=`<div class="row between wrap"><span class="pill">${q.family?`${familyIcon[q.family]} ${q.family} ${q.checkpointEligible?'Family Checkpoint':'Practice · studied cards only'}`:q.coreId?'Foundation Pop Quiz':q.game?'Mini Game · Trainer Battle':'Card Pop Quiz'}</span><span class="pill">${q.done?'Match complete':`Question ${q.index+1}/${q.questions.length}`}</span></div><div class="progress" style="margin:10px 0"><div style="width:${q.done?100:q.index/q.questions.length*100}%"></div></div>`;
+ const field=`<div class="battlefield"><div class="battle-top"><div class="hpbox enemyhp">${esc(pokemonDisplayName(enemy))} <span style="float:right">Lv. ${21+q.index}</span><div class="hpbar"><div style="width:${q.enemyHP}%"></div></div></div><img class="enemy" src="${sprite(enemy)}" alt="Opponent Pokémon"><img class="opponent" src="${trainerSprite(q.coach)}" alt="Opponent trainer"></div><div class="battle-bottom"><img class="trainer" src="${trainerSprite(S.profile.avatar)}" alt="Your trainer"><img class="ally" src="${sprite(q.ally)}" alt="Your partner Pokémon"><div class="hpbox allyhp">${esc(pokemonDisplayName(q.ally))}<div class="hpbar"><div style="width:${q.allyHP}%"></div></div></div></div>`;
+ let body='';if(!q.done){body=`<div class="quiz-stage">${visual}<div class="uppercase" style="color:#a7d9e0">Trainer question</div><h3>${esc(one.question)}</h3><div class="question-options">${one.opts.map((v,i)=>`<button data-answer="${i}" ${q.locked?'disabled':''} class="${q.locked?(v===answer?'correct':v===outcome?'wrong':''):''}"><b>${'ABCD'[i]}</b> ${esc(v)}</button>`).join('')}</div></div><div class="battle-message">${q.locked?`<b>${correct?'Super effective answer!':'Not quite!'}</b><p style="margin:5px 0">${esc(one.explain)}</p><button class="btn sm navy" data-act="battle-next">${q.index===q.questions.length-1?'See battle result':'Next question →'}</button>`:`What will ${esc(pokemonDisplayName(q.ally))} do? Choose one move.`}</div>`}else{let won=(q.checkpointEligible?q.score>=Math.ceil(q.questions.length*.75):q.score>=Math.ceil(q.questions.length*.6));body=`<div class="pad" style="text-align:center"><h2>${won?'🏆 Battle Victory!':'⚔ Training complete'}</h2><p style="margin-top:10px">${q.score}/${q.questions.length} correct. ${won?(q.coreId?'You demonstrated the concepts from this Foundation lesson.':q.family&&!q.checkpointEligible?'Great practice! Your family emblem will become available after all six card lessons.':'You demonstrated the meanings covered in this lesson or challenge.'):'Review this lesson and try again whenever you like.'}</p>${won&&q.family&&q.checkpointEligible?`<div class="badge-token">${familyIcon[q.family]} ${esc(FAM[q.family].badge)} Unlocked!</div>`:''}<div class="row wrap" style="justify-content:center;margin-top:15px"><button class="btn" data-act="battle-done">Done</button><button class="btn ghost" data-act="battle-retry">Replay battle</button></div></div>`}
  if(q.done&&q.newBadge&&q.family)body=oracleBadgeCeremony(q.family,S.badges[q.family]);
  showModal(q.family?`${q.family} Family · Emblem Challenge`:q.coreId?'Foundation Pop Quiz':q.quickId?'Card Pop Quiz':'Pokémon Trainer Battle',head+field+body,{rerender:renderBattle})}
 function answerBattle(i){if(!quiz||quiz.locked||quiz.done)return;let q=quiz,one=q.questions[q.index],answer=one.opts[i];q.choice=answer;q.locked=true;if(answer===one.answer){q.score++;q.enemyHP=Math.max(0,q.enemyHP-22);playSfx('super');if(q.enemyHP===0&&q.enemyIndex<q.team.length-1){q.enemyIndex++;q.enemyHP=100}}else{q.allyHP=Math.max(8,q.allyHP-19);playSfx('hit')}renderBattle()}
@@ -1457,10 +1457,46 @@ function lessonQuizDropdown(id,kind){
  const safe=esc(String(id));
  return `<details class="lesson-quiz-dropdown"><summary aria-label="Pop Quiz for ${esc(kind==='core'?(CORE_LESSONS.find(x=>x[0]===id)?.[2]||id):(cardById[id]?.title||id))}"><span>⚔ Pop Quiz <span class="small muted">· 4 questions · ${passed?'✓ Passed':studied?'Ready':'Study first'}</span></span><span class="quiz-chevron" aria-hidden="true">▾</span></summary><div class="lesson-quiz-content"><p>${studied?'Review only the concepts introduced in this lesson. Correct and incorrect responses will be explained.':'Finish this lesson first to unlock its own Pop Quiz. Other lessons stay freely accessible.'}</p><button class="btn sm ${studied?'':'ghost'}" ${studied?`data-quiz-${kind}="${safe}"`:'disabled'}>${passed?'↻ Replay Pop Quiz':studied?'⚔ Start Pop Quiz':'Study lesson to unlock'}</button></div></details>`
 }
-function oracleQuizItem(id,question,correct,wrong,explain){
+function oracleQuizItem(id,question,correct,wrong,explain,visual=null){
  const opts=shuffle([correct,...wrong.filter((x,i)=>x!==correct&&wrong.indexOf(x)===i).slice(0,3)]);
  if(opts.length!==4)throw new Error(`Bad quiz options: ${id}`);
- return {id,question,answer:correct,opts,explain}
+ return {id,question,answer:correct,opts,explain,visual}
+}
+const FOUNDATION_VISUALS={
+ 'found-1':[1,2,3],
+ 'found-2':[4,5,6],
+ 'found-3':[7,8,9],
+ 'found-4':[10,11,12],
+ 'found-5':[13,14,15],
+ 'found-6':[16,17,18]
+};
+const TRAINER_BATTLE_POOLS={
+ 'Psychic':['abra','kadabra','drowzee','ralts','gothita','solosis'],
+ 'Hiker':['geodude','onix','machop','graveler','rhyhorn','roggenrola'],
+ 'Aroma Lady':['oddish','budew','roselia','bellsprout','petilil','bellossom'],
+ 'Teacher':['eevee','pidgey','jigglypuff','meowth','snubbull','marill'],
+ 'Ace Trainer':['riolu','lucario','pikachu','charmeleon','wartortle','ivysaur'],
+ 'Artist':['smeargle','chatot','mimejr','espurr','togepi','swablu'],
+ 'Ranger':['growlithe','buizel','staravia','shinx','skiddo','yanma'],
+ 'Youngster':['rattata','pidgey','sentret','zigzagoon','patrat','lillipup'],
+ 'Backpacker':['sandshrew','cubone','phanpy','geodude','makuhita','numel']
+};
+function quizVisualMeta(c,label=null,art=null){if(!c)return null;return{card:c.number,art:art==null?(daySeed('quiz-art-'+c.number)%3):art,label:label||`${c.title} · ${c.pokemon}`}}
+function questionNeedsVisual(question=''){return /(card|image|artwork|illustration|symbol|symbolism|message|shadow|integration|title|scene|observation|visible|posture|surroundings|description)/i.test(question)}
+function pickFoundationVisual(coreId,index=0){const picks=(FOUNDATION_VISUALS[coreId]||[]).map(n=>cardById[n]).filter(Boolean);return picks[index%Math.max(1,picks.length)]||cards[index%cards.length]||cards[0]}
+function pokemonDisplayName(k){return trainerName(String(k||'').replace(/-starter$/,'').replace(/-(male|female)$/,'').replace(/-(alola|galar|hisui|paldea|therian|incarnate|origin|midday|midnight|dusk)$/,''))}
+function quizVisualBlock(v){const c=cardById[v?.card];if(!c)return'';return `<div class="soft-surface" style="margin:0 0 12px"><div class="row wrap" style="align-items:center;gap:14px"><div style="max-width:116px;width:100%">${artworkTag(c,v.art??0,'class="scene-card" style="max-width:116px;width:100%;height:auto"')}</div><div><div class="uppercase" style="color:#a7d9e0">Card reference</div><h4 style="margin:4px 0">${esc(v.label||`${c.title} · ${c.pokemon}`)}</h4><p class="small muted" style="margin:0">${esc(c.family)} · ${esc(c.pokemon)}</p></div></div></div>`}
+function battleEnemyPool(family,coach){
+ let pool=[];
+ if(family)pool=pool.concat((ORACLE_EMBLEM_POKEMON[family]||[]));
+ const match=Object.keys(TRAINER_BATTLE_POOLS).find(key=>String(coach||'').toLowerCase()===key.toLowerCase()||String(coach||'').toLowerCase().startsWith(key.toLowerCase()));
+ if(match)pool=pool.concat(TRAINER_BATTLE_POOLS[match]);
+ pool=pool.concat(['eevee','buizel','pikachu','ralts']);
+ let clean=[...new Set(pool)].filter(k=>ASSETS.pokemon[k]);
+ if(clean.length<6){
+  clean=clean.concat(shuffle(Object.keys(ASSETS.pokemon).filter(k=>/^[a-z0-9]+$/.test(k)&&!k.includes('mega')&&!k.includes('gmax')&&!k.includes('totem')&&!k.includes('starter'))));
+ }
+ return [...new Set(clean)].filter(k=>ASSETS.pokemon[k]);
 }
 const FOUNDATION_QUIZ_BANK={
  'found-1':[
@@ -1539,16 +1575,19 @@ function ua2110PickOracle(bank,id){
 }
 function foundationQuestions(coreId){
  const bank=FOUNDATION_QUIZ_BANK[coreId]||[];
- return ua2110PickOracle(bank,coreId).map((q,i)=>oracleQuizItem(coreId+'-'+i,q[0],q[1],q[2],q[3]));
+ return ua2110PickOracle(bank,coreId).map((q,i)=>{
+  const visual=questionNeedsVisual(q[0])?quizVisualMeta(pickFoundationVisual(coreId,i)):null;
+  return oracleQuizItem(coreId+'-'+i,q[0],q[1],q[2],q[3],visual)
+ });
 }
 function cardLessonQuestions(c){
  if(!c)return[];
- const desc=c.teaching_scenario;
+ const desc=c.teaching_scenario,visual=quizVisualMeta(c);
  return shuffle([
-  oracleQuizItem(`${c.number}-message`,`Which statement best expresses ${c.title}'s core Message?`,c.message_draft,[c.shadow_draft,c.integration_draft,`Treat ${c.title.toLowerCase()} as a certain prediction rather than a reflective theme.`],`${c.title} · Message: ${c.message_draft}`),
-  oracleQuizItem(`${c.number}-shadow`,`What is the Shadow expression of ${c.title}?`,c.shadow_draft,[c.integration_draft,c.message_draft,`The Pokémon's game type alone decides whether the card is positive or negative.`],`${c.title} · Shadow: ${c.shadow_draft}`),
-  oracleQuizItem(`${c.number}-integration`,`Which practical step reflects ${c.title}'s Integration?`,c.integration_draft,[c.message_draft,c.shadow_draft,`Expect the situation to resolve without taking any action.`],`${c.title} · Integration: ${c.integration_draft}`),
-  oracleQuizItem(`${c.number}-scenario`,`Consider this situation: ${desc} Which of the following offers a constructive response?`,c.integration_draft,[c.shadow_draft,`Treat the situation as proof that change is impossible.`, `Ignore the underlying feelings and focus on predicting a fixed outcome.`],`The Integration step for ${c.title} is: ${c.integration_draft}`)
+  oracleQuizItem(`${c.number}-message`,`Which statement best expresses ${c.title}'s core Message?`,c.message_draft,[c.shadow_draft,c.integration_draft,`Treat ${c.title.toLowerCase()} as a certain prediction rather than a reflective theme.`],`${c.title} · Message: ${c.message_draft}`,visual),
+  oracleQuizItem(`${c.number}-shadow`,`What is the Shadow expression of ${c.title}?`,c.shadow_draft,[c.integration_draft,c.message_draft,`The Pokémon's game type alone decides whether the card is positive or negative.`],`${c.title} · Shadow: ${c.shadow_draft}`,visual),
+  oracleQuizItem(`${c.number}-integration`,`Which practical step reflects ${c.title}'s Integration?`,c.integration_draft,[c.message_draft,c.shadow_draft,`Expect the situation to resolve without taking any action.`],`${c.title} · Integration: ${c.integration_draft}`,visual),
+  oracleQuizItem(`${c.number}-scenario`,`Consider this situation: ${desc} Which of the following offers a constructive response?`,c.integration_draft,[c.shadow_draft,`Treat the situation as proof that change is impossible.`, `Ignore the underlying feelings and focus on predicting a fixed outcome.`],`The Integration step for ${c.title} is: ${c.integration_draft}`,visual)
  ]);
 }
 function learnedFamilyCards(f){return cards.filter(c=>c.family===f&&S.completed['card-'+c.number])}
@@ -1567,7 +1606,7 @@ function battleOpen(family=null,quickId=null,game=false,coreId=null){
  if(!chosen){if(game){chosen=pokemonBattleQuestions()}else{const pool=shuffle(cards).slice(0,6),questions=buildQuestions(pool),seen=new Set();chosen=[];for(const item of questions){let ci=item.id.split('-')[0];if(!seen.has(ci)){chosen.push(item);seen.add(ci)}if(chosen.length===5)break}}}
  if(!chosen.length)return toast('No questions available');
  const coach=family?FAMILY_GYM[family]:choose(Object.keys(ASSETS.trainers).filter(k=>/acetrainer|psychic|youngster|backpacker|pokemonranger|hiker/.test(k)));
- const enemyTeam=shuffle(Object.keys(ASSETS.pokemon).filter(k=>!k.includes('mega')&&!k.includes('gmax')&&!k.includes('totem')&&!k.includes('-f'))).slice(0,1+rand(6));
+ const enemyTeam=shuffle(battleEnemyPool(family,coach)).slice(0,1+rand(6));
  quiz={family,quickId,game,coreId,checkpointEligible:!!family&&studied.length===6,questions:chosen,index:0,score:0,locked:false,choice:null,team:enemyTeam,enemyIndex:0,coach,ally:(S.profile.team||[])[0]||'eevee',allyHP:100,enemyHP:100,done:false};
  closeModalSilently();battleStartMusic(!!family&&studied.length===6);renderBattle()
 }
@@ -5969,10 +6008,10 @@ window.addEventListener('input',ev=>{
 const oldNotes=fusionViews['fusion-news'];
 fusionViews['fusion-news']=function(){return oldNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.5</span><h3>Gym Leader Avatars & Popup Music</h3><ul><li>Choose a different embedded Trainer sprite for each of the 72 Regional Gym Leader and trial opponents in Trainer Profile.</li><li>Saved avatar choices appear in the League gallery, Gym battles, introductions, victory scenes and new-challenge popups.</li><li>Added three user-provided MP3s to all music selectors, including two full Gym battle remixes and a short Trainers' Eyes Meet cue.</li><li>Added independent music settings for Gym introduction popups and Gym unlock announcements, with preview and silent options.</li><li>Unchanged: challenge requirements, Academy Adventure Tree, earned badges, XP, and existing music preferences.</li></ul></article>`)};
 const ua226OlderNotes=fusionViews['fusion-news'];
-fusionViews['fusion-news']=function(){return ua226OlderNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.6</span><h3>Stop Music & Tarot Wallpaper</h3><ul><li>Added Stop Music buttons in Music & Sound, the Music screen and the top navigation.</li><li>Page navigation stops previous tracks; Back, close and popup dismissal stop encounter and unlock music.</li><li>Card wallpaper now offers Spirit Oracle, Tarot or a mixed collage, with the original Oracle wallpaper retained as the default.</li><li>Saved badges, progress, imported audio and other music assignments are preserved.</li></ul></article>`)};
-document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.6';
+fusionViews['fusion-news']=function(){return ua226OlderNotes().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.7</span><h3>Stop Music & Tarot Wallpaper</h3><ul><li>Added Stop Music buttons in Music & Sound, the Music screen and the top navigation.</li><li>Page navigation stops previous tracks; Back, close and popup dismissal stop encounter and unlock music.</li><li>Card wallpaper now offers Spirit Oracle, Tarot or a mixed collage, with the original Oracle wallpaper retained as the default.</li><li>Saved badges, progress, imported audio and other music assignments are preserved.</li></ul></article>`)};
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.7';
 document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{
- if(el.textContent&&/V2\.\d+\.\d+/.test(el.textContent))el.textContent=el.textContent.replace(/V2\.\d+\.\d+/g,'V2.2.6');
+ if(el.textContent&&/V2\.\d+\.\d+/.test(el.textContent))el.textContent=el.textContent.replace(/V2\.\d+\.\d+/g,'V2.2.7');
 });
 window.__ua225={version:VERSION,roster:()=>roster().length,slots:()=>FUSION_V206_MUSIC_SLOTS.map(x=>x[0]),saved:()=>Object.keys(S.settings.gymLeaderAvatars||{}),openEditor};
 })();
