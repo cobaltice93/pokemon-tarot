@@ -410,7 +410,7 @@ body.oracle-v2-active #content .oracle-feature-grid.is-list,
 }
 
 
-/* V2.2.2 optional application practice and badge ceremony */
+/* V2.2.3 optional application practice and badge ceremony */
 .wizard-reflection{max-width:840px;margin:0 auto;padding:8px 2px 16px}
 .wizard-reflection h3{font-size:clamp(23px,3vw,30px);margin:8px 0 16px}
 .wizard-reflection-prompt{background:var(--card);border:1px solid var(--line);padding:16px;border-radius:15px;margin:18px 0;color:var(--ink)}
@@ -1721,7 +1721,7 @@ function oracleV2Next(){
 function oracleV2Dashboard(){
  const mastery=oracleV2Mastery(),streak=oracleV2Streak(),hearts=oracleV2Hearts();
  return `<div class="tree-status-inner">
-  <button class="tree-brand" data-go="academy" aria-label="Go to Learn"><span class="tree-brand-icon">✦</span><span><b>Spirit Oracle</b><small>Adventure Tree · V2.2.2</small></span></button>
+  <button class="tree-brand" data-go="academy" aria-label="Go to Learn"><span class="tree-brand-icon">✦</span><span><b>Spirit Oracle</b><small>Adventure Tree · V2.2.3</small></span></button>
   <div class="tree-status-metrics" aria-label="Learning statistics">
     <span title="Oracle card lessons studied">👑 <b>${mastery}</b><small>/60</small></span>
     <span title="Consecutive days with a journal entry">🔥 <b>${streak}</b></span>
@@ -2310,12 +2310,12 @@ versionNotes=function(){oracleV22PreviousNotes();const root=$('modalBody')?.quer
 
 startup();
 
-// V2.2.2 history: prepend without discarding any earlier patch notes.
+// V2.2.3 history: prepend without discarding any earlier patch notes.
 const ORACLE_V2_2_2_PREVIOUS_NOTES=versionNotes;
 versionNotes=function(){
  ORACLE_V2_2_2_PREVIOUS_NOTES();
  const root=document.getElementById('modalBody')?.querySelector('.stack');
- if(root)root.insertAdjacentHTML('afterbegin',`<div class="surface pad"><span class="pill">V2.2.2 · Reflection & Emblem Celebration</span><h2>Learn → Apply → Pop Quiz</h2><p>The single-question lesson test has been replaced by an optional written reflection, saved to personal lesson notes. The separate four-question Pokémon battle remains the assessment after completion.</p><p>Family checkpoints now feature a dedicated emblem victory ceremony with the proper Gym Leader sprite, fitting Pokémon companions, written cries, and badge sound. Earned emblems can be reopened from Trainer Profile. Previous update logs and card/media data are preserved.</p></div>`);
+ if(root)root.insertAdjacentHTML('afterbegin',`<div class="surface pad"><span class="pill">V2.2.3 · Reflection & Emblem Celebration</span><h2>Learn → Apply → Pop Quiz</h2><p>The single-question lesson test has been replaced by an optional written reflection, saved to personal lesson notes. The separate four-question Pokémon battle remains the assessment after completion.</p><p>Family checkpoints now feature a dedicated emblem victory ceremony with the proper Gym Leader sprite, fitting Pokémon companions, written cries, and badge sound. Earned emblems can be reopened from Trainer Profile. Previous update logs and card/media data are preserved.</p></div>`);
 };
 </script>
 <script>/* Unified offline Tarot × Oracle assets — single canonical copy of shared sprites. */
@@ -2539,7 +2539,7 @@ function fusionTarotBadges(){const p=fusionTarotProgress(),all=FUSION_BADGE_REGI
 function fusionTarotLeague(){const {p,all,earned}=fusionTarotBadges();let k=-1;return `${fusionHeading('Tarot Regional League','All regional badge milestones in one gallery, without a duplicate Tarot website. Your old Tarot records are respected.')}<div class="fusion-league-summary"><strong>🏅 ${earned} / ${all.length} badges</strong><span>${p.done.size} / ${p.total} course entries completed</span><button class="btn sm" data-fusion-course-tarot>Continue Tarot lessons</button></div><div class="fusion-region-grid">${FUSION_BADGE_REGIONS.map(r=>`<section class="fusion-region"><h3>${fusionEscape(r.region)}</h3><div class="fusion-badge-mini-grid">${r.badges.map(([emoji,name])=>{const index=++k,unlocked=index<earned;return `<button class="fusion-badge-mini ${unlocked?'earned':''}" ${unlocked?`data-fusion-regional-badge="${index}"`:'disabled'} title="${fusionEscape(name)} badge"><span>${unlocked?emoji:'🔒'}</span><small>${fusionEscape(name)}</small></button>`}).join('')}</div></section>`).join('')}</div><div class="fusion-status">Badge milestones follow the original Tarot course-completion rules. Original achievement dates are retained when available; historical dates are never invented.</div>`}
 function fusionRegionalBadge(index){const {all,p,earned}=fusionTarotBadges(),b=all[index];if(!b||index>=earned)return;const saved=p.log[b.region+'|'+b.name];const date=saved?.date?new Date(saved.date).toLocaleDateString():'Original date not recorded';showModal('Regional Badge',`<div class="fusion-badge-detail"><div style="font-size:58px">${b.symbol}</div><h2>${fusionEscape(b.name)} Badge</h2><p>${fusionEscape(b.region)} League · ${fusionEscape(date)}</p>${saved?.gymLeader?`<h3>🏆 ${fusionEscape(saved.gymLeader)}</h3>`:''}${saved?.mascots?.length?`<div class="fusion-fav-row">${saved.mascots.slice(0,3).map(k=>`<span><img src="${sprite(k)}"><small>${fusionEscape(k)}</small></span>`).join('')}</div>`:''}<button class="btn" data-fusion-modal-close>Close</button></div>`)}
 function fusionTools(){return `${fusionHeading('More Tools','Everything in the unified Academy, without duplicate screens.')}<div class="fusion-grid">${[['📰','Patch Notes','Versions, fixes and feature changes','fusion-news'],['🏅','Regional Badges','Tarot League milestones and achievements','fusion-tarot-league'],['🌿','Spirit Emblems','Ten Oracle families and Gym Leaders','fusion-spirit-league'],['🎓','All Lessons','Tarot, Oracle and Dual Deck paths','fusion-learn'],['🎮','Pokémon Arcade','Classic sprite and type games','games'],['🌿','Oracle Daily Journal','Oracle-only daily draws and notes','daily'],['🎵','Music & Sound','Your existing Oracle audio controls','music'],['⚙','Appearance & Settings','Customize color, layout, audio and display','settings'],['💾','Backups','Safeguard your local data','fusion-backup'],['📅','Daily Duo','Your two-card daily check-in','fusion-daily']].map(([ic,t,d,v])=>`<article class="fusion-tile"><span style="font-size:26px">${ic}</span><h3>${t}</h3><p>${d}</p><button class="btn sm" data-go="${v}">Open →</button></article>`).join('')}</div>`}
-function fusionNews(){const entries=[['1.3','Tarot learning experience restored','Five-stage Tarot lessons with multiple Trainer speech bubbles, Focus/Split/Gallery reading modes, concrete card examples and four-question Pop Quizzes. Hearts removed from the status bar; Trainer Profile theme restored.'],['1.2','Unified navigation & Trainer polish','Removed the embedded duplicate Tarot workspace. Added native Tarot lesson dialogs, regional badge gallery, detailed card interpretations, compact two-favorite Trainer editor, and Patch Notes navigation.'],['1.1','Interface & card-training fixes','Scene Detective hides card labels until reveal; improved hybrid interpretations; compact Trainer preview; Spirit family badge gallery.'],['1.0','Ultimate Academy fusion','Merged the 78-card Tarot and 60-card Oracle catalogs; added dual deck lessons, hybrid readings, daily duo, card comparison and backups.']];return `${fusionHeading('Patch Notes & Version History','Find new features and bug fixes here, and in More Tools.')}<div class="fusion-news-list">${entries.map(([ver,title,desc])=>`<article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V${ver}</span><h3>${title}</h3><p>${desc}</p></article>`).join('')}<details class="fusion-news-entry"><summary><strong>Earlier Spirit Oracle releases</strong></summary><p>Oracle V2.2.2: personal reflections and emblem victory ceremonies · V2.2: compact activity layouts · V2.1: printed card wording, three-scene descriptions and educational mini-games · V2.0: Adventure Tree.</p></details><div class="fusion-status">Earlier Pokémon Tarot updates can still be found in your original archived HTML; the unified release log begins at V1.0.</div></div>`}
+function fusionNews(){const entries=[['1.3','Tarot learning experience restored','Five-stage Tarot lessons with multiple Trainer speech bubbles, Focus/Split/Gallery reading modes, concrete card examples and four-question Pop Quizzes. Hearts removed from the status bar; Trainer Profile theme restored.'],['1.2','Unified navigation & Trainer polish','Removed the embedded duplicate Tarot workspace. Added native Tarot lesson dialogs, regional badge gallery, detailed card interpretations, compact two-favorite Trainer editor, and Patch Notes navigation.'],['1.1','Interface & card-training fixes','Scene Detective hides card labels until reveal; improved hybrid interpretations; compact Trainer preview; Spirit family badge gallery.'],['1.0','Ultimate Academy fusion','Merged the 78-card Tarot and 60-card Oracle catalogs; added dual deck lessons, hybrid readings, daily duo, card comparison and backups.']];return `${fusionHeading('Patch Notes & Version History','Find new features and bug fixes here, and in More Tools.')}<div class="fusion-news-list">${entries.map(([ver,title,desc])=>`<article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V${ver}</span><h3>${title}</h3><p>${desc}</p></article>`).join('')}<details class="fusion-news-entry"><summary><strong>Earlier Spirit Oracle releases</strong></summary><p>Oracle V2.2.3: personal reflections and emblem victory ceremonies · V2.2: compact activity layouts · V2.1: printed card wording, three-scene descriptions and educational mini-games · V2.0: Adventure Tree.</p></details><div class="fusion-status">Earlier Pokémon Tarot updates can still be found in your original archived HTML; the unified release log begins at V1.0.</div></div>`}
 function fusionProfileFavoritePreview(){const t=fusionCard(FUSION.tarotFavorite||'t:0')||FUSION_DECK[0];const o=cardById[S.profile.favoriteCard]||DATA.cards[0];return `<div class="fusion-fav-pair"><div class="fusion-fav-box"><img src="${t.img}" alt="Favorite Tarot"><div><small>Favorite Tarot card</small><strong>${fusionEscape(t.name)}</strong><span>${fusionEscape(t.pokemon)}</span></div></div><div class="fusion-fav-box"><img src="${ASSETS.cards[o.number][0]}" alt="Favorite Oracle"><div><small>Favorite Oracle card</small><strong>${fusionEscape(o.title)}</strong><span>${fusionEscape(o.pokemon)}</span></div></div></div>`}
 function fusionTrainer(){const team=(S.profile.team||[]).slice(0,6),{p,earned}=fusionTarotBadges();return `${fusionHeading('Trainer Headquarters','One compact Trainer identity, two favorite cards and both leagues. Customize everything without a long page.')}<div class="fusion-trainer-dashboard"><section class="fusion-trainer-card"><div class="fusion-trainer-identity"><img src="${trainerSprite(S.profile.avatar)}" alt="Trainer avatar"><div><span class="kicker">YOUR TRAINER CARD</span><h2>${fusionEscape(S.profile.nickname||'Trainer')}</h2><p class="muted small">${fusionEscape(S.profile.region||'Kanto')} · ${FUSION.xp} Academy XP</p></div></div><div class="fusion-profile-stats">${[['📘','Tarot',p.done.size+'/'+p.total],['🌿','Oracle',DATA.cards.filter(c=>S.completed?.['card-'+c.number]).length+'/60'],['🏅','Badges',earned],['✨','Emblems',Object.keys(S.badges||{}).length+'/10']].map(([ic,k,v])=>`<div><span>${ic} ${k}</span><strong>${v}</strong></div>`).join('')}</div><div class="fusion-team-compact">${team.length?team.map(k=>`<img src="${sprite(k)}" title="${fusionEscape(k)}" alt="${fusionEscape(k)}">`).join(''):'<span class="muted small">Build your six-Pokémon team below.</span>'}</div><button class="btn sm" data-fusion-profile-edit>⚙ Edit identity, avatar & six Pokémon</button></section><section class="fusion-trainer-cards">${fusionProfileFavoritePreview()}<button class="btn sm ghost" data-fusion-profile-edit>Choose both favorite cards</button></section></div><section class="fusion-achievement-strip"><div><strong>🌿 Spirit Emblems</strong><div class="fusion-quick-emblems">${FAMILY_ORDER.map(f=>`<span title="${fusionEscape(FAM[f].badge)}" class="${S.badges[f]?'earned':''}">${familyIcon[f]}</span>`).join('')}</div></div><div><strong>🏅 Regional Badges</strong><p>${earned} Tarot badges earned</p></div><div class="fusion-achievement-actions"><button class="btn ghost sm" data-go="fusion-spirit-league">Spirit Gallery</button><button class="btn ghost sm" data-go="fusion-tarot-league">Regional Gallery</button></div></section><div class="fusion-status">Your original Oracle nickname, avatar and Pokémon team remain the saved source of truth. Both favorite cards can be changed in the new compact editor.</div>`}
 function fusionProfileEdit(open=true){if(open||!FUSION_EDITOR)FUSION_EDITOR={nickname:S.profile.nickname||'Trainer',region:S.profile.region||'Kanto',avatar:S.profile.avatar||'backpacker',team:[...(S.profile.team||[])].slice(0,6),favoriteCard:S.profile.favoriteCard||1,tarotFavorite:FUSION.tarotFavorite||'t:0',avatarQuery:'',pokeQuery:''};const e=FUSION_EDITOR;const avatars=Object.keys(ASSETS.trainers).filter(x=>x.toLowerCase().includes(e.avatarQuery.toLowerCase())).slice(0,70),mons=Object.keys(ASSETS.pokemon).filter(x=>x.toLowerCase().includes(e.pokeQuery.toLowerCase())).slice(0,90);showModal('Edit Trainer & Favorites',`<div class="fusion-edit-profile"><div class="fusion-edit-identity"><label>Trainer nickname <input class="input" id="fusionNick" maxlength="25" value="${fusionEscape(e.nickname)}"></label><label>Home region <select class="input" id="fusionRegion">${FUSION_BADGE_REGIONS.map(r=>`<option value="${r.region}" ${r.region===e.region?'selected':''}>${r.region}</option>`).join('')}</select></label></div><div class="fusion-profile-pickers"><section class="fusion-picker-panel"><h3>Trainer Avatar</h3><input id="fusionAvatarSearch" class="input" value="${fusionEscape(e.avatarQuery)}" placeholder="Find a Trainer..."><div class="fusion-picker-results">${avatars.map(k=>`<button class="fusion-picker-item ${k===e.avatar?'selected':''}" data-fusion-avatar="${fusionEscape(k)}"><img src="${trainerSprite(k)}" loading="lazy" alt="${fusionEscape(k)}"><small>${fusionEscape(k)}</small></button>`).join('')}</div></section><section class="fusion-picker-panel"><h3>Choose 6 Pokémon · ${e.team.length}/6</h3><div class="fusion-six-team">${e.team.map(k=>`<button data-fusion-team-pick="${fusionEscape(k)}" title="Remove ${fusionEscape(k)}"><img src="${sprite(k)}"><small>×</small></button>`).join('')}${Array.from({length:6-e.team.length},()=>'<span>+</span>').join('')}</div><input id="fusionPokeSearch" class="input" value="${fusionEscape(e.pokeQuery)}" placeholder="Search Pokémon..."><div class="fusion-picker-results">${mons.map(k=>`<button class="fusion-picker-item ${e.team.includes(k)?'selected':''}" data-fusion-team-pick="${fusionEscape(k)}"><img src="${sprite(k)}" loading="lazy" alt="${fusionEscape(k)}"><small>${fusionEscape(k)}</small></button>`).join('')}</div></section></div><div class="fusion-profile-pickers fusion-two-fav-select"><label>Favorite Tarot card<select id="fusionFavTarot" class="input">${FUSION_DECK.filter(c=>c.deck==='tarot').map(c=>`<option value="${c.id}" ${c.id===e.tarotFavorite?'selected':''}>${fusionEscape(c.name)} · ${fusionEscape(c.pokemon)}</option>`).join('')}</select></label><label>Favorite Oracle card<select id="fusionFavOracle" class="input">${DATA.cards.map(c=>`<option value="${c.number}" ${c.number===e.favoriteCard?'selected':''}>${fusionEscape(c.title)} · ${fusionEscape(c.pokemon)}</option>`).join('')}</select></label></div><div class="row wrap"><button class="btn" data-fusion-profile-save>Save Trainer Profile</button><button class="btn ghost" data-fusion-modal-close>Cancel</button></div></div>`)}
@@ -3281,7 +3281,7 @@ if(el.hasAttribute('data-v20-oracle-jump')){e.preventDefault();e.stopImmediatePr
 
 // Keep the combined application brand visible when studying Oracle; its underlying lesson data and controls remain unchanged.
 const FUSION_V20_OLD_DASHBOARD_BRAND=oracleV2Dashboard;
-oracleV2Dashboard=function(){const html=FUSION_V20_OLD_DASHBOARD_BRAND();return view==='academy'?html.replace('<b>Spirit Oracle</b>','<b>Ultimate Academy</b>').replace('Adventure Tree · V2.2.2','Tarot × Oracle · V2.0.3'):html};
+oracleV2Dashboard=function(){const html=FUSION_V20_OLD_DASHBOARD_BRAND();return view==='academy'?html.replace('<b>Spirit Oracle</b>','<b>Ultimate Academy</b>').replace('Adventure Tree · V2.2.3','Tarot × Oracle · V2.0.3'):html};
 // Refresh the underlying learning path whenever progress changes so the next lesson unlocks immediately.
 const FUSION_V20_OLD_PROGRESS=fusionSetProgress;
 fusionSetProgress=function(id,mastery=false){const already=!!FUSION.progress[id];FUSION_V20_OLD_PROGRESS(id,mastery);if(!already&&view==='fusion-learn')render()};
@@ -4250,6 +4250,27 @@ let battle=null;
 const activeProfilePokemon=()=>((S.profile?.team||[]).find(k=>ASSETS.pokemon[k]))||'eevee';
 const randTrainer=()=>{const pool=['acetrainer','veteran','psychic','scientist','pokemonranger','dancer','artist','hexmaniac-gen6','battlegirl','blackbelt','backpacker','beauty'];const t=pick(pool.filter(k=>ASSETS.trainers[k]));return {name:title(t.replace(/-.*/,'')),key:t,ace:pick(['lucario','gengar','arcanine','absol','luxray','dragonite','sceptile','gardevoir','metagross','zoroark'].filter(k=>ASSETS.pokemon[k]))}};
 const spriteSafe=k=>ASSETS.pokemon[k]||sprite(k);
+function deckCardByName(name){
+ const raw=String(name||'').trim().toLowerCase();
+ if(!raw)return null;
+ const simplify=s=>String(s||'').toLowerCase().replace(/^the\s+/,'').replace(/[^a-z0-9]+/g,' ').trim();
+ const target=simplify(raw);
+ return FUSION_DECK.find(c=>simplify(c.name)===target)||null;
+}
+function deckCardImage(name){const card=deckCardByName(name);return card?.img||null}
+function deckCardKind(name){const card=deckCardByName(name);return card?.deck||null}
+function tarotVisualFor(question='',answer=''){
+ const pool=Array.isArray(FUSION_TAROT_CARDS)?FUSION_TAROT_CARDS:[];
+ if(!pool.length)return studied('tarot')[0]?.img||null;
+ const tokens=String(question+' '+answer).toLowerCase().replace(/[^a-z\s-]/g,' ').split(/[\s-]+/).filter(t=>t.length>3&&!FUSION_V18_STOPWORDS.has(t));
+ const ranked=pool.map(c=>{
+  const hay=(String(c.name||'')+' '+String(c.scenery||'')+' '+String(c.upright||'')+' '+String(c.reversed||'')+' '+String((c.keywords||[]).join(' '))).toLowerCase();
+  let score=0;
+  for(const t of tokens)if(hay.includes(t))score++;
+  return {c,score:score+(c.scenery?0.2:0)};
+ }).sort((a,b)=>b.score-a.score);
+ return (ranked[0]?.c?.image)||studied('tarot')[0]?.img||pool[0]?.image||null;
+}
 function q(question,answer,others,explain='',art=null,kind='text'){
  const candidates=[...new Set((others||[]).map(String).filter(s=>s!==String(answer)))];
  if(candidates.length<3)return null;
@@ -4266,7 +4287,10 @@ function conceptBank(){const list=[];const groupLessons={foundations:'found-welc
  for(const group of Object.keys(FUSION_V18_CONCEPT_BANK).filter(k=>fusionTarotLegacyDone(groupLessons[k]))){
   for(const [question,answer,wrong,why] of FUSION_V18_CONCEPT_BANK[group]){
    const obj=fusionV18ChoiceQuestion(question,answer,wrong,why);
-   const c=q(obj.q,obj.correctText,obj.options.filter((_,i)=>i!==obj.correctIndex),obj.why);
+   const needsVisual=group==='imagery'||/(card|illustration|image|imagery|upright|reversed|orientation|spread)/i.test(String(question)+' '+String(answer));
+   const art=needsVisual?tarotVisualFor(question,answer):null;
+   const kind=needsVisual?(group==='imagery'?'scene':'card'):'text';
+   const c=q(obj.q,obj.correctText,obj.options.filter((_,i)=>i!==obj.correctIndex),obj.why,art,kind);
    if(c)list.push(c);
   }
  }return list;}
@@ -4368,13 +4392,15 @@ function launch(mode, badgeId){let questions=[],opp,region=null;
  battleRender();
 }
 function imageQuestion(cur){if(!cur)return '';
- if(['scene','card'].includes(cur.kind)){const isScene=cur.kind==='scene';return `<div class="v21-image-frame ${isScene?'scene':''}">${isScene?`<div class="fusion-scene-crop"><img src="${cur.art}" alt="Card painting with its printed title and text concealed"></div>`:`<img src="${cur.art}" alt="Tarot card associated with this question">`}</div>`}
+ if(['scene','card'].includes(cur.kind) && cur.art){const isScene=cur.kind==='scene';return `<div class="v21-image-frame ${isScene?'scene':''}">${isScene?`<div class="fusion-scene-crop"><img src="${cur.art}" alt="Card painting associated with this question"></div>`:`<img src="${cur.art}" alt="Card associated with this question">`}</div>`}
  if(cur.kind==='silhouette')return `<div class="v21-image-frame"><img class="v21-silhouette" src="${spriteSafe(cur.art)}" alt="Mystery Pokémon silhouette"></div>`;
  if(['evolution','type'].includes(cur.kind))return `<div class="v21-image-frame"><img src="${spriteSafe(cur.art)}" alt="${h(cur.art)}"></div>`;
+ if(cur.art)return `<div class="v21-image-frame"><img src="${cur.art}" alt="Card associated with this question"></div>`;
  return '';
 }
 function optImage(cur,opt){if(cur.kind==='pokemon'||cur.kind==='evolution'||cur.kind==='silhouette')return `<img src="${spriteSafe(slug(opt))}" alt="" loading="lazy">`;
  if(cur.kind==='type'){const iconMons={Normal:'snorlax',Fire:'charmander',Water:'squirtle',Electric:'pikachu',Grass:'bulbasaur',Ice:'glaceon',Fighting:'lucario',Poison:'ekans',Ground:'sandshrew',Flying:'pidgey',Psychic:'abra',Bug:'caterpie',Rock:'geodude',Ghost:'gengar',Dragon:'dratini',Dark:'umbreon',Steel:'magnemite',Fairy:'clefairy'};const represent=iconMons[opt]&&ASSETS.pokemon[iconMons[opt]]?iconMons[opt]: (ORACLE_TYPE_GROUPS[opt]||[]).find(k=>ASSETS.pokemon[k]);return represent?`<img src="${spriteSafe(represent)}" alt="" loading="lazy">`:''}
+ const cardImg=deckCardImage(opt); if(cardImg)return `<img src="${cardImg}" alt="" loading="lazy">`;
  return '';
 }
 function field(cur){const b=battle,o=b.opponent;return `<div class="v21-field"><div class="v21-field-top">
@@ -5645,14 +5671,14 @@ for(const collection of [FUSION_MENU,navItems]){
  for(const row of collection){if(row[0]==='fusion-collection')row[2]='Tarot / Oracle Cards';}
 }
 const oldRender=render;
-render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.2');}all();return ret;};
+render=function(...args){const ret=oldRender.apply(this,args);document.documentElement.lang=german()?'de':'en';for(const el of document.querySelectorAll('#sidebar .brand small,.tree-brand small')){if(el.textContent)el.textContent=el.textContent.replace(/V\d+\.\d+(?:\.\d+)?/g,'V2.2.3');}all();return ret;};
 const oldShow=showModal;
 showModal=function(...args){const ret=oldShow.apply(this,args);if(german())localize(document.getElementById('modal'));return ret;};
 const oldNews=fusionNews;
 fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.1</span><h3>Tarot / Oracle Cards &amp; Expanded German UI</h3><ul><li>Renamed Both Card Decks to Tarot / Oracle Cards in the main navigation.</li><li>Expanded the English/German language selector to cover navigation, course titles, regional navigation, progress, quizzes and Reading Studio controls.</li><li>Kept established card names and interpretation passages in English where reviewed German translations are not yet available, avoiding inaccurate educational claims.</li><li>Language changes affect presentation only; save data, quiz grading, XP, badges and the Adventure Tree layout remain unchanged.</li></ul></article>`);};
 fusionViews['fusion-news']=fusionNews;
 const ua222OldNews=fusionNews;
-fusionNews=function(){return ua222OldNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.2</span><h3>Dual Mastery Navigation Hotfix</h3><ul><li>Dual progress shortcut now opens the Dual Mastery course and scrolls to its chapter, including when already on the same Academy page.</li><li>Dual Mastery shortcut in the Pokémon League Hall now also brings the next chapter into view.</li><li>Adventure Tree, quiz mechanics, badges, XP, settings and saved lesson progress are unchanged.</li></ul></article>`);};
+fusionNews=function(){return ua222OldNews().replace('<div class="fusion-news-list">',`<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.3</span><h3>Dual Mastery Navigation Hotfix</h3><ul><li>Dual progress shortcut now opens the Dual Mastery course and scrolls to its chapter, including when already on the same Academy page.</li><li>Dual Mastery shortcut in the Pokémon League Hall now also brings the next chapter into view.</li><li>Adventure Tree, quiz mechanics, badges, XP, settings and saved lesson progress are unchanged.</li></ul></article>`);};
 fusionViews['fusion-news']=fusionNews;
 const observer=new MutationObserver(mutations=>{
  if(!german())return;
@@ -5661,6 +5687,6 @@ const observer=new MutationObserver(mutations=>{
 observer.observe(document.body,{childList:true,subtree:true});
 window.__ua221={version:'2.2.2',translate:lookup,localize,apply:all};
 render();
-document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.2';
+document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.2.3';
 })();
 </script></body></html>
