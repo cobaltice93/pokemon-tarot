@@ -5164,4 +5164,143 @@ render();
 window.__ua217={version:'2.1.7',options:makeOptions217,preview:newPreview217,diagram:diagram217};
 })();
 </script>
+<script>
+/* Ultimate Academy V2.1.8 — integrated reading narratives (offline, deck-grounded) */
+(()=>{
+ 'use strict';
+ const previousNews = fusionNews;
+ const previousRender = render;
+ const themes = {
+  hurt:'acknowledging a disappointment',care:'giving emotions proper care',opening:'the possibility of starting anew',
+  agency:'taking purposeful action',boundary:'recognising a needed boundary',patience:'letting timing and acceptance matter',
+  connection:'trust and reciprocity',change:'a meaningful transition',uncertainty:'navigating uncertainty',
+  hope:'renewed warmth and clarity',reflection:'making room for reflection',growth:'steady progress'
+ };
+ const groundedSentence = (input, limit=230)=>{
+  const text=String(input||'').replace(/^Reversed:\s*/i,'').replace(/\s+/g,' ').trim();
+  const first=text.match(/^.*?[.!?](?:\s|$)/);
+  const sentence=(first?first[0]:text).trim();
+  const short=sentence.length<=limit?sentence:sentence.slice(0,limit).replace(/\s+\S*$/,'');
+  return short&&!/[.!?]$/.test(short)?short+'.':short;
+ };
+ const themeOf=(entry)=>themes[fusionReadingDimension(entry.c)]||'a change in perspective';
+ const nameOf=(entry)=>`${entry.c.name}${entry.row.reversed?' (reversed)':''}`;
+ const meaningOf=(entry)=>groundedSentence(fusionReadingCopy(entry.c,entry.row));
+ const positionalName=(entry)=>String(entry.row.position||'').replace(/^Tarot\s*\d+\s*[·:—\-]\s*/i,'').replace(/^Oracle\s*\d+\s*[·:—\-]\s*/i,'').trim();
+ const isUsefulPosition=(str)=>str&&!/^(position\s*\d+|tarot\s*\d+|oracle\s*\d+)$/i.test(str);
+ const drawContext=(rec)=>{
+   const focus=String(rec.context||rec.focus||'').trim();
+   if(/relationship|friend|social|love/i.test(focus))return 'Read this as a reflection on connection, boundaries and observable behaviour—not a claim about someone else’s thoughts.';
+   if(/career|work|job/i.test(focus))return 'Treat the reading as a way to weigh effort, possibilities and real-world evidence before choosing a next step.';
+   if(/well.being|health/i.test(focus))return 'Use the cards to explore what needs attention and support, not to diagnose or predict an outcome.';
+   if(/personal growth/i.test(focus))return '';
+   return ''; 
+ };
+ const bridge=(a,b)=>{
+   const d1=fusionReadingDimension(a.c),d2=fusionReadingDimension(b.c);
+   const pair=[d1,d2].sort().join('|');
+   const bridges={
+    'growth|hope':'Taken together, this may be about recognizing how steady effort creates space for confidence, rather than waiting for confidence before you begin.',
+    'agency|growth':'The important distinction is between working consistently and pushing harder simply to feel in control.',
+    'growth|hurt':'Effort can move you forward, but it does not require pretending that disappointment has disappeared.',
+    'hope|hurt':'There may be room for hope without skipping the part that still needs acknowledgement.',
+    'agency|hope':'Optimism becomes more useful when it is paired with a deliberate, manageable action.',
+    'agency|uncertainty':'You may not be able to remove uncertainty, but you can choose how carefully to respond to it.',
+    'boundary|connection':'Care for a relationship and a clear limit can coexist; one does not cancel the other.',
+    'change|reflection':'A transition can be meaningful even when it calls for a period of reflection before action.',
+    'care|hurt':'A gentler response does not make the difficult feelings any less real.',
+    'connection|uncertainty':'It may help to distinguish what is actually being communicated from what you fear or hope it means.',
+    'growth|reflection':'Looking at the pattern and acting on it need not be opposing steps.',
+    'hope|patience':'Hope can be present without turning it into pressure for an immediate result.',
+    'agency|patience':'There is a difference between making a choice and trying to force its outcome.',
+    'opening|uncertainty':'A new possibility does not require certainty; it does call for discernment.',
+    'boundary|hurt':'Acknowledging the pain and identifying a boundary may be parts of the same response.'
+   };
+   if(d1===d2)return `Both cards touch on ${themes[d1]}, but they need not mean the same thing: notice what one adds that the other leaves unsaid.`;
+   return bridges[pair]||`Read these as complementary influences: ${themes[d1]} may affect how you approach ${themes[d2]}, rather than presenting two competing verdicts.`;
+ };
+ function connectionOf(items){
+   if(items.length===0)return '';
+   if(items.length===1){const a=items[0];return `${nameOf(a)} adds the theme of ${themeOf(a)}. ${meaningOf(a)}`;}
+   if(items.length===2){const [a,b]=items;return `${nameOf(a)} and ${nameOf(b)} bring ${themeOf(a)} into contact with ${themeOf(b)}. ${meaningOf(a)} ${meaningOf(b)} ${bridge(a,b)}`;}
+   const [a,b,c]=items;
+   return `${nameOf(a)} and ${nameOf(b)} raise the question of ${themeOf(a)} alongside ${themeOf(b)}. ${meaningOf(a)} ${meaningOf(b)} ${nameOf(c)} adds ${themeOf(c)}: ${meaningOf(c)}`;
+ }
+ fusionComposeSynthesis=function(rec,cards){
+   if(!cards||!cards.length)return {title:'Your reading in context',intro:'',paragraphs:['There are no cards in this reading.'],reflection:''};
+   const tarot=cards.filter(x=>x.row.deck==='tarot');
+   const oracle=cards.filter(x=>x.row.deck==='oracle');
+   const paragraphs=[];
+   const main=tarot[0]||oracle[0], second=tarot[1]||oracle[1]||null;
+   const spread=String(rec.spread||'');
+   const crossed=/crossroads/i.test(spread)&&tarot.length>=5;
+   const celtic=/celtic/i.test(spread)&&tarot.length>=10;
+   let title=second?(themeOf(main)===themeOf(second)?`Two sides of ${themeOf(main)}`:`Between ${themeOf(main)} and ${themeOf(second)}`):`A closer look at ${themeOf(main)}`;
+   if(crossed){
+     const [anchor,pathA,pathB,hidden,guiding]=tarot;
+     title=`Finding direction without losing sight of what matters`;
+     paragraphs.push(`The decision starts with ${themeOf(anchor)}. ${nameOf(anchor)} asks you to take that seriously: ${meaningOf(anchor)} It gives the two possible paths something real to be measured against.`);
+     paragraphs.push(`Neither path is automatically the “right” one. ${nameOf(pathA)} brings ${themeOf(pathA)} into view: ${meaningOf(pathA)} ${nameOf(pathB)} points toward ${themeOf(pathB)} instead: ${meaningOf(pathB)} ${bridge(pathA,pathB)}`);
+     paragraphs.push(`What is easy to overlook may matter as much as either option. ${nameOf(hidden)} highlights ${themeOf(hidden)}: ${meaningOf(hidden)} ${nameOf(guiding)} then offers a principle for moving forward: ${meaningOf(guiding)}`);
+     if(tarot.length>5)for(let i=5;i<tarot.length;i+=3)paragraphs.push(`The surrounding influences bring additional nuance. ${connectionOf(tarot.slice(i,i+3))}`);
+   }else if(celtic){
+     const [core,cross,root,past,aim,near,stance,environment,feelings,outcome]=tarot;
+     title='What is shaping the situation beneath the surface';
+     paragraphs.push(`At the heart of the situation, ${nameOf(core)} and ${nameOf(cross)} bring together ${themeOf(core)} and ${themeOf(cross)}. ${meaningOf(core)} ${meaningOf(cross)} ${bridge(core,cross)}`);
+     paragraphs.push(`The deeper roots and the road behind you add context: ${nameOf(root)} speaks to ${themeOf(root)}, while ${nameOf(past)} draws attention to ${themeOf(past)}. ${meaningOf(root)} ${meaningOf(past)}`);
+     paragraphs.push(`What you are reaching for and what may be approaching do not necessarily match. ${nameOf(aim)} suggests ${themeOf(aim)}; ${nameOf(near)} adds ${themeOf(near)}. ${meaningOf(aim)} ${meaningOf(near)}`);
+     paragraphs.push(`The wider picture includes your own stance, the environment, and what you may both fear and hope for. ${connectionOf([stance,environment,feelings])}`);
+     paragraphs.push(`As a possible direction rather than a guaranteed outcome, ${nameOf(outcome)} invites you to consider ${themeOf(outcome)}. ${meaningOf(outcome)}`);
+   }else if(tarot.length>=2){
+     const [a,b]=tarot;
+     const firstPlace=positionalName(a),secondPlace=positionalName(b);
+     let frame=`The central thread is ${themeOf(a)} meeting ${themeOf(b)}.`;
+     if(isUsefulPosition(firstPlace)&&isUsefulPosition(secondPlace)&&!/custom/i.test(spread))frame=`The spread sets ${themeOf(a)} beside ${themeOf(b)}—different perspectives that may both belong to your question.`;
+     paragraphs.push(`${frame} ${nameOf(a)} points to one side of that story: ${meaningOf(a)} ${nameOf(b)} brings a different emphasis: ${meaningOf(b)} ${bridge(a,b)}`);
+     const rest=tarot.slice(2);
+     for(let i=0;i<rest.length;i+=3){
+       const group=rest.slice(i,i+3);
+       const connector=i===0?'The wider spread adds nuance.':'Another part of the picture is worth considering.';
+       paragraphs.push(`${connector} ${connectionOf(group)}`);
+     }
+   }else if(tarot.length===1){
+     const a=tarot[0];
+     paragraphs.push(`${nameOf(a)} invites you to examine ${themeOf(a)} in your present circumstances. ${meaningOf(a)} The value of this position is not in predicting what happens next, but in noticing where this theme is already relevant.`);
+   }
+   if(oracle.length){
+     const first=oracle[0];
+     const extra=oracle.slice(1);
+     const bridgeLine=tarot.length?
+       `Rather than adding another prediction, ${nameOf(first)} turns the reading toward how you might respond.`:
+       `${nameOf(first)} sets the tone for a reflective next step.`;
+     const shadow=groundedSentence(first.c.shadow);
+     const action=groundedSentence(first.c.action);
+     paragraphs.push(`${bridgeLine} ${meaningOf(first)} There is also a caution here: ${shadow} As a practical starting point, ${action}`);
+     for(let i=0;i<extra.length;i+=2){
+       const more=extra.slice(i,i+2);
+       paragraphs.push(`The other guidance adds another perspective. ${more.map(o=>`${nameOf(o)}: ${meaningOf(o)} To practise it: ${groundedSentence(o.c.action)}`).join(' ')}`);
+     }
+   }else if(tarot.length){
+     paragraphs.push(`A useful way to take this beyond the spread is to test its themes against your experience: what do you already know, what remains uncertain, and what is one choice within your control?`);
+   }
+   const reflection=crossed&&oracle.length?
+      `How could ${oracle[0].c.name.toLowerCase()} help you compare the two possible paths without losing sight of what matters most?`:
+      oracle.length?`Where could you put ${oracle[0].c.name.toLowerCase()} into practice as you consider ${themeOf(main)}${second&&themeOf(second)!==themeOf(main)?' alongside '+themeOf(second):''}?`:
+      `Where do you see ${themeOf(main)}${second&&themeOf(second)!==themeOf(main)?' interacting with '+themeOf(second):''} in your own situation, and what would be a manageable next step?`;
+   return {title,intro:drawContext(rec),paragraphs,reflection};
+ };
+ fusionNews=function(){return previousNews().replace('<div class="fusion-news-list">',
+  '<div class="fusion-news-list"><article class="fusion-news-entry fusion-v19-notes"><span class="kicker">ULTIMATE ACADEMY V2.1.8</span><h3>Reading Narrative Hotfix</h3><ul><li>Reading summaries now connect Tarot meanings into a coherent story rather than enumerating card positions.</li><li>Crossroads and Celtic Cross readings use the spread structure to explain relationships between cards.</li><li>Oracle guidance now focuses on integration, shadow cautions and concrete action.</li><li>The engine continues using only the meanings stored in the offline Tarot and Oracle decks.</li><li>Saved readings, card layouts, achievements, music, lessons and settings remain unchanged.</li></ul></article>');};
+ fusionViews['fusion-news']=fusionNews;
+ render=function(...args){const result=previousRender.apply(this,args);
+  document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{
+    if(el.textContent&&el.textContent.includes('V2.1.7'))el.textContent=el.textContent.replace('V2.1.7','V2.1.8');
+  }); return result;
+ };
+ document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V2.1.8';
+ window.__ua218={version:'2.1.8',compose:fusionComposeSynthesis};
+ render();
+})();
+
+</script>
 </body></html>
