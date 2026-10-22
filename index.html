@@ -6061,4 +6061,202 @@ window.__ua225={version:VERSION,roster:()=>roster().length,slots:()=>FUSION_V206
  syncVersion();
 })();
 </script>
+
+<style id="ua229-style">
+.ua229-deep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:12px 0 14px}
+.ua229-keywords{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+.ua229-keywords span{padding:5px 9px;border-radius:999px;background:var(--panel,#152845);border:1px solid var(--line);font-size:12px;color:var(--ink)}
+.ua229-note{margin-top:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel,#152845)}
+.ua229-position-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.ua229-position-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel,#152845)}
+.ua229-position-card h4{margin:0 0 8px;font-size:17px}
+.ua229-position-card p{margin:0 0 8px}
+.ua229-position-card small{color:var(--sub)}
+.ua229-minihead{margin:0 0 10px}
+.ua229-card-summary{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel,#152845);margin:10px 0 12px}
+.ua229-card-summary p{margin:8px 0}
+@media(max-width:720px){.ua229-deep-grid,.ua229-position-grid{grid-template-columns:1fr}}
+</style>
+<script id="ua229-patch">
+/* Ultimate Academy V2.2.9 — mixed spread filtering + richer Tarot card lessons */
+(()=>{
+'use strict';
+const VERSION='2.2.9';
+const esc=s=>fusionEscape(String(s??''));
+const trim229=(text,max=240)=>{
+  const clean=String(text||'').replace(/\s+/g,' ').trim();
+  if(!clean) return '';
+  if(typeof fusionV205TrimSentence==='function'){
+    try{return fusionV205TrimSentence(clean,max);}catch(_e){}
+  }
+  return clean.length>max?clean.slice(0,max-1).trim()+'…':clean;
+};
+const hybrid229=()=>FUSION_READING.mode==='hybrid'&&FUSION_READING.tarot>0&&FUSION_READING.oracle>0;
+const maxCards229=()=>FUSION_READING.mode==='hybrid'?13:12;
+const oldSpread229=fusionSpreadOptions;
+const oldRead229=fusionRead;
+const oldExamples229=fusionV205Examples;
+const oldTarotRender229=fusionRenderTarotLesson;
+const oldTarotProgress229=fusionTarotLessonProgress;
+const oldNews229=fusionNews;
+const oldRender229=render;
+function oracleLabels229(count){
+  return Array.from({length:count},(_,i)=>`Oracle guidance ${i+1} · ${count===1?'Guidance & integration':`Guidance ${i+1}`}`);
+}
+function tarotLabel229(label,i){
+  const cleaned=String(label||`Position ${i+1}`).replace(/^Tarot\s*\d*\s*[·:-]\s*/i,'').replace(/^Oracle(?: guidance)?\s*\d*\s*[·:-]\s*/i,'').trim();
+  return `Tarot ${i+1} · ${cleaned||`Position ${i+1}`}`;
+}
+function makeHybridOptions229(){
+  if(!hybrid229()) return oldSpread229();
+  const r=FUSION_READING;
+  const custom={
+    id:'custom',
+    name:`Custom · ${r.tarot} Tarot + ${r.oracle} Oracle guidance`,
+    kind:'custom',
+    tarotCount:r.tarot,
+    oracleCount:r.oracle,
+    positions:[...Array.from({length:r.tarot},(_,i)=>tarotLabel229(`Position ${i+1}`,i)),...oracleLabels229(r.oracle)]
+  };
+  const tarotSpreads=FUSION_TAROT_SPREADS
+    .filter(x=>x.count===r.tarot)
+    .map(x=>({
+      id:'t-'+x.id,
+      name:x.name,
+      kind:'tarot',
+      layout:x.id,
+      tarotCount:r.tarot,
+      oracleCount:r.oracle,
+      positions:[...x.positions.map((p,i)=>tarotLabel229(p,i)),...oracleLabels229(r.oracle)]
+    }));
+  const specials=FUSION_HYBRID_SPREADS
+    .filter(x=>x.count===r.tarot+r.oracle && x.positions.filter(p=>/^Tarot/i.test(p)).length===r.tarot && x.positions.filter(p=>/^Oracle/i.test(p)).length===r.oracle)
+    .map(x=>({
+      id:x.id,
+      name:x.name,
+      kind:'hybrid',
+      layout:x.id,
+      tarotCount:r.tarot,
+      oracleCount:r.oracle,
+      positions:[...x.positions.slice(0,r.tarot).map((p,i)=>tarotLabel229(p,i)),...x.positions.slice(r.tarot).map((p,i)=>`Oracle guidance ${i+1} · ${String(p).replace(/^Oracle(?: guidance)?\s*\d*\s*[·:-]\s*/i,'').trim()||`Guidance ${i+1}`}`)]
+    }));
+  const all=[custom,...specials,...tarotSpreads];
+  const seen=new Set();
+  return all.filter(item=>!seen.has(item.id) && seen.add(item.id));
+}
+fusionSpreadOptions=makeHybridOptions229;
+fusionRead=function(){
+  if(hybrid229() && !fusionSpreadOptions().some(x=>x.id===FUSION_READING.spread)) FUSION_READING.spread='custom';
+  let html=oldRead229();
+  if(hybrid229()){
+    html=html.replace('Oracle cards provide guidance after the Tarot reading; they are not additional Tarot positions.','Oracle cards provide guidance after the Tarot spread; they are not additional Tarot positions.')
+             .replace('Hybrid spread templates show their assigned positions.','Oracle cards provide guidance after the Tarot spread; they are not additional Tarot positions.');
+  }
+  return html;
+};
+fusionViews['fusion-read']=fusionRead;
+
+fusionV205Examples=function(lesson,cards){
+  const c=(lesson?.topic||'').startsWith('card:')?cards?.[0]:null;
+  if(!c) return oldExamples229(lesson,cards);
+  const up=trim229(c.upright,220);
+  const rev=trim229(c.reversed,220);
+  return [
+    [`A new situation · ${c.name}`,
+     `Someone is considering a fresh opportunity and draws ${c.name}.`,
+     `Begin with the upright theme: ${up} Instead of using the card as a prediction, ask where this energy is already present and what first step the person can take on purpose.`],
+    [`A complication · ${c.name}`,
+     `A project feels stuck and ${c.name} appears reversed.`,
+     `The reversal shifts the emphasis: ${rev} Look for what is blocked, excessive or being avoided, then name one practical adjustment before leaping to a final conclusion.`],
+    [`Advice in a spread · ${c.name}`,
+     `After a difficult week, someone draws ${c.name} in the Advice position.`,
+     `Read the card as guidance rather than fate. The core theme is ${up} In an Advice position, the useful question becomes: what would it look like to practise this meaning in one realistic action this week?`]
+  ];
+};
+
+function lessonIsCard229(src){return !!(src?.lesson?.topic||'').startsWith('card:');}
+function keywordChips229(card){
+  return Array.isArray(card?.keywords)&&card.keywords.length
+    ? `<div class="ua229-keywords">${card.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`
+    : '';
+}
+function positionPractice229(card){
+  const up=trim229(card?.upright,180);
+  const rev=trim229(card?.reversed,180);
+  return `<section class="fusion-v204-main"><h3 class="ua229-minihead">The same card changes with spread position</h3><p>The artwork stays the same, but the slot in the spread tells you what part of the story the card is answering.</p><div class="ua229-position-grid"><article class="ua229-position-card"><h4>Advice</h4><p>If <b>${esc(card.name)}</b> appears as advice, start with the upright meaning: ${esc(up)}</p><small>Ask: what constructive action does this card encourage right now?</small></article><article class="ua229-position-card"><h4>Challenge</h4><p>In a challenge slot, look more critically: ${esc(rev)}</p><small>Ask: what is blocked, overdone or difficult to handle here?</small></article><article class="ua229-position-card"><h4>Present / current energy</h4><p>In a present-position reading, notice where this theme is already visible in real life before predicting anything.</p><small>Ask: where is this pattern already happening, and what evidence supports that reading?</small></article></div></section>`;
+}
+function completion229(lesson,first){
+  const done=!!FUSION.progress['tarot:'+lesson.id];
+  if(!done) fusionSetProgress('tarot:'+lesson.id,false);
+  return `<div class="fusion-learning-completion"><div class="fusion-trophy-icon">🏅</div><h2>Lesson Complete!</h2><p>${esc(lesson.title)}</p><strong>${done?'Previously completed · progress preserved':'+15 Academy XP earned'}</strong>${typeof fusionCoachLine==='function'?fusionCoachLine(4,`Nice work! You studied the artwork, upright meaning, reversed meaning and several practical examples for ${first?.name||lesson.title}.`):''}<div class="fusion-complete-buttons"><button class="btn" data-fusion-tarot-quiz>⚔ Take the 4-question Pop Quiz</button><button class="btn ghost" data-fusion-modal-close>Return to Learning Tree</button></div></div>`;
+}
+
+fusionTarotLessonProgress=function(a){
+  const src=typeof fusionLessonSource==='function'?fusionLessonSource():null;
+  if(!lessonIsCard229(src)) return oldTarotProgress229(a);
+  const labels=['Meet Trainer','See the card','Explore the artwork','Upright & reversed','Worked examples','Spread positions','Apply & reflect','Complete'];
+  const step=Math.max(0,Math.min(labels.length-1,Number(a?.step)||0));
+  return `<div class="fusion-wizard-top"><div class="fusion-progress" aria-label="Lesson progress"><span style="width:${((step+1)/labels.length)*100}%"></span></div><div class="fusion-wizard-label"><span>${labels[step]}</span><span>${step+1} / ${labels.length}</span></div>${fusionTarotLessonLayout()}</div>`;
+};
+
+fusionRenderTarotLesson=function(){
+  const a=FUSION_LESSON;
+  const src=typeof fusionLessonSource==='function'?fusionLessonSource():null;
+  if(!lessonIsCard229(src)) return oldTarotRender229();
+  if(!src) return oldTarotRender229();
+  const {lesson:l,sec,cards}=src;
+  const first=cards[Math.min(a?.focus||0,cards.length-1)]||cards[0];
+  if(!first) return oldTarotRender229();
+  a.step=Math.max(0,Math.min(7,Number(a.step)||0));
+  const title=`<div class="fusion-learning-heading"><span class="kicker">${esc(sec.section)} · ${esc(l.kind||'lesson')}</span><h2>${esc(l.title)}</h2></div>`;
+  let body='';
+  if(a.step===0){
+    body=`${title}<p class="fusion-v19-summary">${esc(fusionLessonConcept(l,cards))}</p>${fusionCoachLine(0,`Welcome, Trainer! In this lesson we'll study ${first.name} from several angles so the pages do not just repeat the same sentence.`)}<div class="fusion-learning-goal"><strong>🎯 Our learning goal</strong><p>${esc(fusionLessonTeachingGoal(l,cards))}</p></div><div class="fusion-learning-goal"><strong>What this lesson covers</strong><p>Artwork first, then the upright and reversed meanings, several worked examples, and finally how the same card changes with spread position.</p></div>${fusionCoachLine(2,`A strong explanation of ${first.name} should connect the picture, the meaning and one believable real-life situation.`)}`;
+  }else if(a.step===1){
+    body=`${title}<div class="fusion-learning-overview"><strong>Card overview</strong><p>${esc(first.name)} is represented by ${esc(first.pokemon)}${first.suit && first.suit!=='Major' ? ` in the ${esc(first.suit)} suit` : ''}. Start by noticing the card identity before interpreting it.</p><p>${esc(fusionLessonExtra(l,cards))}</p></div><div class="ua229-card-summary"><p><strong>Upright meaning:</strong> ${esc(first.upright)}</p><p><strong>Reversed meaning:</strong> ${esc(first.reversed)}</p>${keywordChips229(first)}</div>${fusionCoachLine(1,`Before you worry about memorising a keyword, make sure you can recognise what this card is and what changes when it appears reversed.`)}${fusionTarotFocusPicker(cards)}`;
+  }else if(a.step===2){
+    body=`${title}<section class="fusion-v204-main"><h3>Explore the artwork</h3><p>This page uses the same gallery-style breakdown, so the image details and card description stay aligned.</p>${fusionV14VisualGuide(l,cards,first)}</section>${fusionCoachLine(3,`Describe what you can literally see in the art first. Then connect those observations to the card's interpretation.`)}`;
+  }else if(a.step===3){
+    body=`${title}<section class="fusion-v204-main"><h3>Upright and reversed meaning</h3><p>Now focus on what changes when the card turns upside down. A reversal is not automatically “bad”; it can show delay, imbalance, internalization or overuse.</p><div class="ua229-deep-grid"><div class="fusion-keyed-detail"><strong>Upright · core meaning</strong><p>${esc(first.upright)}</p></div><div class="fusion-keyed-detail reversed"><strong>Reversed · blocked / excessive / internalized</strong><p>${esc(first.reversed)}</p></div></div><div class="ua229-note"><strong>Remember:</strong> read the reversal as a change in how the theme is expressed, not as a separate unrelated card.</div>${keywordChips229(first)}</section>${fusionCoachLine(4,`If you can explain both the upright and reversed versions in your own words, you understand far more than just a definition.`)}`;
+  }else if(a.step===4){
+    body=`${title}${fusionCoachLine(5,`Let's move from definitions to examples. Try explaining what ${first.name} would mean in context, not just repeating a keyword.`)}${fusionV205Carousel(l,[first])}`;
+  }else if(a.step===5){
+    body=`${title}${positionPractice229(first)}${fusionCoachLine(2,`Context matters: the same card answers a different question when it appears as Advice, Challenge or Present energy.`)}`;
+  }else if(a.step===6){
+    const prompt=first.reflection||`In your own words, how would you explain ${l.title} to another Trainer?`;
+    body=`${title}${fusionCoachLine(5,`You don't need a perfect answer. Name one observation from the artwork, one meaning, and one practical next step.`)}<div class="fusion-reflect-panel"><h3>Put it into practice</h3><p>${esc(prompt)}</p><label for="fusionTarotReflection">Your reflection (optional)</label><textarea id="fusionTarotReflection" rows="4" class="input" placeholder="One observation, one interpretation, one possible next step…">${esc(FUSION.reflections['tarot:'+l.id]||'')}</textarea><small>Saved in this lesson's notes; skipping doesn't affect your XP.</small></div>${fusionCoachLine(0,`The best takeaway is not just "what the card means" but how to read it responsibly in a real situation.`)}`;
+  }else{
+    body=completion229(l,first);
+  }
+  const footer=a.step<7?`<div class="fusion-lesson-footer">${a.step>0?`<button class="btn ghost" data-v229-step="${a.step-1}">← Back</button>`:'<span></span>'}<button class="btn" data-v229-step="${a.step+1}">${a.step===6?'Complete Lesson':'Continue'} →</button></div>`:'';
+  fusionTarotLessonFrame(body,footer);
+};
+
+document.addEventListener('click',function(e){
+  const el=e.target.closest('[data-v229-step]');
+  if(!el||!FUSION_LESSON||FUSION_LESSON.type!=='tarot') return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  const input=document.getElementById('fusionTarotReflection');
+  if(input){FUSION.reflections['tarot:'+FUSION_LESSON.id]=input.value;fusionSave();}
+  FUSION_LESSON.step=Math.max(0,Math.min(7,Number(el.dataset.v229Step)||0));
+  fusionRenderTarotLesson();
+},true);
+
+fusionNews=function(){
+  return oldNews229().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.2.9</span><h3>Mixed Spread & Tarot Lesson Hotfix</h3><ul><li>Hybrid Tarot + Oracle readings now show only the Tarot spreads that match the selected number of Tarot cards.</li><li>Oracle cards remain separate guidance cards instead of changing the spread count options.</li><li>Card lessons were expanded with a dedicated artwork page, an upright vs. reversed page, richer worked examples and a spread-position page.</li></ul></article>');
+};
+fusionViews['fusion-news']=fusionNews;
+
+function sync229(){
+  const text='TAROT × ORACLE · '+VERSION;
+  document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{el.textContent=text;});
+  document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy '+VERSION;
+}
+render=function(...args){const result=oldRender229.apply(this,args);sync229();return result;};
+window.__ultimateAcademyVersion=VERSION;
+sync229();
+})();
+</script>
+
 </body></html>
