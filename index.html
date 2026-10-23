@@ -6617,7 +6617,7 @@ sync229();
 </style><script id="ua240-script">/* Ultimate Academy V2.4.0 — contextual reading and interactive Trainer Card */
 (()=>{
 'use strict';
-const VERSION='2.4.0';
+const VERSION='2.4.1';
 const E=x=>fusionEscape(String(x??''));
 const tidy=x=>String(x??'').replace(/\s+/g,' ').trim();
 const shorten=(s,n=270)=>{const x=tidy(s);return x.length>n?x.slice(0,n).replace(/\s+\S*$/,'').trim()+'…':x};
@@ -6769,7 +6769,8 @@ function historyResults240(readings,term){const q=tidy(term).toLowerCase();const
 // Trainer Card, stored in the same app save; its face and decorations are cosmetic only.
 let currentFace240='front';
 const oldTrainer=fusionViews['fusion-trainer'];
-function partner240(){const stored=conf().partner;return stored&&ASSETS.pokemon[stored]?stored:(S.profile.team||[]).find(k=>ASSETS.pokemon[k])||'eevee';}
+function teamChoices241(){return [...new Set((S.profile.team||[]).filter(k=>!!ASSETS.pokemon[k]))].slice(0,6)}
+function partner240(){const team=teamChoices241(),stored=conf().partner;return team.includes(stored)?stored:(team[0]||'');}
 function favoriteTarot240(){return fusionCard(FUSION.tarotFavorite||'t:0')||FUSION_DECK.find(x=>x.deck==='tarot')}
 function favoriteOracle240(){const c=cardById[S.profile.favoriteCard]||DATA.cards[0];return {name:c.title,img:ASSETS.cards[c.number]?.[0]||''}}
 function achievements240(){let league=0;try{league=window.__ua220LeagueCount?.()??0}catch(_e){}return {league,spirit:Object.keys(S.badges||{}).length,tarot:FUSION_TAROT_COURSE.reduce((n,x)=>n+x.lessons.filter(l=>fusionTarotLegacyDone(l.id)).length,0),oracle:DATA.cards.filter(c=>S.completed?.['card-'+c.number]).length,dual:FUSION_DUAL_LESSONS.filter((_,i)=>FUSION.progress['dual:'+i]).length};}
@@ -6779,10 +6780,10 @@ function profileCard240(){const p=conf(),theme=palettes[p.theme]||palettes.class
  return `<section class="ua240-profile-panel"><div class="ua240-card-toolbar"><div><h2>Pokémon Trainer Card</h2><p class="muted small">Flip to see your journey. Your card and colors are saved locally.</p></div><div class="row wrap"><button type="button" class="btn" data-ua240-flip aria-label="Flip Trainer Card">↻ Flip card</button><button type="button" class="btn ghost" data-ua240-png>⬇ Save ${currentFace240} as PNG</button></div></div>
  <div class="ua240-trainer-card ua240-pattern-${E(p.pattern)}" style="${themeStyle}" role="region" aria-label="Pokémon Trainer Card ${currentFace240}">
  <div class="ua240-card-heading"><strong>◉ TRAINER CARD</strong><span>${currentFace240==='front'?'FRONT':'BACK'}</span></div>
- ${currentFace240==='front'?`<div class="ua240-front"><div class="ua240-person"><div class="ua240-avatar"><img src="${trainerSprite(S.profile.avatar)}" alt="Your Trainer avatar"></div><div><small>TRAINER NAME</small><h2>${E(name)}</h2><p>${E(rank.curr.name)}</p><p>${E(S.profile.region||'Kanto')} Region</p></div></div><div class="ua240-stat-grid"><div><small>ACADEMY XP</small><strong>${rank.xp.toLocaleString()}</strong></div><div><small>LEAGUE BADGES</small><strong>${stats.league}/72</strong></div></div><div class="ua240-partner"><span>FAVOURITE POKÉMON</span><img src="${sprite(poke)}" alt="${E(poke)}"><strong>${E(trainerName(poke))}</strong></div></div>`:
+ ${currentFace240==='front'?`<div class="ua240-front"><div class="ua240-person"><div class="ua240-avatar"><img src="${trainerSprite(S.profile.avatar)}" alt="Your Trainer avatar"></div><div><small>TRAINER NAME</small><h2>${E(name)}</h2><p>${E(rank.curr.name)}</p><p>${E(S.profile.region||'Kanto')} Region</p></div></div><div class="ua240-stat-grid"><div><small>ACADEMY XP</small><strong>${rank.xp.toLocaleString()}</strong></div><div><small>LEAGUE BADGES</small><strong>${stats.league}/72</strong></div></div><div class="ua240-partner"><span>FEATURED TEAM POKÉMON</span>${poke?`<img src="${sprite(poke)}" alt="${E(poke)}"><strong>${E(trainerName(poke))}</strong>`:`<strong>Choose a Pokémon in Edit team</strong>`}</div></div>`:
  `<div class="ua240-back"><strong>YOUR POKÉMON TEAM</strong><div class="ua240-six">${Array.from({length:6},(_,i)=>pokemonTeam[i]?`<div><img src="${sprite(pokemonTeam[i])}" alt="${E(pokemonTeam[i])}"></div>`:'<div>◉</div>').join('')}</div><div class="ua240-favorites"><div><img src="${t?.img||''}" alt="Favourite Tarot card"><span><small>FAVOURITE TAROT</small><strong>${E(t?.name||'Not selected')}</strong></span></div><div><img src="${o.img}" alt="Favourite Oracle card"><span><small>FAVOURITE ORACLE</small><strong>${E(o.name)}</strong></span></div></div><div class="ua240-back-progress"><span>Tarot lessons <b>${stats.tarot}/121</b></span><span>Oracle cards <b>${stats.oracle}/60</b></span><span>Spirit Emblems <b>${stats.spirit}/10</b></span><span>Dual Mastery <b>${stats.dual}/12</b></span></div></div>`}
  <div class="ua240-card-footer"><span>POKÉMON ULTIMATE ACADEMY</span><span>✦</span></div></div>
- <div class="ua240-card-controls"><label>Card color<select id="ua240-card-theme">${Object.keys(palettes).map(k=>`<option value="${k}" ${p.theme===k?'selected':''}>${k[0].toUpperCase()+k.slice(1)}</option>`).join('')}</select></label><label>Pattern<select id="ua240-card-pattern">${[['pokeball','Pokéball'],['waves','Waves'],['stars','Stars'],['grid','Geometric'],['minimal','Minimal']].map(([k,label])=>`<option value="${k}" ${p.pattern===k?'selected':''}>${label}</option>`).join('')}</select></label><label>Featured Pokémon<select id="ua240-card-partner">${[...new Set([...(S.profile.team||[]),'eevee'].filter(k=>ASSETS.pokemon[k]))].map(k=>`<option value="${E(k)}" ${poke===k?'selected':''}>${E(trainerName(k))}</option>`).join('')}</select></label></div>
+ <div class="ua240-card-controls"><label>Card color<select id="ua240-card-theme">${Object.keys(palettes).map(k=>`<option value="${k}" ${p.theme===k?'selected':''}>${k[0].toUpperCase()+k.slice(1)}</option>`).join('')}</select></label><label>Pattern<select id="ua240-card-pattern">${[['pokeball','Pokéball'],['waves','Waves'],['stars','Stars'],['grid','Geometric'],['minimal','Minimal']].map(([k,label])=>`<option value="${k}" ${p.pattern===k?'selected':''}>${label}</option>`).join('')}</select></label><label>Featured Pokémon<select id="ua240-card-partner">${teamChoices241().length?teamChoices241().map(k=>`<option value="${E(k)}" ${poke===k?'selected':''}>${E(trainerName(k))}</option>`).join(''):'<option value="" selected>No Pokémon in team — edit your team</option>'}</select></label></div>
  <div class="row wrap"><button class="btn" data-fusion-profile-edit>⚙ Edit avatar, team & favourite cards</button><button class="btn ghost" data-ua225-edit>🎭 Gym Leader appearances</button><button class="btn ghost" data-go="fusion-league">🏆 Pokémon League</button></div></section>`;
 }
 fusionViews['fusion-trainer']=function(){return `${fusionHeading('Trainer Headquarters','Your Trainer identity, achievements and favourite partners—now on a two-sided Pokémon card.')}${profileCard240()}`;};
@@ -6802,10 +6803,10 @@ async function trainerPng240(){const palette=palettes[conf().theme]||palettes.cl
  ctx.globalAlpha=.16;ctx.strokeStyle=palette[2];ctx.lineWidth=3;for(let i=0;i<16;i++){ctx.beginPath();ctx.arc(150,120,i*19,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;
  ctx.fillStyle='#ffffff';ctx.font='bold 38px sans-serif';ctx.fillText('◉  TRAINER CARD',44,70);ctx.font='bold 20px sans-serif';ctx.fillText(currentFace240.toUpperCase(),842,65);
  if(currentFace240==='front'){
- const rank=fusionV202Rank(),stat=achievements240(),person=await loadImg240(trainerSprite(S.profile.avatar)),poke=await loadImg240(sprite(partner240()));
+ const rank=fusionV202Rank(),stat=achievements240(),person=await loadImg240(trainerSprite(S.profile.avatar)),poke=await loadImg240(partner240()?sprite(partner240()):'');
  ctx.fillStyle=palette[0];ctx.fillRect(40,110,245,325);if(person)ctx.drawImage(person,68,130,185,270);
  ctx.fillStyle='#fff';ctx.font='17px sans-serif';ctx.fillText('TRAINER NICKNAME',320,145);ctx.font='bold 41px sans-serif';drawText240(ctx,S.profile.nickname||'Trainer',320,198,540);ctx.font='bold 25px sans-serif';ctx.fillText(rank.curr.name,320,247);ctx.font='22px sans-serif';ctx.fillText((S.profile.region||'Kanto')+' Region',320,290);ctx.fillText('XP: '+rank.xp.toLocaleString(),320,350);ctx.fillText('League Badges: '+stat.league+'/72',320,395);
- ctx.fillText('Favourite Pokémon: '+trainerName(partner240()),44,505);if(poke)ctx.drawImage(poke,585,420,140,135);
+ ctx.fillText('Featured Pokémon: '+(partner240()?trainerName(partner240()):'No team Pokémon selected'),44,505);if(poke)ctx.drawImage(poke,585,420,140,135);
  }else{
  ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.fillText('YOUR POKÉMON TEAM',42,145);const team=(S.profile.team||[]).filter(k=>ASSETS.pokemon[k]).slice(0,6);for(let i=0;i<team.length;i++){const im=await loadImg240(sprite(team[i]));if(im)ctx.drawImage(im,40+i*146,165,115,115);}
  const tar=favoriteTarot240(),ora=favoriteOracle240(),imgs=await Promise.all([loadImg240(tar?.img),loadImg240(ora.img)]);
@@ -6840,7 +6841,7 @@ document.addEventListener('change',function(ev){const el=ev.target;
  if(['ua240-card-theme','ua240-card-pattern','ua240-card-partner'].includes(el.id)){
   if(el.id==='ua240-card-theme')conf().theme=palettes[el.value]?el.value:'classic';
   if(el.id==='ua240-card-pattern')conf().pattern=['pokeball','waves','stars','grid','minimal'].includes(el.value)?el.value:'pokeball';
-  if(el.id==='ua240-card-partner')conf().partner=ASSETS.pokemon[el.value]?el.value:'eevee';
+  if(el.id==='ua240-card-partner')conf().partner=teamChoices241().includes(el.value)?el.value:'';
   fusionSave();const y=window.scrollY;render();window.scrollTo(0,y);
  }
 },true);
@@ -6848,7 +6849,113 @@ document.addEventListener('input',function(ev){if(ev.target?.id==='ua240HistoryS
 // Fix repeated navigating-on-copy and supply accurate bullet-point release history.
 fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.4.0</span><h3>Question-Aware Readings & Trainer Card</h3><ul><li>Complete reading interpretations are included when copying notes; added card-list copy and TXT export.</li><li>Question-based and open reading modes, with Quick, Balanced and Detailed explanations based on card meanings and spread positions.</li><li>Search saved readings by question, spread or card, locally without uploading private notes.</li><li>Restored Trainer Headquarters navigation with a flipable Pokémon Trainer Card and customizable themes, patterns and featured Pokémon.</li><li>The front displays nickname, avatar, region, rank, XP and League Badges. The back displays the team, favorite cards and learning progress; PNG export works offline.</li><li>Preserved existing reading history, Academy Tree, badges, lessons, XP, sprites and music.</li></ul></article>')};
 fusionViews['fusion-news']=fusionNews;
+const oldNews241=fusionNews;
+fusionNews=function(){return oldNews241().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.4.1</span><h3>Settings & Trainer Team Hotfix</h3><ul><li>Restored Settings to both desktop sidebar and top navigation after Trainer Headquarters was added.</li><li>Featured Pokémon now lists only the Pokémon in the currently saved Trainer team; removed the forced Eevee option.</li><li>If a previously featured Pokémon was removed from the team, the card uses the first remaining team member without deleting the old preference.</li><li>Empty teams show a clear placeholder rather than a Pokémon that is not on the team.</li><li>No Academy progress, XP, badges, music preferences, or reading records are reset.</li></ul></article>');};
+fusionViews['fusion-news']=fusionNews;
 window.__ultimateAcademyVersion=VERSION;
 render();
 })();
-</script></body></html>
+</script>
+<style id="ua241-nav-hotfix">
+/* The original eight-item cap must not hide the essential Settings navigation. */
+#sidebarNav button[data-go="settings"],
+#desktopTopNav button[data-go="settings"]{display:flex!important;align-items:center;}
+/* Keep Settings keyboard accessible in both navigation layouts. */
+#sidebarNav button[data-go="settings"]:focus-visible,
+#desktopTopNav button[data-go="settings"]:focus-visible{outline:2px solid var(--gold,#d6ad67);outline-offset:2px;}
+</style>
+
+<style id="ua241-review-style">
+.ua241-review-strip{border:1px solid var(--line,#394762);border-radius:15px;background:var(--panel,#121e35);padding:16px 18px;margin:15px 0 20px}
+.ua241-review-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.ua241-review-top p{margin:5px 0 0;color:var(--sub,#b3c4cf);font-size:13px}
+.ua241-review-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ua241-review-metrics{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.ua241-review-metrics span{padding:5px 10px;border:1px solid var(--line,#40556b);border-radius:10px;font-size:12px}
+.ua241-review-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin:14px 0 18px}
+.ua241-review-item{display:flex;gap:10px;align-items:center;border:1px solid var(--line,#344761);border-radius:12px;background:rgba(255,255,255,.03);padding:9px}
+.ua241-review-item img{width:52px;height:76px;object-fit:contain}
+.ua241-review-item strong{display:block;font-size:13px}
+.ua241-review-item small{display:block;color:var(--sub,#b7c2d1);font-size:11px;line-height:1.4}
+.ua241-review-panel-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+</style>
+<script id="ua241-review-hotfix">
+/* Restore accessible Mastery Review Queue without changing saved review records. */
+(()=>{
+'use strict';
+const previousMastery241=fusionMastery;
+const tarotLessons241=new Map();
+for(const sec of FUSION_TAROT_COURSE){
+ for(const lesson of sec.lessons||[]){
+  if(typeof lesson.topic==='string'&&lesson.topic.startsWith('card:')){
+   tarotLessons241.set(lesson.topic.slice(5).trim().toLowerCase(),lesson.id);
+  }
+ }
+}
+fusionMastery=function(id){
+ const original=previousMastery241(id);
+ if(original!=='New'||!String(id).startsWith('t:'))return original;
+ const c=FUSION_DECK.find(c=>c.id===id);
+ const lid=tarotLessons241.get(String(c?.name||'').trim().toLowerCase());
+ return lid&&fusionTarotLegacyDone(lid)?'Studied':'New';
+};
+function reviewQueue241(){
+ const eligible=FUSION_DECK.filter(c=>fusionMastery(c.id)!=='New');
+ const now=Date.now(),due=[],later=[];
+ for(const c of eligible){
+  const stamp=Date.parse(FUSION.mastery?.[c.id]?.due||'');
+  if(!Number.isFinite(stamp)||stamp<=now)due.push(c);
+  else later.push(c);
+ }
+ later.sort((a,b)=>Date.parse(FUSION.mastery[a.id].due)-Date.parse(FUSION.mastery[b.id].due));
+ return {due,later,eligible:eligible.length};
+}
+const reviewMetrics241=()=>{
+ const q=reviewQueue241();
+ return `<div class="ua241-review-metrics"><span>📅 <b>${q.due.length}</b> due now</span><span>⏳ <b>${q.later.length}</b> scheduled</span><span>📚 <b>${q.eligible}</b> studied</span></div>`;
+};
+function reviewBanner241(){
+ return `<section class="ua241-review-strip" aria-label="Mastery Review Queue"><div class="ua241-review-top"><div><h3 style="margin:0">📅 Mastery Review Queue</h3><p>Review learned Tarot and Oracle cards at spaced intervals. Your existing mastery records are used.</p></div><div class="ua241-review-actions"><button class="btn ghost" data-ua241-review-queue>View review queue</button><button class="btn" data-fusion-game="review">▶ Start review</button></div></div>${reviewMetrics241()}</section>`;
+}
+const collection241=fusionCollection;
+fusionCollection=function(){
+ const html=collection241();
+ const anchor='<div class="fusion-field"';
+ return html.includes(anchor)?html.replace(anchor,reviewBanner241()+anchor):reviewBanner241()+html;
+};
+fusionViews['fusion-collection']=fusionCollection;
+const originalActivities241=fusionActivities;
+fusionActivities=function(){
+ let html=originalActivities241();
+ const legacy='<div class="fusion-tile"><h3>📅 Spaced Review</h3>';
+ const start=html.indexOf(legacy);
+ if(start>=0){const end=html.indexOf('</div>',start);if(end>start)html=html.slice(0,start)+html.slice(end+6);}
+ const anchor='<h2 class="v21-grouphead">🃏 Card Challenges</h2>';
+ return html.includes(anchor)?html.replace(anchor,reviewBanner241()+anchor):reviewBanner241()+html;
+};
+fusionViews['fusion-activities']=fusionActivities;
+function row241(c,status){
+ const due=FUSION.mastery?.[c.id]?.due;
+ const when=status==='due'?'Ready for review':due?`Next: ${new Date(due).toLocaleDateString()}`:'Ready for review';
+ return `<div class="ua241-review-item"><img src="${c.img}" alt="${fusionEscape(c.name)} card" loading="lazy"><div><strong>${fusionEscape(c.name)}</strong><small>${c.deck==='tarot'?'Tarot':'Oracle'} · ${fusionEscape(fusionMastery(c.id))}</small><small>${fusionEscape(when)}</small></div></div>`;
+}
+function openReviewQueue241(){
+ const q=reviewQueue241();
+ const due=q.due.slice(0,12),later=q.later.slice(0,12);
+ showModal('Mastery Review Queue',`<div class="stack"><div class="ua241-review-panel-head"><div><h2 style="margin:0">📅 Spaced Review</h2><p>Practise cards you have studied, then return when they are due again.</p></div><button class="btn" data-fusion-game="review">▶ Start due review</button></div>${reviewMetrics241()}${q.eligible===0?'<div class="fusion-status">No cards in your review queue yet. Finish an individual card lesson or mark a card studied in Tarot / Oracle Cards to add it.</div>':q.due.length?`<h3>Due now ${q.due.length>12?`· first 12 of ${q.due.length}`:''}</h3><div class="ua241-review-list">${due.map(c=>row241(c,'due')).join('')}</div>`:'<div class="fusion-status">All caught up! Your studied cards are scheduled for later.</div>'}${q.later.length?`<h3>Scheduled next ${q.later.length>12?`· first 12 of ${q.later.length}`:''}</h3><div class="ua241-review-list">${later.map(c=>row241(c,'later')).join('')}</div>`:''}<div class="row wrap"><button class="btn ghost" data-fusion-modal-close>Close</button></div></div>`);
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-ua241-review-queue]');
+ if(!b)return;
+ e.preventDefault();e.stopImmediatePropagation();openReviewQueue241();
+},true);
+const oldNewsReview241=fusionNews;
+fusionNews=function(){return oldNewsReview241().replace('Restored Settings to both desktop sidebar and top navigation after Trainer Headquarters was added.','Restored Settings to both desktop sidebar and top navigation after Trainer Headquarters was added.').replace('<li>No Academy progress, XP, badges, music preferences, or reading records are reset.</li>','<li>Mastery Review Queue is now prominently available from Pokémon Arcade and Tarot / Oracle Cards, with live due and scheduled counts.</li><li>Card lessons are recognized as studied for the review queue without resetting existing mastery records.</li><li>No Academy progress, XP, badges, music preferences, or reading records are reset.</li>');};
+fusionViews['fusion-news']=fusionNews;
+window.__ua241ReviewQueue=reviewQueue241;
+const priorRender241=render;
+render=function(...args){const result=priorRender241.apply(this,args);window.__ultimateAcademyVersion='2.4.1';return result;};
+window.__ultimateAcademyVersion='2.4.1';
+})();
+</script>
+</body></html>
