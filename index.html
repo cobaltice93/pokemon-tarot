@@ -6958,4 +6958,145 @@ render=function(...args){const result=priorRender241.apply(this,args);window.__u
 window.__ultimateAcademyVersion='2.4.1';
 })();
 </script>
+
+<style id="ua242-review-style">
+.ua242-study-response{padding:15px;border:1px solid var(--line);border-radius:15px;background:rgba(29,68,83,.18)}
+.ua242-study-response h3{margin:0 0 8px}
+.ua242-study-response img{width:90px;height:134px;object-fit:contain}
+.ua242-study-response .ua242-study-card{display:flex;align-items:center;gap:16px}
+.ua242-study-response .ua242-study-card p{margin:4px 0}
+.ua242-new-pill{background:rgba(51,174,140,.14);border:1px solid rgba(51,174,140,.45);border-radius:16px;padding:4px 10px}
+.ua242-review-note{color:var(--sub,#cbd5df);font-size:12px;margin-top:9px}
+@media(max-width:560px){.ua242-study-response .ua242-study-card{flex-wrap:wrap}}
+</style>
+<script id="ua242-review-fix">
+/* Ultimate Academy V2.4.2 — correctly enroll marked cards and separate review from study. */
+(()=>{
+ 'use strict';
+ const VERSION='2.4.2';
+ const safe=v=>fusionEscape(String(v??''));
+ const masteryRecord=id=>FUSION.mastery?.[id]||{};
+ const learned=id=>fusionMastery(id)!=='New';
+ const available=()=>FUSION_DECK.filter(c=>learned(c.id));
+ const dueNow=c=>{
+  const raw=masteryRecord(c.id).due;
+  const timestamp=raw?Date.parse(raw):NaN;
+  return !Number.isFinite(timestamp)||timestamp<=Date.now();
+ };
+ const newlyStudied=()=>available().filter(c=>!Number(masteryRecord(c.id).reviews||0)).length;
+ const queueStats=()=>{
+  const eligible=available();
+  return {total:eligible.length,now:eligible.filter(dueNow).length,later:eligible.filter(c=>!dueNow(c)).length,newly:eligible.filter(c=>!Number(masteryRecord(c.id).reviews||0)).length};
+ };
+ function updateVisibleCounts(){
+  const stats=queueStats();
+  document.querySelectorAll('.ua241-review-metrics').forEach(box=>{
+   box.innerHTML=`<span>📅 <b>${stats.now}</b> due now</span><span>✨ <b>${stats.newly}</b> new to review</span><span>⏳ <b>${stats.later}</b> scheduled</span><span>📚 <b>${stats.total}</b> studied</span>`;
+  });
+ }
+ function openSingleReview(id){
+  const card=fusionCard(id);
+  if(!card)return;
+  FUSION_GAME={type:'review',pool:[card],question:0,score:0};
+  fusionGameQuestion();
+ }
+ function markNewCard(id){
+  const card=fusionCard(id);
+  if(!card)return;
+  FUSION.mastery=FUSION.mastery||{};
+  const record=masteryRecord(id);
+  const first=!learned(id);
+  if(first){
+   // Learning the card is NOT a quiz attempt, so do not increase reviews or grant Academy XP.
+   FUSION.mastery[id]={...record,studied:true,reviews:record.reviews||0,studiedAt:record.studiedAt||new Date().toISOString(),due:new Date(Date.now()-1000).toISOString()};
+   fusionSave();
+   render();
+  }
+  const status=first?'Added to the queue — ready for your first review.':'Already studied — start a practice review whenever you like.';
+  showModal('Card added to Mastery Review',`<div class="stack ua242-study-response"><div class="ua242-study-card"><img src="${card.img}" alt="${safe(card.name)}"><div><h3>${safe(card.name)}</h3><p>${safe(status)}</p><p class="muted small">Studying adds a card to review. Reviewing it is what determines the next review date.</p></div></div><div class="row wrap"><button class="btn" data-ua242-review-single="${safe(card.id)}">▶ Review this card now</button><button class="btn ghost" data-ua241-review-queue>📅 View queue</button><button class="btn ghost" data-fusion-modal-close>Later</button></div></div>`);
+  updateVisibleCounts();
+ }
+ // Capture the existing Mark Studied button before the older handler marks a fake review.
+ window.addEventListener('click',e=>{
+  const target=e.target.closest('[data-fusion-card-study],[data-ua242-review-single]');
+  if(!target)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(target.hasAttribute('data-ua242-review-single'))openSingleReview(target.dataset.ua242ReviewSingle);
+  else{
+   const id=target.dataset.fusionCardStudy;
+   if(learned(id))openSingleReview(id);
+   else markNewCard(id);
+  }
+ },true);
+ // The card detail should no longer say "Mark studied" if already registered.
+ const earlierOpenCard=fusionOpenCard;
+ fusionOpenCard=function(...args){
+  const result=earlierOpenCard.apply(this,args);
+  const button=document.querySelector('#modal [data-fusion-card-study]');
+  if(button&&learned(button.dataset.fusionCardStudy))button.textContent='▶ Review this card';
+  return result;
+ };
+ // Include cards with an eligible lesson record, even before a formal repetition.
+ // The legacy review function still operates normally for Scene Detective and Chemistry.
+ const previousStart=fusionStartGame;
+ fusionStartGame=function(type){
+  if(type!=='review')return previousStart.apply(this,arguments);
+  const due=available().filter(dueNow);
+  if(due.length){
+   FUSION_GAME={type:'review',pool:fusionRandomPool(due,Math.min(8,due.length)),question:0,score:0};
+   return fusionGameQuestion();
+  }
+  const total=available().length;
+  return showModal('Mastery Review',`<div class="stack"><h2>You're caught up! 🎉</h2><p>${total?`All ${total} studied card${total===1?' is':'s are'} scheduled for later.`:'No cards studied yet. Open Tarot / Oracle Cards and mark one as studied to begin.'}</p><p class="muted small">Spaced review brings cards back after your next review interval. You can still practise them early.</p><div class="row wrap">${total?'<button class="btn" data-ua242-practice-any>▶ Practise studied cards</button>':''}<button class="btn ghost" data-fusion-modal-close>Close</button></div></div>`);
+ };
+ document.addEventListener('click',e=>{
+  const button=e.target.closest('[data-ua242-practice-any]');
+  if(!button)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const pool=fusionRandomPool(available(),8);
+  if(pool.length){FUSION_GAME={type:'review',pool,question:0,score:0};fusionGameQuestion();}
+ },true);
+ // Completing an actual review now changes the spaced repetition schedule.
+ // Wrong answers also count as review attempts (but remain due soon).
+ const priorAnswer=fusionAnswerGame;
+ fusionAnswerGame=function(answerId){
+  const game=FUSION_GAME;
+  if(!game||game.type!=='review')return priorAnswer.apply(this,arguments);
+  const target=fusionCard(game.target);
+  if(!target)return priorAnswer.apply(this,arguments);
+  const good=answerId===game.target;
+  if(good)game.score++;
+  playSfx(good?'level':'hit');
+  FUSION.mastery=FUSION.mastery||{};
+  const record=masteryRecord(target.id);
+  const priorStreak=Number(record.correctStreak||0);
+  const streak=good?Math.max(1,priorStreak+1):0;
+  const hours=good?[24,72,168,336,720][Math.min(streak-1,4)]:(10/60);
+  FUSION.mastery[target.id]={...record,studied:true,reviews:(Number(record.reviews)||0)+1,correctStreak:streak,correct:(Number(record.correct)||0)+(good?1:0),missed:(Number(record.missed)||0)+(good?0:1),last:new Date().toISOString(),due:new Date(Date.now()+hours*3600000).toISOString()};
+  fusionSave();
+  const fullArt=target.deck==='oracle'?(ASSETS.cards[+target.id.slice(2)]?.[0]||target.img):target.img;
+  showModal('Practice feedback',`<div class="fusion-feedback"><img loading="lazy" src="${fullArt}" alt="${safe(target.name)} — full card"><div class="fusion-tile"><h3>${good?'✓ Nicely remembered':'Keep practising'}</h3><p><b>${safe(target.name)}</b> — ${safe(target.theme)}</p><p>${safe(target.shadow)}</p><p class="ua242-review-note">${good?`Next review: ${[1,3,7,14,30][Math.min(streak-1,4)]} day${streak===1?'':'s'}.`:'Review again in about 10 minutes.'}</p><button class="btn" data-fusion-game-next>Next question →</button></div></div>`);
+  game.question++;
+  updateVisibleCounts();
+ };
+ // Refresh the visible counters after navigation or returning from the card dialog.
+ const oldRender=render;
+ render=function(...args){const result=oldRender.apply(this,args);updateVisibleCounts();document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy '+VERSION;return result;};
+ const oldNews=fusionNews;
+ fusionNews=function(){
+  return oldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.4.2</span><h3>Mastery Review Queue Fix</h3><ul><li>Marking a card studied now adds it to the queue as due for its first review immediately.</li><li>Studying no longer falsely counts as a successful review or awards XP.</li><li>Queue counts refresh immediately and distinguish new, due, scheduled and studied cards.</li><li>Correct answers schedule later reviews; incorrect answers return sooner for practice.</li><li>Added direct Review This Card and optional early-practice actions. Existing mastery history remains saved.</li></ul></article>');
+ };
+ fusionViews['fusion-news']=fusionNews;
+ function syncVersion(){
+  document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>{el.textContent='TAROT × ORACLE · '+VERSION;});
+  document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy '+VERSION;
+ }
+ const baseRender=render;
+ render=function(...args){const result=baseRender.apply(this,args);syncVersion();return result;};
+ window.__ultimateAcademyVersion=VERSION;
+ window.__ua242={queueStats,markNewCard,openSingleReview};
+ syncVersion();
+})();
+</script>
+
 </body></html>
