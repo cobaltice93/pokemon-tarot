@@ -6581,4 +6581,274 @@ sync229();
  syncVersion();
  window.__ua230={version:VERSION,lab:()=>!!document.getElementById('ua230-lab-output'),academyCrew:key=>(FUSION_V209_TAROT_TEAMS[key]||[]).filter(k=>ASSETS.pokemon[k]),spiritCrew:key=>(FUSION_V209_ORACLE_TEAMS[key]||[]).filter(k=>ASSETS.pokemon[k])};
 })();
+</script><style id="ua240-style">/* Ultimate Academy V2.4.0: reading modes, Trainer Card */
+.ua240-reading-mode{padding:12px;border:1px solid var(--line);border-radius:12px;margin:14px 0;background:var(--card)}
+.ua240-mode-options{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ua240-mode-options label{border:1px solid var(--line);border-radius:11px;padding:10px;display:flex;align-items:center;gap:7px;cursor:pointer}
+.ua240-reading-actions{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}
+.ua240-history{margin-top:16px}.ua240-history input{width:100%}
+.ua240-history-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:340px;overflow-y:auto;margin-top:14px}
+.ua240-history-item{background:var(--panel,#152638);color:var(--ink);border:1px solid var(--line);padding:12px;text-align:left;border-radius:10px;display:grid;gap:4px}
+.ua240-history-item span{font-size:12px;line-height:1.5}.ua240-history-item small{color:var(--sub)}
+.ua240-profile-panel{max-width:1000px;margin:0 auto;display:grid;gap:18px}
+.ua240-card-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ua240-trainer-card{position:relative;isolation:isolate;background:var(--tc-main);color:#fff;border:5px solid #edce92;outline:1px solid #d5b478;box-shadow:inset 0 0 0 8px var(--tc-dark),0 12px 32px #0003;min-height:440px;max-width:750px;width:100%;margin:0 auto;padding:24px 27px;border-radius:21px;overflow:hidden}
+.ua240-trainer-card:before{content:"";position:absolute;z-index:-1;inset:0;opacity:.22;pointer-events:none;background:repeating-radial-gradient(circle at 12% 25%,transparent 0 27px,var(--tc-light) 29px 42px,transparent 46px 95px)}
+.ua240-pattern-waves:before{background:repeating-linear-gradient(132deg,transparent 0 34px,var(--tc-light) 36px 45px,transparent 48px 92px)}
+.ua240-pattern-stars:before{background:radial-gradient(circle,var(--tc-light) 2px,transparent 4px) 0 0/36px 36px}
+.ua240-pattern-grid:before{background:linear-gradient(var(--tc-light) 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,var(--tc-light) 1px,transparent 1px) 0 0/34px 34px}
+.ua240-pattern-minimal:before{display:none}
+.ua240-trainer-card h2,.ua240-trainer-card strong,.ua240-trainer-card p{color:#fff}
+.ua240-card-heading{display:flex;justify-content:space-between;align-items:center;font-size:23px;letter-spacing:.07em;padding:0 0 12px;border-bottom:2px solid #ffffff77}
+.ua240-card-heading span{font-size:11px}.ua240-front,.ua240-back{padding:17px 0 12px}
+.ua240-person{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:22px}.ua240-person small,.ua240-stat-grid small,.ua240-partner span{font-size:11px;letter-spacing:.06em;opacity:.9}
+.ua240-person h2{font-size:34px;line-height:1.15;margin:4px 0}.ua240-person p{margin:6px 0}
+.ua240-avatar{background:#fff3;border:1px solid #fff6;border-radius:15px;display:grid;place-items:center;height:170px}.ua240-avatar img{height:145px;max-width:155px;object-fit:contain;image-rendering:auto}
+.ua240-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}.ua240-stat-grid>div{padding:11px;background:#ffffff22;border-radius:10px;display:grid}.ua240-stat-grid strong{font-size:22px}
+.ua240-partner{display:flex;align-items:center;gap:12px;padding:8px 12px;background:#ffffff23;border-radius:12px}.ua240-partner img{width:70px;height:65px;object-fit:contain}.ua240-partner strong{font-size:18px}
+.ua240-card-footer{display:flex;justify-content:space-between;opacity:.85;font-size:10px;font-weight:800;letter-spacing:.1em;border-top:1px solid #ffffff60;padding-top:10px}
+.ua240-back>strong{font-size:13px}.ua240-six{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:12px 0}.ua240-six>div{display:grid;place-items:center;min-height:66px;border-radius:13px;background:#ffffff33}.ua240-six img{max-width:68px;max-height:70px;object-fit:contain}
+.ua240-favorites{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ua240-favorites>div{display:flex;gap:11px;align-items:center;background:#ffffff22;border-radius:12px;padding:10px}.ua240-favorites img{width:67px;height:100px;object-fit:contain}.ua240-favorites span{display:grid;gap:4px;min-width:0}.ua240-favorites small{font-size:10px}.ua240-favorites strong{font-size:14px;overflow-wrap:anywhere}
+.ua240-back-progress{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:13px}.ua240-back-progress span{font-size:12px;background:#ffffff22;padding:10px;border-radius:9px;display:flex;justify-content:space-between}
+.ua240-card-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.ua240-card-controls label{display:grid;gap:6px;font-weight:700;font-size:12px}.ua240-card-controls select{background:var(--card);border:1px solid var(--line);color:var(--ink);padding:11px;border-radius:9px}
+@media(max-width:670px){.ua240-history-list{grid-template-columns:1fr}.ua240-trainer-card{padding:16px 15px;min-height:380px}.ua240-card-heading{font-size:18px}.ua240-person{grid-template-columns:96px 1fr;gap:12px}.ua240-avatar{height:116px}.ua240-avatar img{height:105px;max-width:90px}.ua240-person h2{font-size:24px}.ua240-partner img{height:43px;width:45px}.ua240-card-controls{grid-template-columns:1fr}.ua240-favorites>div{flex-direction:column;text-align:center}.ua240-favorites img{height:78px;width:53px}.ua240-six{gap:3px}.ua240-six>div{min-height:40px}.ua240-six img{max-width:38px;max-height:43px}}
+/* Old compact navigation hides items after slot eight; this direct profile link is intentional. */
+#sidebarNav button[data-go="fusion-trainer"],#desktopTopNav button[data-go="fusion-trainer"]{display:flex!important}
+</style><script id="ua240-script">/* Ultimate Academy V2.4.0 — contextual reading and interactive Trainer Card */
+(()=>{
+'use strict';
+const VERSION='2.4.0';
+const E=x=>fusionEscape(String(x??''));
+const tidy=x=>String(x??'').replace(/\s+/g,' ').trim();
+const shorten=(s,n=270)=>{const x=tidy(s);return x.length>n?x.slice(0,n).replace(/\s+\S*$/,'').trim()+'…':x};
+const prefs=()=>FUSION.readingPrefs||(FUSION.readingPrefs={intent:'question',length:'balanced'});
+const conf=()=>FUSION.trainerCard||(FUSION.trainerCard={theme:'classic',pattern:'pokeball',partner:''});
+const palettes={classic:['#408cda','#225ca2','#badbff'],indigo:['#45589a','#263769','#bbbefa'],forest:['#25887a','#18574c','#b4ead8'],volcano:['#c56a59','#82384a','#ffdaa7'],gold:['#c5a057','#80602f','#fff1bd']};
+const oldRead=fusionRead,oldSync=fusionSyncReading,oldCreate=fusionCreateResult,oldNews=fusionNews;
+const oldDaily=fusionDaily;
+const currentIntent=()=>FUSION_READING.readingIntent||prefs().intent||'question';
+const currentLength=()=>FUSION_READING.readingLength||prefs().length||'balanced';
+// Reading controls are additive; existing spread configuration and physical drawing stay in place.
+fusionRead=function(){
+ let html=oldRead();const mode=currentIntent(),length=currentLength();
+ const questionUI=`<div class="ua240-reading-mode"><strong>What kind of reading would you like?</strong><div class="ua240-mode-options"><label><input type="radio" name="ua240-intent" value="question" ${mode==='question'?'checked':''}> Question-based reading</label><label><input type="radio" name="ua240-intent" value="open" ${mode==='open'?'checked':''}> Open reading · no question needed</label></div><p class="muted small">${mode==='open'?'Explore emerging themes without asking a specific question.':'Your question guides how the card positions are interpreted.'}</p></div>`;
+ html=html.replace('<div class="fusion-field"><label>Question or intention</label>',questionUI+'<div class="fusion-field ua240-question"><label>Question or intention</label>');
+ if(mode==='open')html=html.replace(/(<textarea id="fusionQuestion"[^>]*)(>)/,'$1 disabled$2');
+ const lengthUI=`<div class="fusion-field ua240-reading-length"><label>Interpretation length</label><select id="ua240ReadingLength"><option value="quick" ${length==='quick'?'selected':''}>Quick · essential insight</option><option value="balanced" ${length==='balanced'?'selected':''}>Balanced · connected explanation</option><option value="detailed" ${length==='detailed'?'selected':''}>Detailed · position-by-position insight</option></select></div>`;
+ html=html.replace('<div class="fusion-field"><label>Reading focus</label>',lengthUI+'<div class="fusion-field"><label>Reading focus</label>');
+ return html+readingHistoryPanel();
+};
+fusionViews['fusion-read']=fusionRead;
+fusionSyncReading=function(){oldSync();
+ const mode=document.querySelector('input[name="ua240-intent"]:checked')?.value||currentIntent();
+ const length=document.getElementById('ua240ReadingLength')?.value||currentLength();
+ FUSION_READING.readingIntent=mode;FUSION_READING.readingLength=length;
+ prefs().intent=mode;prefs().length=length;
+ if(mode==='open')FUSION_READING.question='';
+ fusionSave();
+};
+fusionCreateResult=function(chosen){
+ fusionSyncReading();const intent=currentIntent(),length=currentLength();
+ oldCreate(chosen);const rec=FUSION.history[0];
+ if(rec){rec.intentMode=intent;rec.readLength=length;if(intent==='open')rec.question='';fusionSave();fusionShowReading(rec);}
+};
+// The earlier engine was mostly spread-driven. Keep it available but provide contextual text for every new and historical reading.
+const previousCompose=fusionComposeSynthesis;
+function intentOf(rec){return rec.intentMode||((tidy(rec.question))?'question':'open');}
+function topicOf(rec){const q=tidy(rec.question).toLowerCase(),c=tidy(rec.context).toLowerCase(),s=q+' '+c;
+ if(/attract|attractive|ugly|desirab|unwanted|dating|date|romantic|crush|love|find me|finds me|find them|flirt|sex|ansehnlich|attraktiv|dating|liebe|anzieh/.test(s))return 'attraction';
+ if(/friend|social|belong|lonely|friendship|companionship|freund|einsam|sozial/.test(s))return 'friendship';
+ if(/work|job|career|business|office|promotion|salary|school|stud|beruf|arbeit|bewerb/.test(s))return 'career';
+ if(/decid|choice|which|whether|option|path|direction|change|move|soll|entschei|wechsel/.test(s))return 'decision';
+ if(/self|confidence|esteem|worth|identity|believ|fear|stress|anx|mental|health|well.being|selbst|wert|angst|gesund/.test(s))return 'self';
+ if(/family|parent|mother|father|famil|eltern/.test(s))return 'family';
+ return 'general';}
+const subjects={
+ attraction:{label:'connection and being wanted',focus:'attention, mutual interest and what is actually known about other people’s responses',question:'What patterns can you observe in how connection happens, without treating one person’s attention as a verdict on your attractiveness?'},
+ friendship:{label:'connection and belonging',focus:'reciprocity, communication and whether your social needs are being met',question:'Where is connection mutual, and what might you want to communicate more clearly?'},
+ career:{label:'your work and direction',focus:'current skills, constraints, resources and realistic decisions',question:'What is one concrete action you can take with the information available now?'},
+ decision:{label:'a choice in front of you',focus:'trade-offs, uncertainty, resources and actions within your control',question:'What evidence would help you distinguish these possible directions?'},
+ self:{label:'your relationship with yourself',focus:'inner narratives, emotional needs and actions that support your well-being',question:'Which belief deserves checking against the evidence, rather than taking it as a fixed truth?'},
+ family:{label:'family dynamics and boundaries',focus:'patterns you have experienced, your boundaries and your available choices',question:'What could help you protect your needs while acknowledging what you cannot control?'},
+ general:{label:'the situation you are exploring',focus:'the card positions, emerging themes and possible next steps',question:'What feels relevant to your situation and what is one realistic way to respond?'}
+};
+function roleName(row){return String(row?.position||'').replace(/^(?:Tarot|Oracle(?: guidance)?)\s*\d*\s*[·:–-]\s*/i,'').trim()||'this position';}
+function roleSense(role){const k=role.toLowerCase();
+ if(/(^you$|your side|self)/.test(k))return 'what you bring to the situation and what you may be seeking';
+ if(/(^them$|their side|other person)/.test(k))return 'your experience of the other side, not private knowledge of someone else’s thoughts';
+ if(/challenge|obstacle|shadow|block/.test(k))return 'a difficulty or tension worth acknowledging';
+ if(/advice|guidance|integration|action/.test(k))return 'a constructive direction to consider';
+ if(/resource|support|strength/.test(k))return 'something supportive or available to you';
+ if(/past/.test(k))return 'a past influence or pattern';
+ if(/future|outcome|potential/.test(k))return 'a possibility, not a guaranteed forecast';
+ if(/present|current|situation/.test(k))return 'what may be relevant right now';
+ if(/path\s*a|option\s*a/.test(k))return 'one possible approach';
+ if(/path\s*b|option\s*b/.test(k))return 'a different possible approach';
+ return 'the particular angle this spread asks you to examine';
+}
+function meaningOf240(card){const c=card.c,r=card.row;return shorten(r.deck==='tarot'?(r.reversed?(c.shadow||c.reversed):(c.theme||c.upright)):(c.theme||c.message_draft||''),300);}
+function oneCard240(card,subject){const position=roleName(card.row),name=card.c.name+(card.row.reversed?' (reversed)':''),meaning=meaningOf240(card),role=position.toLowerCase();
+ if(card.row.deck==='oracle')return `${name} offers guidance alongside the Tarot reading rather than changing its spread positions. ${meaning} One caution from its Shadow is: ${shorten(card.c.shadow,195)} For integration, the card suggests: ${shorten(card.c.action,215)}`;
+ if(role==='you'||/your side/.test(role))return `On your side of the spread, ${name} brings a personal need or aspiration into focus. ${meaning} In this position, ask what kind of ${subject.label} you want to experience—and what you can honestly observe about your own hopes and choices.`;
+ if(role==='them'||/their side|other person/.test(role))return `The other person's position introduces ${name}. ${meaning} This position may help you reflect on how you experience the interaction, but it cannot reveal what somebody privately feels or why they act a certain way.`;
+ if(/advice|guidance|integration|action/.test(role))return `As advice, ${name} shifts attention toward what you can do. ${meaning} Consider what a small, realistic expression of this theme might look like for you.`;
+ if(/challenge|obstacle|shadow|block/.test(role))return `The challenge is represented by ${name}. ${meaning} Rather than treating the difficulty as inevitable, consider which part is real, which is uncertain and what might ease it.`;
+ if(/resource|support|strength/.test(role))return `${name} appears as a resource—a form of support or capacity you may be able to draw upon. ${meaning} Notice where this is already available in daily life.`;
+ if(/past/.test(role))return `Looking back, ${name} suggests an earlier influence worth recognising. ${meaning} Ask how that experience shapes the situation now without assuming the past must repeat.`;
+ if(/future|outcome|potential/.test(role))return `Looking ahead, ${name} indicates one possible development, not a predetermined outcome. ${meaning} Which choices now might support a constructive direction?`;
+ if(/path|option/.test(role))return `One option, represented by ${name}, highlights this possibility: ${meaning} The point is to compare this path's trade-offs with the other positions, not predict a guaranteed result.`;
+ if(/present|current|situation/.test(role))return `For the situation as it stands, ${name} draws attention to a theme you can examine now. ${meaning} Look for evidence of this in your actual circumstances.`;
+ return `${name}, in “${position}”, gives the reading this perspective: ${meaning} Read that theme through the position's question rather than as a fixed prediction.`;
+}
+function contextIntro240(rec,subject,topic,tarot){const q=tidy(rec.question);
+ if(intentOf(rec)==='open')return `No question was supplied. This is an open reading exploring ${subject.label}. The cards describe themes to reflect on, not fixed predictions.`;
+ if(topic==='attraction')return `You asked: “${shorten(q,320)}” This spread cannot establish why particular people do or do not find you attractive, or reveal anyone’s private judgment. It can help you examine what you hope for in connection, what reactions you have actually experienced and how uncertainty affects your interpretation.`;
+ if(topic==='friendship')return `You asked: “${shorten(q,320)}” The cards cannot confirm another person's hidden intentions. Use them to consider observable reciprocity, your own needs and how the relationship feels to you.`;
+ if(topic==='career')return `You asked: “${shorten(q,320)}” Read these positions as a reflection on your available skills, uncertainties and next decisions, not a guaranteed professional outcome.`;
+ if(topic==='decision')return `You asked: “${shorten(q,320)}” This spread can help frame the trade-offs and priorities within that choice, but it cannot make the decision on your behalf.`;
+ if(topic==='self')return `You asked: “${shorten(q,320)}” Use the cards as prompts for reflection rather than proof that a difficult belief about yourself is true.`;
+ return `You asked: “${shorten(q,320)}” Keep that specific concern in mind as you read the positions: the value lies in seeing possible patterns and next steps, not claiming certainty.`;
+}
+fusionComposeSynthesis=function(rec,cards){
+ if(!cards?.length)return previousCompose(rec,cards);
+ const topic=topicOf(rec),subject=subjects[topic],open=intentOf(rec)==='open';
+ const tarot=cards.filter(x=>x.row.deck==='tarot'),oracle=cards.filter(x=>x.row.deck==='oracle');
+ const length=['quick','balanced','detailed'].includes(rec.readLength)?rec.readLength:currentLength();
+ const para=[],intro=contextIntro240(rec,subject,topic,tarot);
+ const lead=tarot[0]||oracle[0],other=tarot[1]||oracle[1];
+ const title=open?`Themes emerging from the cards`:(topic==='attraction'?'Wanting connection amid uncertain reactions':`Exploring ${subject.label}`);
+ if(length==='quick'){
+  para.push(oneCard240(lead,subject));
+  if(other)para.push(`${other.c.name} adds another dimension: ${meaningOf240(other)} The point is to consider how these themes interact, not to treat either one as a final verdict.`);
+  if(oracle.length&&lead.row.deck!=='oracle')para.push(`Oracle guidance from ${oracle[0].c.name}: ${shorten(oracle[0].c.action||oracle[0].c.theme,220)}`);
+ }else{
+  if(tarot.length)para.push(oneCard240(tarot[0],subject));
+  if(tarot.length>1)para.push(oneCard240(tarot[1],subject));
+  if(!tarot.length)para.push(oneCard240(oracle[0],subject));
+  if(tarot.length>1){const a=tarot[0],b=tarot[1];
+   const pair=roleName(a.row).toLowerCase()==='you'&&roleName(b.row).toLowerCase()==='them';
+   para.push(pair?`Together, these positions juxtapose what you hope for or contribute with uncertainty about the other side. ${a.c.name} and ${b.c.name} cannot prove how a specific person sees you. They can, however, suggest separating your need for connection from assumptions about responses you cannot fully know.`:
+   `Together, ${a.c.name} and ${b.c.name} present two aspects of ${subject.label}. Rather than asking which card wins, consider how ${roleName(a.row).toLowerCase()} and ${roleName(b.row).toLowerCase()} might influence each other in the situation you described.`);
+  }
+  if(length==='detailed')for(const c of tarot.slice(2))para.push(oneCard240(c,subject));
+  else if(tarot.length>2)para.push(`Additional positions add detail: ${tarot.slice(2).map(c=>`${c.c.name} in “${roleName(c.row)}” highlights ${shorten(meaningOf240(c),170)}`).join(' ')} Consider their roles in the selected spread rather than treating them as unrelated definitions.`);
+  if(oracle.length){for(const o of (length==='detailed'?oracle:oracle.slice(0,1)))para.push(oneCard240(o,subject));}
+  if(length==='detailed')para.push(`A practical way to use this reading is to distinguish observed facts from interpretation. For ${subject.label}, notice ${subject.focus}. Then choose one action you can test or one question you can ask in the real world. These cards do not replace evidence, communication or judgment.`);
+ }
+ if(!open&&topic==='attraction'&&length!=='quick')para.push('Experiencing less attention than you want can be painful, and it is a real experience worth acknowledging. The cards cannot resolve the reason for that difference. What they can do is give you space to distinguish the desire to feel wanted from any conclusion that your appearance alone explains every interaction.');
+ if(open&&length!=='quick')para.push('Because this was an open reading, you do not have to force these cards into one life situation. Notice which theme resonates, which does not, and whether either suggests a useful reflection.');
+ return {title,intro,paragraphs:para,reflection:open?`Which of these themes feels relevant today, and what is one small action or reflection you want to take from it?`:subject.question};
+};
+function sourceCards240(rec){return (rec.rows||[]).map(row=>({row,c:fusionCard(row.id)})).filter(x=>x.c)}
+function fullText240(rec,notes){const cards=sourceCards240(rec),s=fusionComposeSynthesis(rec,cards);return [
+ 'POKÉMON ULTIMATE ACADEMY · READING',
+ 'Date: '+(rec.created?new Date(rec.created).toLocaleString():''),
+ 'Reading type: '+(intentOf(rec)==='open'?'Open reading':'Question-based reading'),
+ intentOf(rec)==='open'?'Open reading (no question)':'Question: '+(rec.question||'Not supplied'),
+ 'Spread: '+(rec.spread||'Custom'),
+ 'Focus: '+(rec.context||'General'),
+ 'Cards:',...cards.map(x=>`• ${roleName(x.row)}: ${x.c.name}${x.row.reversed?' (reversed)':''} [${x.row.deck}]`),
+ '', 'THE READING AS ONE STORY',s.title,s.intro,...s.paragraphs,'', 'REFLECT ON THIS',s.reflection,'',
+ 'YOUR JOURNAL NOTES',notes||'(none)', '',
+ 'This is a reflective reading, not evidence of hidden thoughts or a guaranteed prediction.'
+ ].join('\n\n');}
+function cardList240(rec){return [rec.question||'Open reading',rec.spread,...(rec.rows||[]).map(r=>`${roleName(r)}: ${fusionCard(r.id)?.name||'Card'}${r.reversed?' (reversed)':''}`)].join('\n')}
+async function copyText240(txt){try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(txt);toast('Copied to clipboard');return true;}}catch(_e){}try{const node=document.createElement('textarea');node.value=txt;node.style.position='fixed';node.style.opacity='0';document.body.appendChild(node);node.select();const ok=document.execCommand('copy');node.remove();if(ok){toast('Copied to clipboard');return true}}catch(_e){}toast('Copy unavailable: try Export TXT');return false}
+function saveTxt240(str,name){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([str],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+const oldShow=fusionShowReading;
+fusionShowReading=function(rec){const outcome=oldShow(rec);const body=document.getElementById('modalBody');if(!body)return outcome;
+ const syn=fusionComposeSynthesis(rec,sourceCards240(rec));const section=body.querySelector('.fusion-summary');
+ if(section){section.innerHTML=`<span class="fusion-summary-eyebrow">${intentOf(rec)==='open'?'OPEN READING · THEMES & REFLECTION':'QUESTION-AWARE READING'}</span><h3>${E(syn.title)}</h3><p class="fusion-reading-context">${E(syn.intro)}</p>${syn.paragraphs.map(x=>`<p class="fusion-summary-paragraph">${E(x)}</p>`).join('')}<div class="fusion-reflection-question"><strong>Reflect on this</strong><p>${E(syn.reflection)}</p></div>`;}
+ body.querySelectorAll('[data-fusion-copy-reading]').forEach(b=>b.textContent='Copy full interpretation');
+ const firstCopy=body.querySelector('[data-fusion-copy-reading]');
+ if(firstCopy){firstCopy.insertAdjacentHTML('afterend',`<div class="ua240-reading-actions"><button class="fusion-soft-btn" data-ua240-copy-list="${E(rec.id)}">Copy card list</button><button class="fusion-soft-btn" data-ua240-export-reading="${E(rec.id)}">Export TXT</button></div>`);}
+ return outcome;
+};
+function readingHistoryPanel(){const items=(FUSION.history||[]).slice(0,400);return `<section class="fusion-tile ua240-history"><h3>🔎 Search past readings</h3><p class="muted small">Find a question, spread or card in your locally saved reading history.</p><input class="input" id="ua240HistorySearch" placeholder="Search a question, spread or card…" aria-label="Search reading history"><div id="ua240HistoryResults" class="ua240-history-list">${historyResults240(items,'')}</div></section>`;}
+function historyResults240(readings,term){const q=tidy(term).toLowerCase();const rows=readings.filter(r=>!q||[r.question,r.spread,r.context,...r.rows.map(x=>fusionCard(x.id)?.name||'')].join(' ').toLowerCase().includes(q)).slice(0,60);return rows.length?rows.map(r=>`<button class="ua240-history-item" data-fusion-revisit="${E(r.id)}"><strong>${E(r.spread)}</strong><span>${E((r.question||'Open reading').slice(0,130))}</span><small>${E((r.created||'').slice(0,10))}</small></button>`).join(''):'<p class="muted small">No matching readings.</p>'}
+// Trainer Card, stored in the same app save; its face and decorations are cosmetic only.
+let currentFace240='front';
+const oldTrainer=fusionViews['fusion-trainer'];
+function partner240(){const stored=conf().partner;return stored&&ASSETS.pokemon[stored]?stored:(S.profile.team||[]).find(k=>ASSETS.pokemon[k])||'eevee';}
+function favoriteTarot240(){return fusionCard(FUSION.tarotFavorite||'t:0')||FUSION_DECK.find(x=>x.deck==='tarot')}
+function favoriteOracle240(){const c=cardById[S.profile.favoriteCard]||DATA.cards[0];return {name:c.title,img:ASSETS.cards[c.number]?.[0]||''}}
+function achievements240(){let league=0;try{league=window.__ua220LeagueCount?.()??0}catch(_e){}return {league,spirit:Object.keys(S.badges||{}).length,tarot:FUSION_TAROT_COURSE.reduce((n,x)=>n+x.lessons.filter(l=>fusionTarotLegacyDone(l.id)).length,0),oracle:DATA.cards.filter(c=>S.completed?.['card-'+c.number]).length,dual:FUSION_DUAL_LESSONS.filter((_,i)=>FUSION.progress['dual:'+i]).length};}
+function profileCard240(){const p=conf(),theme=palettes[p.theme]||palettes.classic,stats=achievements240(),rank=fusionV202Rank(),poke=partner240(),t=favoriteTarot240(),o=favoriteOracle240(),name=S.profile.nickname||'Trainer';
+ const pokemonTeam=(S.profile.team||[]).filter(k=>ASSETS.pokemon[k]).slice(0,6);
+ const themeStyle=`--tc-main:${theme[0]};--tc-dark:${theme[1]};--tc-light:${theme[2]}`;
+ return `<section class="ua240-profile-panel"><div class="ua240-card-toolbar"><div><h2>Pokémon Trainer Card</h2><p class="muted small">Flip to see your journey. Your card and colors are saved locally.</p></div><div class="row wrap"><button type="button" class="btn" data-ua240-flip aria-label="Flip Trainer Card">↻ Flip card</button><button type="button" class="btn ghost" data-ua240-png>⬇ Save ${currentFace240} as PNG</button></div></div>
+ <div class="ua240-trainer-card ua240-pattern-${E(p.pattern)}" style="${themeStyle}" role="region" aria-label="Pokémon Trainer Card ${currentFace240}">
+ <div class="ua240-card-heading"><strong>◉ TRAINER CARD</strong><span>${currentFace240==='front'?'FRONT':'BACK'}</span></div>
+ ${currentFace240==='front'?`<div class="ua240-front"><div class="ua240-person"><div class="ua240-avatar"><img src="${trainerSprite(S.profile.avatar)}" alt="Your Trainer avatar"></div><div><small>TRAINER NAME</small><h2>${E(name)}</h2><p>${E(rank.curr.name)}</p><p>${E(S.profile.region||'Kanto')} Region</p></div></div><div class="ua240-stat-grid"><div><small>ACADEMY XP</small><strong>${rank.xp.toLocaleString()}</strong></div><div><small>LEAGUE BADGES</small><strong>${stats.league}/72</strong></div></div><div class="ua240-partner"><span>FAVOURITE POKÉMON</span><img src="${sprite(poke)}" alt="${E(poke)}"><strong>${E(trainerName(poke))}</strong></div></div>`:
+ `<div class="ua240-back"><strong>YOUR POKÉMON TEAM</strong><div class="ua240-six">${Array.from({length:6},(_,i)=>pokemonTeam[i]?`<div><img src="${sprite(pokemonTeam[i])}" alt="${E(pokemonTeam[i])}"></div>`:'<div>◉</div>').join('')}</div><div class="ua240-favorites"><div><img src="${t?.img||''}" alt="Favourite Tarot card"><span><small>FAVOURITE TAROT</small><strong>${E(t?.name||'Not selected')}</strong></span></div><div><img src="${o.img}" alt="Favourite Oracle card"><span><small>FAVOURITE ORACLE</small><strong>${E(o.name)}</strong></span></div></div><div class="ua240-back-progress"><span>Tarot lessons <b>${stats.tarot}/121</b></span><span>Oracle cards <b>${stats.oracle}/60</b></span><span>Spirit Emblems <b>${stats.spirit}/10</b></span><span>Dual Mastery <b>${stats.dual}/12</b></span></div></div>`}
+ <div class="ua240-card-footer"><span>POKÉMON ULTIMATE ACADEMY</span><span>✦</span></div></div>
+ <div class="ua240-card-controls"><label>Card color<select id="ua240-card-theme">${Object.keys(palettes).map(k=>`<option value="${k}" ${p.theme===k?'selected':''}>${k[0].toUpperCase()+k.slice(1)}</option>`).join('')}</select></label><label>Pattern<select id="ua240-card-pattern">${[['pokeball','Pokéball'],['waves','Waves'],['stars','Stars'],['grid','Geometric'],['minimal','Minimal']].map(([k,label])=>`<option value="${k}" ${p.pattern===k?'selected':''}>${label}</option>`).join('')}</select></label><label>Featured Pokémon<select id="ua240-card-partner">${[...new Set([...(S.profile.team||[]),'eevee'].filter(k=>ASSETS.pokemon[k]))].map(k=>`<option value="${E(k)}" ${poke===k?'selected':''}>${E(trainerName(k))}</option>`).join('')}</select></label></div>
+ <div class="row wrap"><button class="btn" data-fusion-profile-edit>⚙ Edit avatar, team & favourite cards</button><button class="btn ghost" data-ua225-edit>🎭 Gym Leader appearances</button><button class="btn ghost" data-go="fusion-league">🏆 Pokémon League</button></div></section>`;
+}
+fusionViews['fusion-trainer']=function(){return `${fusionHeading('Trainer Headquarters','Your Trainer identity, achievements and favourite partners—now on a two-sided Pokémon card.')}${profileCard240()}`;};
+// Ensure Trainer Headquarters remains a visible navigation option in both layouts.
+const oldProfileAt=navItems.findIndex(n=>n[0]==='fusion-trainer');
+let navEntry=oldProfileAt>=0?navItems.splice(oldProfileAt,1)[0]:['fusion-trainer','♟','Trainer Headquarters'];
+navEntry[1]='♟';navEntry[2]='Trainer Headquarters';
+const leagueAt=navItems.findIndex(x=>x[0]==='fusion-league');navItems.splice(leagueAt>=0?leagueAt+1:6,0,navEntry);
+const fusionEntry=FUSION_MENU.find(n=>n[0]==='fusion-trainer');if(fusionEntry)fusionEntry[2]='Trainer Headquarters';
+// Refresh immediately but do not change course choice or progress.
+const baseRender240=render;
+render=function(...args){const output=baseRender240.apply(this,args);document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>el.textContent='TAROT × ORACLE · V'+VERSION);document.title='Pokémon Ultimate Academy V'+VERSION;return output;};
+function drawText240(ctx,text,x,y,max=33){const words=String(text).split(' ');let line='',yy=y;for(const word of words){const test=(line+' '+word).trim();if(ctx.measureText(test).width>max&&line){ctx.fillText(line,x,yy);yy+=26;line=word}else line=test;}ctx.fillText(line,x,yy);return yy;}
+async function loadImg240(src){return await new Promise(resolve=>{if(!src)return resolve(null);const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src;});}
+async function trainerPng240(){const palette=palettes[conf().theme]||palettes.classic,canvas=document.createElement('canvas');canvas.width=960;canvas.height=620;const ctx=canvas.getContext('2d');if(!ctx)return;
+ ctx.fillStyle=palette[0];ctx.fillRect(0,0,960,620);ctx.fillStyle=palette[1];ctx.fillRect(16,16,928,588);
+ ctx.globalAlpha=.16;ctx.strokeStyle=palette[2];ctx.lineWidth=3;for(let i=0;i<16;i++){ctx.beginPath();ctx.arc(150,120,i*19,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;
+ ctx.fillStyle='#ffffff';ctx.font='bold 38px sans-serif';ctx.fillText('◉  TRAINER CARD',44,70);ctx.font='bold 20px sans-serif';ctx.fillText(currentFace240.toUpperCase(),842,65);
+ if(currentFace240==='front'){
+ const rank=fusionV202Rank(),stat=achievements240(),person=await loadImg240(trainerSprite(S.profile.avatar)),poke=await loadImg240(sprite(partner240()));
+ ctx.fillStyle=palette[0];ctx.fillRect(40,110,245,325);if(person)ctx.drawImage(person,68,130,185,270);
+ ctx.fillStyle='#fff';ctx.font='17px sans-serif';ctx.fillText('TRAINER NICKNAME',320,145);ctx.font='bold 41px sans-serif';drawText240(ctx,S.profile.nickname||'Trainer',320,198,540);ctx.font='bold 25px sans-serif';ctx.fillText(rank.curr.name,320,247);ctx.font='22px sans-serif';ctx.fillText((S.profile.region||'Kanto')+' Region',320,290);ctx.fillText('XP: '+rank.xp.toLocaleString(),320,350);ctx.fillText('League Badges: '+stat.league+'/72',320,395);
+ ctx.fillText('Favourite Pokémon: '+trainerName(partner240()),44,505);if(poke)ctx.drawImage(poke,585,420,140,135);
+ }else{
+ ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.fillText('YOUR POKÉMON TEAM',42,145);const team=(S.profile.team||[]).filter(k=>ASSETS.pokemon[k]).slice(0,6);for(let i=0;i<team.length;i++){const im=await loadImg240(sprite(team[i]));if(im)ctx.drawImage(im,40+i*146,165,115,115);}
+ const tar=favoriteTarot240(),ora=favoriteOracle240(),imgs=await Promise.all([loadImg240(tar?.img),loadImg240(ora.img)]);
+ if(imgs[0])ctx.drawImage(imgs[0],44,310,105,165);if(imgs[1])ctx.drawImage(imgs[1],460,310,105,165);ctx.font='bold 22px sans-serif';ctx.fillText('Tarot: '+(tar?.name||''),155,365);ctx.fillText('Oracle: '+ora.name,575,365);
+ const stats=achievements240();ctx.font='19px sans-serif';ctx.fillText(`Tarot ${stats.tarot}/121 · Oracle ${stats.oracle}/60 · Dual ${stats.dual}/12 · Emblems ${stats.spirit}/10`,42,525);
+ }
+ ctx.fillStyle='#e7f5ff';ctx.font='bold 18px sans-serif';ctx.fillText('POKÉMON ULTIMATE ACADEMY',40,580);
+ canvas.toBlob(blob=>{if(!blob){toast('Could not export PNG');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`trainer-card-${currentFace240}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)},'image/png');
+}
+// Capture before older delegated handlers for complete-copy and Trainer Card controls.
+window.addEventListener('click',function(ev){const el=ev.target.closest('button');if(!el)return;
+ if(el.hasAttribute('data-fusion-copy-reading')||el.hasAttribute('data-ua240-copy-list')||el.hasAttribute('data-ua240-export-reading')){
+  ev.preventDefault();ev.stopImmediatePropagation();const id=el.dataset.fusionCopyReading||el.dataset.ua240CopyList||el.dataset.ua240ExportReading;
+  const rec=FUSION.history.find(x=>x.id===id);if(!rec)return;
+  const notes=document.getElementById('fusionReadingNotes')?.value??rec.notes??'';
+  if(el.hasAttribute('data-fusion-copy-reading'))copyText240(fullText240(rec,notes));
+  else if(el.hasAttribute('data-ua240-copy-list'))copyText240(cardList240(rec));
+  else saveTxt240(fullText240(rec,notes),'ultimate-academy-reading-'+(rec.created||'reading').slice(0,10)+'.txt');return;
+ }
+ if(el.hasAttribute('data-ua240-flip')){ev.preventDefault();ev.stopImmediatePropagation();currentFace240=currentFace240==='front'?'back':'front';render();return;}
+ if(el.hasAttribute('data-ua240-png')){ev.preventDefault();ev.stopImmediatePropagation();trainerPng240();return;}
+},true);
+document.addEventListener('change',function(ev){const el=ev.target;
+ if(el.name==='ua240-intent'){
+  FUSION_READING.readingIntent=el.value;prefs().intent=el.value;
+  // Preserve draft question while showing open reading; it is excluded from open readings.
+  if(el.value==='question'&&FUSION_READING.savedQuestion)FUSION_READING.question=FUSION_READING.savedQuestion;
+  if(el.value==='open')FUSION_READING.savedQuestion=document.getElementById('fusionQuestion')?.value||FUSION_READING.question||'';
+  fusionSave();const y=window.scrollY;render();window.scrollTo(0,y);return;
+ }
+ if(el.id==='ua240ReadingLength'){FUSION_READING.readingLength=el.value;prefs().length=el.value;fusionSave();return;}
+ if(['ua240-card-theme','ua240-card-pattern','ua240-card-partner'].includes(el.id)){
+  if(el.id==='ua240-card-theme')conf().theme=palettes[el.value]?el.value:'classic';
+  if(el.id==='ua240-card-pattern')conf().pattern=['pokeball','waves','stars','grid','minimal'].includes(el.value)?el.value:'pokeball';
+  if(el.id==='ua240-card-partner')conf().partner=ASSETS.pokemon[el.value]?el.value:'eevee';
+  fusionSave();const y=window.scrollY;render();window.scrollTo(0,y);
+ }
+},true);
+document.addEventListener('input',function(ev){if(ev.target?.id==='ua240HistorySearch'){const out=document.getElementById('ua240HistoryResults');if(out)out.innerHTML=historyResults240(FUSION.history||[],ev.target.value)}},true);
+// Fix repeated navigating-on-copy and supply accurate bullet-point release history.
+fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.4.0</span><h3>Question-Aware Readings & Trainer Card</h3><ul><li>Complete reading interpretations are included when copying notes; added card-list copy and TXT export.</li><li>Question-based and open reading modes, with Quick, Balanced and Detailed explanations based on card meanings and spread positions.</li><li>Search saved readings by question, spread or card, locally without uploading private notes.</li><li>Restored Trainer Headquarters navigation with a flipable Pokémon Trainer Card and customizable themes, patterns and featured Pokémon.</li><li>The front displays nickname, avatar, region, rank, XP and League Badges. The back displays the team, favorite cards and learning progress; PNG export works offline.</li><li>Preserved existing reading history, Academy Tree, badges, lessons, XP, sprites and music.</li></ul></article>')};
+fusionViews['fusion-news']=fusionNews;
+window.__ultimateAcademyVersion=VERSION;
+render();
+})();
 </script></body></html>
