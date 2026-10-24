@@ -8107,6 +8107,16 @@ for(const [id,phase] of [['major-review-1','early'],['major-review-2','middle'],
 const bankPrev=fusionV18TarotQuestionSet;
 const qbank=(l)=>{const d=LESSONS[l?.id];if(!d)return bankPrev(l);const base=[fusionV18ChoiceQuestion(d.question,d.answer,d.wrong,d.definition),fusionV18ChoiceQuestion(l.title+' — '+d.application,d.applicationAnswer,d.other,d.example),fusionV18ChoiceQuestion('Which caveat matters in '+l.title+'?',d.distinction,['Every interpretation guarantees the future.','A card tells you all private thoughts.','Only the artwork matters; context never does.'],d.distinction),fusionV18ChoiceQuestion('What is the learning goal in '+l.title+'?',d.goal,['Memorize answers without understanding.','Skip all questions and meanings.','Use Pokémon types as fortune-telling rules.'],d.definition)];return fusionV18Balance(base);};
 fusionV18TarotQuestionSet=qbank;
+// Reuse the named Trainer cast and refresh controls with the current curriculum's teaching notes.
+function ua3TrainerSpeech(lesson,data,step){
+ const cast=fusionV17Cast(),trainer=cast[(step+1)%cast.length]||cast[0]||['school-kid','Academy Trainer','academic'];
+ const context={subject:lesson.title,lesson:fusionV205TrimSentence(step===1?data.example:data.definition,175),contrast:data.distinction,exercise:data.application};
+ let words=fusionV205Voice(trainer[2],step===4?1:step,context);
+ if(step===0)words+=' '+data.goal;
+ if(step===2)words+=' '+data.distinction;
+ if(step===4)words+=' Your takeaway: '+data.goal;
+ return fusionV204Speech(trainer[1],trainer[0],words);
+}
 // Keep all individual card renderers from V2.6.2 intact. Use subject-specific concept lessons only.
 const oldLesson=fusionRenderTarotLesson;
 fusionRenderTarotLesson=function(){const a=FUSION_LESSON;if(!a||a.type!=='tarot'||!LESSONS[a.id])return oldLesson();const d=LESSONS[a.id], l=byId.get(a.id)||FUSION_TAROT_COURSE.flatMap(s=>s.lessons).find(x=>x.id===a.id);const step=Math.max(0,Math.min(4,Number(a.step)||0)),names=['Understand','Observe','Experiment','Practise','Remember'];a.step=step;
@@ -8119,8 +8129,10 @@ fusionRenderTarotLesson=function(){const a=FUSION_LESSON;if(!a||a.type!=='tarot'
  if(step===3){const questions=qbank(l),idx=Math.max(0,Math.min(questions.length-1,Number(a._ua3QuestionIdx)||0)),q=questions[idx];a._ua3ActualQuestion=q;const picked=Number.isInteger(a._ua3Answer)?a._ua3Answer:null;inner=`<div class="ua3-panel"><h3>Apply what you've learned</h3><p><strong>${e(q.q)}</strong></p><div class="ua3-options">${q.options.map((opt,i)=>`<button type="button" data-ua3-answer="${i}" class="${picked===i?'selected':''}">${String.fromCharCode(65+i)} · ${e(opt)}</button>`).join('')}</div><div class="ua3-quiz-feedback" id="ua3-feedback" role="status">${picked===null?'Choose an answer to see why it fits.':`${picked===q.correctIndex?'✓ Correct':'Not quite'} · ${e(q.why)}<p><b>Correct:</b> ${e(q.correctText)}</p>`}</div><button type="button" class="ua3-test-button" data-ua3-other-question>Try a different question</button></div>`;}
  if(step===4){if(!fusionTarotLegacyDone(a.id)){fusionSetProgress('tarot:'+a.id,false);}inner=`<div class="ua3-panel"><h3>Lesson recap</h3><p>${e(d.goal)}</p><div class="ua3-concepts"><article><strong>Remember</strong><p>${e(d.definition)}</p></article><article><strong>Apply it</strong><p>${e(d.example)}</p></article></div><div class="ua3-example"><b>Watch out for</b>${e(d.distinction)}</div><p>${tester()?'🧪 Beta preview · no XP or progress awarded.':'This lesson is complete. Continue along the Adventure Tree.'}</p><button class="btn" data-fusion-tarot-quiz>⚔ Optional Pop Quiz</button><button class="btn ghost" data-fusion-modal-close>Back to Academy</button></div>`;}
  const foot=step<4?`<div class="ua3-actions"><button class="btn ghost" data-ua3-step="${step-1}" ${step===0?'disabled':''}>← Back</button><button class="btn" data-ua3-step="${step+1}">${step===3?'Complete Lesson':'Continue'} →</button></div>`:'';
- fusionTarotLessonFrame(`<div class="ua3-lesson">${tester()?'<div class="ua3-tester-banner">🧪 Tester preview: rewards and completion disabled</div>':''}${head}${inner}${foot}<button type="button" class="ua3-test-button" data-ua3-report>📋 Copy issue report</button></div>`);
+ fusionTarotLessonFrame(`<div class="ua3-lesson">${tester()?'<div class="ua3-tester-banner">🧪 Tester preview: rewards and completion disabled</div>':''}${head}${inner}${ua3TrainerSpeech(l,d,step)}${foot}<button type="button" class="ua3-test-button" data-ua3-report>📋 Copy issue report</button></div>`);
  const body=document.getElementById('modalBody');if(body)body.scrollTop=stepChanged?0:previous;a._ua3Step=step;};
+// Keep draft text when New Trainer rerenders the current concept stage.
+document.addEventListener('input',ev=>{if(ev.target.id==='ua3-explain-text'&&FUSION_LESSON?.type==='tarot')FUSION_LESSON._ua3Explain=ev.target.value;},true);
 // Lesson stage actions. Capture prevents legacy delegated handlers from hijacking new controls.
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ua3-step],[data-ua3-answer],[data-ua3-other-question],[data-ua3-report],[data-ua3-explain-check]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();const a=FUSION_LESSON;if(!a)return;
  if(b.hasAttribute('data-ua3-step')){a.step=Math.max(0,Math.min(4,Number(b.dataset.ua3Step)||0));a._ua3Answer=null;fusionRenderTarotLesson();}
