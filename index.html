@@ -6521,12 +6521,12 @@ sync229();
   const a=FUSION_LESSON;
   if(button.hasAttribute('data-ua230-step')){
    const note=document.getElementById('fusionTarotReflection');if(note){FUSION.reflections['tarot:'+a.id]=note.value;fusionSave();}
-   a.step=Math.max(0,Math.min(4,Number(button.dataset.ua230Step)||0));a.ua230Answer=null;renderTarot();return;
+   a.step=Math.max(0,Math.min(4,Number(button.dataset.ua230Step)||0));a.ua230Answer=null;fusionRenderTarotLesson();return;
   }
   if(button.hasAttribute('data-ua230-switch')){
    const src=fusionLessonSource();if(!src?.cards?.length)return;
    a.focus=((Number(a.focus)||0)+Number(button.dataset.ua230Switch)+src.cards.length)%src.cards.length;
-   a.ua230Keyword=0;renderTarot();return;
+   a.ua230Keyword=0;fusionRenderTarotLesson();return;
   }
   if(button.hasAttribute('data-ua230-keyword')){
    a.ua230Keyword=Number(button.dataset.ua230Keyword)||0;
@@ -7293,28 +7293,7 @@ window.__ultimateAcademyVersion='2.4.1';
    }
    return originalFrame(body,footer);
  };
- // Change keyword selections to meaningful differences beyond word substitution.
- const focusFor=(word)=>{
-   const w=String(word||'').toLowerCase();
-   if(/risk|fear|anxiet|uncertain|danger|worr|caution/.test(w))return ['Caution and uncertainty','Consider what could go wrong and what protective step you can take.','What risk would you want to prepare for before acting?'];
-   if(/freedom|independ|choice|liberat|open|new|begin|opportun|adventur/.test(w))return ['Opportunity and autonomy','Look for the possibility of a new direction without ignoring practical limits.','Which small choice is actually yours to make?'];
-   if(/trust|connect|lov|friend|belong|compassion|emotion/.test(w))return ['Trust and connection','Notice how relationships, support or mutual understanding shape the situation.','What evidence of trust or support can you observe?'];
-   if(/balance|justice|fair|truth|clarity|decision|reason|account/.test(w))return ['Fairness and clarity','Weigh evidence, responsibilities and consequences before taking a position.','What information would make your next decision fairer?'];
-   if(/reflect|solitude|wisdom|quiet|withdraw|study|insight/.test(w))return ['Reflection and perspective','Give yourself space to observe before reacting, without assuming that isolation solves everything.','What could a quiet moment help you understand more clearly?'];
-   if(/grow|progress|effort|work|practice|skill|persist|mastery/.test(w))return ['Growth through practice','Look for steady improvement, including the work and support required to sustain it.','What small skill can you practise this week?'];
-   return ['This particular nuance','Use this documented keyword as a lens on the card, not as a prediction or a stand-alone answer.','Which part of the real situation best matches this nuance?'];
- };
- // Rebuild keyword panel in-place after a keyword selection (without resetting scroll).
- document.addEventListener('click',event=>{
-   const b=event.target.closest('[data-ua230-keyword]');
-   if(!b||FUSION_LESSON?.type!=='tarot')return;
-   const src=fusionLessonSource(),a=FUSION_LESSON,c=src?.cards?.[Math.min(a.focus||0,src.cards.length-1)];
-   if(!c)return;
-   const word=(c.keywords||[])[Number(b.dataset.ua230Keyword)]||c.suit||c.rank;
-   const [emphasis,advice,prompt]=focusFor(word);
-   // Execute after the original selector updates its saved index and selected chip.
-   queueMicrotask(()=>{const out=document.getElementById('ua230-keyword-output');if(!out)return;out.innerHTML=`<strong>${E(word)} · ${E(emphasis)}</strong><p><b>Meaning in this deck:</b> ${E(c.upright)}</p><p><b>What changes when this keyword is emphasized?</b> ${E(advice)}</p><p><b>Try interpreting it:</b> ${E(prompt)}</p>`;});
- },true);
+ // Keyword selection is handled once by the original handler and keywordExplanation.
  // A compact hint goes underneath existing personality/pun dialogue rather than replacing it.
  const HINTS={Kanto:'Tarot basics · observation versus inference · upright and reversed · reflective questions',Johto:'Your studied Tarot lessons · card context · upright and reversed',Hoenn:'Studied suit and rank meanings · responsible interpretation',Sinnoh:'Interpreting studied cards · spread position and context',Unova:'Completed Tarot lessons · combining card meanings',Kalos:'Studied Tarot lessons · relationships between themes',Alola:'Studied Oracle families · Message, Shadow and Integration',Galar:'Studied Tarot and Oracle material · synthesis',Paldea:'Studied Tarot and Oracle material · applying themes'};
  const priorModal=showModal;
@@ -7405,7 +7384,7 @@ html:has(.ua260-overlay){overflow:hidden}
 @media(max-width:650px){.ua260-dialog{padding:14px}.ua260-dialog h2{font-size:20px}.ua260-choices{grid-template-columns:1fr}.ua260-dictionary{grid-template-columns:1fr}.ua260-steps{grid-template-columns:1fr}.ua260-start{padding:12px}}
 
 /* Refresher mode provides the concise concept card and skips the two long introductory paragraphs; all practice steps stay available. */
-.ua260-refresher .ua230-gloss,.ua260-refresher .ua230-card:has(> h3:first-child){display:none}
+.ua260-refresher .ua230-gloss,.ua260-refresher [data-ua260-intro]{display:none}
 .ua260-refresher .ua260-quick-summary{display:block}
 
 </style>
@@ -7549,7 +7528,8 @@ html:has(.ua260-overlay){overflow:hidden}
    html=html.replace('<section class="ua230-learning">',`<section class="ua230-learning ${isEarly?'ua260-no-card-spoiler':''} ${config().mode==='refresher'?'ua260-refresher':''}">${glossaryBar}`);
    if(a.step===0&&config().mode==='refresher'){
     const quick=String(fusionLessonTheory(lesson)||fusionLessonConcept(lesson,[])||lesson?.title||'').replace(/\s+/g,' ').slice(0,265);
-    html=html.replace('<div class="ua230-card"><h3>Today\'s learning goal</h3>',`<div class="ua260-tip ua260-quick-summary"><strong>Quick refresher · ${h(lesson?.title||'Tarot concept')}</strong><p>${h(quick)}</p></div><div class="ua230-card"><h3>Today\'s learning goal</h3>`);
+    // Mark only the introduction; Observe, practice and recap stay visible.
+    html=html.replace('<div class="ua230-card">',`<div class="ua260-tip ua260-quick-summary"><strong>Quick refresher · ${h(lesson?.title||'Tarot concept')}</strong><p>${h(quick)}</p></div><div class="ua230-card" data-ua260-intro>`);
    }
    if(a.step===0&&config().mode!=='refresher'){
     const help=getPrimer(a.section,lesson?.id);
@@ -7765,7 +7745,11 @@ document.addEventListener('click',e=>{const button=e.target.closest('[data-ua261
 const baseDualPair261=fusionV14DualPair;
 const tarotPassed261=c=>!!c&&FUSION_TAROT_COURSE.some(section=>section.lessons.some(lesson=>lesson.topic==='card:'+c.name && fusionTarotLegacyDone(lesson.id)));
 const oraclePassed261=c=>!!c&&!!S.completed?.['card-'+c.number];
-const allowedDual261=(id)=>{
+const allowedDual261=(id,preferred)=>{
+  if(Number.isInteger(preferred)&&preferred>=0){
+    const pair=baseDualPair261(Number(id),preferred);
+    if(Array.isArray(pair)&&tarotPassed261(pair[0])&&oraclePassed261(pair[1]))return {variant:preferred,pair};
+  }
   for(let n=0;n<40;n++){
     const pair=baseDualPair261(Number(id),n);
     if(Array.isArray(pair)&&tarotPassed261(pair[0])&&oraclePassed261(pair[1]))return {variant:n,pair};
@@ -7785,9 +7769,10 @@ fusionDualLesson=function(id){
 };
 const baseDualQuiz261=fusionDualQuiz;
 fusionDualQuiz=function(id){
- const allowed=allowedDual261(id);
+ const current=FUSION_LESSON?.type==='dual'&&Number(FUSION_LESSON.id)===Number(id);
+ const allowed=allowedDual261(id,current?FUSION_LESSON.variant:undefined);
  if(!allowed){showModal('Dual Mastery · Study first',`<p>Complete the individual Tarot and Oracle card lessons before attempting this comparative quiz.</p><button class="btn" data-fusion-modal-close>Return to Learning Tree</button>`);return;}
- if(!FUSION_LESSON||FUSION_LESSON.type!=='dual')FUSION_LESSON={type:'dual',id:Number(id),step:4,variant:allowed.variant};
+ if(!current)FUSION_LESSON={type:'dual',id:Number(id),step:4,variant:allowed.variant};
  else FUSION_LESSON.variant=allowed.variant;
  return baseDualQuiz261(id);
 };
