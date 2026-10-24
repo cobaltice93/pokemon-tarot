@@ -7812,4 +7812,115 @@ render();
 })();
 
 </script>
+<style id="ua262-scroll-toolbar">/* V2.6.2: progress UI is outside the lesson's scrollable body. */
+#modal .modal-box > .ua262-lesson-toolbar{
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+  padding:12px clamp(12px,3vw,24px) 11px!important;
+  margin:0!important;
+  background:#121e36!important;
+  color:#f2f4ff!important;
+  border-bottom:1px solid #334461!important;
+  box-shadow:none!important;
+  isolation:isolate!important;
+  z-index:30!important;
+  overflow:visible!important;
+}
+#modal .modal-box > .ua262-lesson-toolbar::before{
+  content:none!important;
+}
+#modal .modal-box:has(> .ua262-lesson-toolbar) > #modalBody{
+  position:relative!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain!important;
+  scrollbar-gutter:stable!important;
+  background:var(--card)!important;
+  isolation:isolate;
+}
+#modal .ua262-lesson-toolbar .fusion-wizard-label{
+  margin:7px 0 8px!important;
+}
+#modal .ua262-lesson-toolbar .fusion-lesson-layout-tabs{
+  margin:0!important;
+}
+@media(max-width:620px){
+ #modal .modal-box > .ua262-lesson-toolbar{padding:10px 12px 9px!important;}
+ #modal .ua262-lesson-toolbar .fusion-lesson-layout-tabs button{min-height:32px;}
+}
+</style>
+<script id="ua262-scroll-hotfix">/* Ultimate Academy V2.6.2: separated lesson toolbar and stable in-page scrolling. */
+(() => {
+ 'use strict';
+ const VERSION='2.6.2';
+ const modal=document.getElementById('modal');
+ const body=document.getElementById('modalBody');
+ const panel=modal?.querySelector('.modal-box');
+ if(!modal||!body||!panel)return;
+ let previousKey=null;
+ let previousType=null;
+ function syncVersion(){
+   document.querySelectorAll('[data-ultimate-version-label],.ua240-version-label').forEach(el=>el.textContent='V'+VERSION);
+   document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>el.textContent='TAROT × ORACLE · V'+VERSION);
+   document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VERSION;
+   window.__ultimateAcademyVersion=VERSION;
+ }
+ const originalShowModal=showModal;
+ // A toolbar must never persist when changing from a lesson to a different modal.
+ showModal=function(...args){
+   const previous=panel.querySelector(':scope > .ua262-lesson-toolbar');
+   if(previous)previous.remove();
+   const result=originalShowModal.apply(this,args);
+   syncVersion();
+   return result;
+ };
+ const originalFrame=fusionTarotLessonFrame;
+ fusionTarotLessonFrame=function(...args){
+   const lesson=FUSION_LESSON;
+   const key=lesson?.type==='tarot' ? `${lesson.section}|${lesson.id}|${Number(lesson.step)||0}` : null;
+   const oldScroll=body.scrollTop;
+   const preserve=!!key&&key===previousKey&&modal.classList.contains('open')&&previousType==='tarot';
+   const result=originalFrame.apply(this,args);
+   // Structural fix: the lesson toolbar is a sibling of the SCROLL CONTAINER,
+   // so no lesson text can be painted behind it or above it at any scroll offset.
+   const bar=body.querySelector('.fusion-tarot-wizard > .fusion-wizard-top');
+   if(bar){
+     bar.classList.add('ua262-lesson-toolbar');
+     panel.insertBefore(bar,body);
+   }
+   body.scrollTop=preserve?Math.min(oldScroll,body.scrollHeight-body.clientHeight):0;
+   previousKey=key;
+   previousType=lesson?.type||null;
+   return result;
+ };
+ // Exiting Tarot or opening a non-lesson modal removes its remaining toolbar.
+ // This ensures the close X, other dialogs and navigation cannot inherit it.
+ document.addEventListener('click',event=>{
+   if(event.target.closest('#modalClose,[data-fusion-modal-close]')){
+     previousKey=null;
+     previousType=null;
+   }
+ },true);
+ const oldRender=render;
+ render=function(...args){
+   const result=oldRender.apply(this,args);
+   syncVersion();
+   return result;
+ };
+ const oldNews=fusionNews;
+ fusionNews=function(...args){
+   const existing=oldNews.apply(this,args);
+   const patch='<article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V2.6.2</span><h3>Lesson scrolling and toolbar hotfix</h3><ul><li>Lesson progress, stage indicator and Focus/Split/Gallery controls now stay in a separate solid toolbar directly below the title, with no text showing behind them.</li><li>Changing cards, keywords or layouts within a lesson stage preserves scroll position.</li><li>Opening a new lesson or proceeding to the next stage starts at the top of that stage.</li><li>Other dialogs no longer inherit a stale lesson toolbar.</li></ul></article>';
+   return existing.replace('<div class="fusion-news-list">','<div class="fusion-news-list">'+patch);
+ };
+ fusionViews['fusion-news']=fusionNews;
+ render();
+ syncVersion();
+ window.__ua262={version:VERSION,activeToolbar:()=>!!panel.querySelector(':scope > .ua262-lesson-toolbar')};
+})();
+</script>
 </body></html>
