@@ -7923,4 +7923,306 @@ render();
  window.__ua262={version:VERSION,activeToolbar:()=>!!panel.querySelector(':scope > .ua262-lesson-toolbar')};
 })();
 </script>
+<style id="ua300-styles">/* V3.0: concise self-contained concept lesson layouts and beta tools */
+.ua3-lesson{max-width:1020px;margin:0 auto;padding:22px 2px;color:var(--text,#e9efff)}
+.ua3-kicker{font-size:.72rem;letter-spacing:.12em;color:#c9a25e;font-weight:800;text-transform:uppercase}
+.ua3-lesson h2{font-family:Georgia,serif;font-size:clamp(1.4rem,3vw,2.25rem);margin:12px 0}
+.ua3-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:18px 0}
+.ua3-steps span{text-align:center;border-bottom:4px solid #33455d;padding:8px 3px;font-size:.73rem;color:#b6c7df}
+.ua3-steps .active{border-bottom-color:#ddb16b;color:#fff;font-weight:800}
+.ua3-panel{border:1px solid #364d6b;border-radius:16px;background:#070f24;padding:clamp(15px,3vw,24px);margin:13px 0}
+.ua3-panel h3{font-family:Georgia,serif;margin:0 0 12px;font-size:1.4rem;color:#f4f5ff}
+.ua3-panel p{line-height:1.7}
+.ua3-example{border-left:4px solid #e1b168;border-radius:8px;padding:12px 16px;margin-top:14px;background:#17283b}
+.ua3-example b{display:block;margin-bottom:6px;color:#efcd91}
+.ua3-concepts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.ua3-concepts article{background:#192a3d;border:1px solid #3f6078;border-radius:12px;padding:13px}
+.ua3-concepts strong{color:#f2ce87}
+.ua3-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.ua3-options button{border:1px solid #52647a;background:#162840;color:#fff;border-radius:10px;padding:14px;text-align:left;cursor:pointer;min-height:62px}
+.ua3-options button:hover{border-color:#e8b96a}.ua3-options button.selected{background:#195a5e;border-color:#86dbc5}
+.ua3-actions{display:flex;gap:10px;justify-content:space-between;margin:20px 0 8px;flex-wrap:wrap}
+.ua3-quiz-feedback{background:#1c3346;border-radius:10px;padding:14px;line-height:1.6;margin-top:10px}
+.ua3-tester-banner{padding:9px 12px;border:1px solid #e0b873;border-radius:12px;background:#473218;color:#ffe9c3;font-weight:700;margin:12px 0}
+.ua3-curriculum-intro{margin-bottom:14px;border:1px solid #3e6682;border-radius:12px;background:#10263c;padding:14px}
+.ua3-curriculum-intro h3{margin:0 0 6px}
+.ua3-beta-panel{padding:15px;border:1px solid #506b89;border-radius:14px;background:rgba(20,46,69,.75);margin:12px 0}
+.ua3-beta-panel label{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 2px}
+.ua3-beta-panel input[type=checkbox]{width:20px;height:20px;flex-shrink:0}
+.ua3-beta-sub{font-size:.83rem;opacity:.82;line-height:1.5}
+.ua3-beta-panel .ua3-beta-settings{padding-left:16px;border-left:3px solid #a88b5d}
+.ua3-test-button{border:1px solid #8da4b8;border-radius:9px;padding:8px 13px;color:inherit;background:#20364e;cursor:pointer}
+.ua3-test-button.danger{border-color:#cf7272;color:#ffcaca}
+.ua3-test-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.ua3-badge{display:inline-block;border-radius:20px;background:#1a604d;color:#d8ffdf;font-size:.75rem;padding:4px 9px;margin:5px}
+@media(max-width:600px){.ua3-steps span{font-size:.61rem}.ua3-options,.ua3-concepts{grid-template-columns:1fr}.ua3-lesson{padding:10px 0}.ua3-panel{padding:14px}}
+/* A dark, opaque reading canvas in either site theme; prevents white-on-white typography */
+#modalBody:has(.ua3-lesson),
+#modalBody:has(.ua3-lesson) .fusion-tarot-wizard,
+#modalBody:has(.ua3-lesson) .fusion-wizard-content,
+#modalBody:has(.ua3-lesson) .ua3-lesson{background:#131d34!important;color:#eaf0fe!important}
+#modalBody:has(.ua3-lesson) .fusion-wizard-content{padding:0 12px 14px!important}
+.ua3-lesson h2,.ua3-lesson h3{color:#f5f7ff!important}
+.ua3-lesson .ua3-steps span{color:#b6c7df!important}
+.ua3-lesson .ua3-steps span.active{color:#fff!important}
+.ua3-lesson .ua3-panel p,.ua3-lesson .ua3-panel{color:#eaf0fe!important}
+</style>
+<script id="ua300-curriculum-and-tester">/* Ultimate Academy 3.0 — intentional beta curriculum rebuild, honest rewards-free tester mode */
+(()=>{
+'use strict';
+const V='3.0.0', e=x=>fusionEscape(String(x??''));
+const original=FUSION_TAROT_COURSE.map(section=>({...section,lessons:[...section.lessons]}));
+const byId=new Map(original.flatMap(s=>s.lessons).map(l=>[l.id,{...l}]));
+const used=new Set();
+function pick(id,title){if(used.has(id))throw Error('Duplicate lesson '+id);used.add(id);const l=byId.get(id);if(!l)throw Error('Missing lesson '+id);if(title)l.title=title;return l}
+function extra(id,title,topic){if(used.has(id))throw Error('Duplicate '+id);used.add(id);return {id,title,topic,kind:'study',mins:5}}
+const checkpoints=['found-check','read-check','minor-check','wands-check','cups-check','swords-check','pentacles-check','major-check','court-check','spread-check'];
+const chapters=[];
+function chapter(id,title,lessons){const at=chapters.length;const checkpoint=pick(checkpoints[at],`Gym Checkpoint · ${title.split(' — ')[0]}`); chapters.push({id,title,section:'Chapter '+(at+1),lessons:[...lessons,checkpoint]})}
+chapter('foundations','Tarot Foundations — Begin Your Journey',[
+ pick('found-welcome','What Is Tarot? Its Origins and Purpose'),extra('v3-pokemon','Why Pokémon? Symbols and Storytelling','v3:pokemon'),pick('minor-overview','Understanding the 78-Card Deck'),pick('minor-suits','Four Suits and the Minor Arcana'),pick('found-orientation','Upright and Reversed: A Different Lens'),pick('read-position','What Is a Spread? Card Positions Explained'),pick('found-question','Asking Useful Tarot Questions'),pick('found-reflection','Tarot Ethics and Honest Interpretation')]);
+for(const [id,name,theme] of [['wands','Wands','Fire · action and creativity'],['cups','Cups','Water · connection and feeling'],['swords','Swords','Air · thought and challenge'],['pentacles','Pentacles','Earth · material life and stability']]){
+ const orig=original.find(x=>x.id===id).lessons;
+ const study=orig.filter(l=>l.kind!=='practice');
+ chapter(id,`${name} — ${theme}`,study.map(l=>pick(l.id,l.title)));
+}
+chapter('major','Major Arcana — Life’s Larger Themes',original.find(s=>s.id==='major').lessons.filter(l=>l.kind!=='practice').map(l=>pick(l.id,l.title)));
+chapter('court','Court Cards — People, Roles and Personalities',[
+ pick('minor-courts','Court Card Ranks — An Overview'),...original.find(s=>s.id==='court').lessons.filter(l=>l.kind!=='practice').map(l=>pick(l.id,l.title))]);
+chapter('spreads','Spreads — Layouts and Card Positions',[
+ pick('read-anatomy','Card Anatomy and Reading Positions'),...original.find(s=>s.id==='spreads').lessons.filter(l=>l.kind!=='practice' && l.id!=='spread-final').map(l=>pick(l.id,l.title))]);
+chapter('interpretation','Reading Skills — Meaning, Context and Number Patterns',[
+ pick('found-imagery','Observation vs. Interpretation'),pick('read-keywords','From Keywords to Meaningful Sentences'),pick('read-context','Applying Card Meaning to the Question'),pick('read-synthesis','Connecting Challenges and Resources'),...['minor-ace-two','minor-three-four','minor-five-six','minor-seven-eight','minor-nine-ten'].map(id=>pick(id)),pick('spread-final','Connecting Several Cards into One Reading')]);
+chapter('final','Tarot Master Challenge — Complete Readings',[
+ extra('v3-final-one','Build a Complete Reading','v3:final'),extra('v3-final-two','Check Interpretations Against Evidence','v3:final'),extra('v3-final-three','Explain Your Reading to a Client','v3:final'),extra('v3-final-four','Review Your Reading Practice','v3:final')]);
+if(chapters.length!==10)throw Error('Expected 10 chapters');
+const missing=[...byId.keys()].filter(id=>!used.has(id));
+if(missing.length)throw Error('Unassigned lesson IDs: '+missing.join(', '));
+FUSION_TAROT_COURSE.splice(0,FUSION_TAROT_COURSE.length,...chapters);
+FUSION_V19_UNIT.tarot=Math.max(0,Math.min(9,Number(FUSION_V19_UNIT.tarot)||0));
+// Curated concept content. Each task has a unique educational purpose, rather than a reused suit overview.
+const LESSONS={};
+function teach(id,goal,definition,example,distinction,question,answer,wrong,application,applicationAnswer,other){
+ LESSONS[id]={goal,definition,example,distinction,question,answer,wrong,application,applicationAnswer,other};
+}
+teach('found-welcome','Understand what Tarot is and how its history differs from modern reading practice.',
+'Tarot began as a playing-card tradition in northern Italy in the fifteenth century. The familiar 78-card deck developed from card games; using Tarot as an occult or divinatory system became prominent centuries later. Today readers may use its imagery for spiritual reflection, storytelling or consideration of choices.',
+'Imagine asking “What might help me approach a difficult conversation?” The cards give symbolic themes to reflect on. You still use real information, judgment and personal choice.',
+'A reading is an interpretation, not independent proof of future events or what another person thinks.',
+'Which statement about Tarot history is accurate?','Tarot originated as playing cards and acquired divinatory uses later.',
+['Tarot was originally designed as a Pokémon teaching game.','Tarot has always been a scientific prediction method.','Every Tarot reading must follow one spiritual tradition.'],
+'What can a reader reasonably claim?','Cards can suggest themes to reflect on, not verify hidden facts.',
+['The cards prove another person’s thoughts.','Every spread predicts an exact future date.','Tarot replaces informed decisions.']);
+teach('v3-pokemon','Understand how Pokémon characters illustrate traditional Tarot concepts.',
+'This is a fan-created Pokémon Tarot. The Pokémon featured in the illustrations are visual analogies: their poses, abilities, stories and settings can help you recall a card’s meaning. The traditional Tarot structure and names still come first.',
+'A picture of a small Pokémon beginning a journey can express the idea of exploration, without implying that the Pokémon itself originated in historical Tarot.',
+'Pokémon is a memory aid and artistic interpretation, not the source of Tarot history or a substitute for the card’s documented meaning.',
+'Why are Pokémon used on the Tarot cards?','To illustrate and help remember the Tarot symbolism.',
+['Because Pokémon invented Tarot.','Because every Pokémon has a fixed universal Tarot meaning.','To replace the 78-card Tarot structure.'],
+'What should guide your interpretation?','The card’s actual meaning together with the artwork and question.',
+['A Pokémon type matchup alone.','Guessing only from the Pokémon name.','Assuming all Pokémon of one type mean the same thing.']);
+teach('minor-overview','Learn how the full 78-card Tarot deck is organized.',
+'Tarot has 22 Major Arcana cards for broad archetypal themes and 56 Minor Arcana cards for everyday experiences. The Minor Arcana has four suits with fourteen cards each: Ace to Ten, then Page, Knight, Queen and King.',
+'When organizing the deck, you can separate the 22 Major Arcana from the four groups of 14 Minor Arcana without yet memorizing any individual card.',
+'The division describes how the deck is structured; it does not mean that Major cards are always “more important” in every reading.',
+'How is a 78-card Tarot deck divided?','22 Major Arcana and 56 Minor Arcana.',
+['56 Major Arcana and 22 Minor Arcana.','40 Major Arcana and 38 Minor Arcana.','60 Oracle cards and 18 Tarot cards.'],
+'How many cards are in each Minor Arcana suit?','Fourteen: ten numbered and four Court Cards.',
+['Twenty-two, all numbered.','Ten numbered cards with no Court Cards.','Four, one for each element.']);
+teach('minor-suits','Recognize the four life domains described by the suits.',
+'Wands evokes motivation, action and creativity (Fire). Cups concerns emotions, connection and relationships (Water). Swords explores thoughts, communication and tension (Air). Pentacles relates to resources, work and the physical world (Earth).',
+'If a question centers on practical savings, Pentacles is a useful suit domain. If it concerns an emotional connection, Cups is more directly relevant. These are domains, not guaranteed outcomes.',
+'The suit gives the topic; each individual card and spread position provide the specific interpretation later.',
+'Which suit relates most directly to feelings and relationships?','Cups — Water.',
+['Wands — Fire.','Swords — Air.','Pentacles — Earth.'],
+'Which pairing suits a question about practical resources?','Pentacles — Earth.',
+['Cups — Water.','Swords — Air.','Wands — Fire.']);
+teach('found-orientation','Understand orientation without assuming reversed means bad.',
+'An upright card is displayed in its usual orientation. A reversed card is turned upside down. Reversals can indicate an internalized, delayed, blocked or exaggerated expression of a theme; the exact nuance depends on the particular card.',
+'As a neutral example, the theme “movement” could suggest action upright and hesitation or excessive haste reversed. This is an illustration of orientation, not the meaning of an individual card.',
+'Reversed does not automatically mean negative, just as upright does not guarantee positive.',
+'What does a reversal change?','How a documented card theme may be expressed.',
+['The card’s suit permanently changes.','Every positive meaning becomes a bad outcome.','The card is no longer part of Tarot.'],
+'What should you avoid when seeing a reversed card?','Assuming that reversed always means something bad.',
+['Reading it alongside the question.','Considering delayed or internal themes.','Consulting its card-specific explanation.']);
+teach('read-position','Learn what a spread does without learning card names early.',
+'A spread is an arrangement of card positions used to organize a reading. The positions assign roles such as Present (what influences this situation), Challenge (what complicates it), Resource (what helps) and Advice (a constructive approach).',
+'Imagine placing two blank practice cards: one labeled Challenge and one labeled Advice. An abstract “change” theme might point to instability in Challenge and to flexibility in Advice.',
+'A card’s position is the role it plays; it is not the card’s name or its permanent meaning.',
+'What is a Tarot spread?','A layout of positions that give drawn cards specific roles.',
+['A new suit within Minor Arcana.','A guarantee that a prediction will happen.','A type of Pokémon attack.'],
+'Which position asks for a constructive response?','Advice.',
+['Challenge.','Present.','Background.']);
+teach('found-question','Write thoughtful questions that leave room for choices.',
+'A helpful Tarot question is clear and reflective. It usually asks what you might learn, examine or do. You can read without any question too—an open reading simply considers the themes that arise.',
+'Instead of “Will my interview go perfectly?” try “What can I prepare for, and what should I pay attention to during the interview?”',
+'Asking a question does not make a card a source of certain facts about somebody else.',
+'Which question invites practical reflection?','What can I do to prepare for this conversation?',
+['Exactly what will another person think tomorrow?','Which date am I guaranteed to be hired?','Can this card prove someone is lying?'],
+'What is an open reading?','A reading that explores themes without requiring a specific question.',
+['A reading that reveals confidential thoughts.','A reading without any card positions ever.','A guaranteed prediction.']);
+teach('found-reflection','Learn responsible Tarot interpretation and boundaries.',
+'Tarot readers can describe symbolism and possible perspectives while acknowledging uncertainty. Readings should not replace professional medical, legal or financial advice or be used to assert private information about others.',
+'If a reading appears to suggest anxiety, describe it as a possible theme for reflection instead of telling someone you know exactly what another person is feeling.',
+'Personal beliefs about energy or spirituality vary. They can be discussed as beliefs, not presented as mandatory facts for every reader.',
+'Which is responsible Tarot language?','This card may invite reflection on uncertainty.',
+['This card proves the other person secretly fears you.','This reading gives a certain medical diagnosis.','The cards make the decision for you.'],
+'Which reading claim crosses a boundary?','Claiming certainty about another person’s hidden thoughts.',
+['Using conditional language.','Describing a visible symbol.','Exploring actions within the questioner’s control.']);
+const SUITS={Wands:['Fire, initiative, enthusiasm, creative drive and the willingness to begin.','A person planning a creative event may recognize the Wands domain of passion and action.','Wands does not automatically guarantee success; you learn each card separately.','Which domain best fits Wands?','Motivation, creativity and action.',['Only romantic attachment.','Only financial security.','Only analytical conflict.']],Cups:['Water, affection, relationships, emotional needs and intuition.','A discussion about trust or belonging is likely to involve the Cups domain.','Cups does not automatically mean romantic love; context and specific cards matter.','Which domain best fits Cups?','Feelings, connection and relationships.',['Only work contracts.','Only creative ambition.','Only logic and debate.']],Swords:['Air, thinking, communication, analysis and conflict.','Planning a difficult conversation illustrates the Swords domain of ideas and clarity.','Swords are not automatically bad: analysis and truth can also be constructive.','Which domain best fits Swords?','Thought, communication and conflict.',['Only personal wealth.','Only affection and reunion.','Only creative excitement.']],Pentacles:['Earth, physical life, material resources, health routines and work.','A question about maintaining a budget or building a dependable routine fits Pentacles.','Pentacles is not merely “being rich”; it includes responsibility and practical stability.','Which domain best fits Pentacles?','Work, resources and practical stability.',['Only romantic longing.','Only psychic ability.','Only abstract conflict.']]};
+for(const [s,a] of Object.entries(SUITS))teach(s.toLowerCase()+'-intro',
+ `Discover the ${s} suit as a whole; individual cards come next.`,
+ `${s} is associated with ${a[0]} The suit describes a life domain. Number, Court rank and card-specific meaning will be introduced in their proper lessons.`,a[1],a[2],a[3],a[4],a[5],
+ `Before studying the individual ${s} cards, what should you know?`,
+ `The ${s} suit’s theme, without assuming specific card meanings.`,
+ ['All fourteen cards are identical.','Every illustration predicts an outcome.','The suit alone tells the complete story.']);
+const RANKS=[['minor-ace-two','Ace versus Two','An Ace expresses potential or a beginning. A Two considers duality, a relationship between factors, or a choice.','Starting a project is Ace-like; deciding between approaches is Two-like.','The difference is a developmental pattern, not the guaranteed meaning of every suit.','What is the central difference between Ace and Two?','Ace opens a possibility; Two considers a balance or choice.'],['minor-three-four','Three versus Four','A Three commonly concerns development, expansion or creating together. A Four often explores consolidating, stabilizing or pausing.','Building an idea with others reflects Three; establishing a routine reflects Four.','Stability can be supportive or restrictive.','Which is more associated with stabilizing what has grown?','Four.'],['minor-five-six','Five versus Six','A Five commonly signals disruption or tension. Six often explores response, transition, help or adjustment.','A team argument is Five-like; working toward a constructive solution is Six-like.','Six does not automatically undo the Five.','Which rank often explores what comes after disruption?','Six.'],['minor-seven-eight','Seven versus Eight','Seven can invite assessment or persistence; Eight can show committed effort, motion or repeated application.','Evaluating a plan resembles Seven; repeatedly putting it into practice resembles Eight.','Neither rank guarantees immediate success.','Which rank is often about putting effort into motion?','Eight.'],['minor-nine-ten','Nine versus Ten','Nine often suggests a nearing culmination or independent attainment; Ten explores completion and its consequences, satisfying or burdensome.','Nearing the end of a project can feel Nine-like; managing the outcome can feel Ten-like.','A Ten is not necessarily a happy ending.','Which rank often shows the consequences of a full cycle?','Ten.']];
+for(const [id,label,def,ex,contrast,q,ans] of RANKS)teach(id,`Compare rank patterns: ${label}.`,def,ex,contrast,q,ans,['Every rank means exactly the same thing.','The rank is unrelated to the card.','Only the Pokémon species determines the rank.'],`What matters besides the general rank pattern?`,'The suit, position, question and card-specific meaning.',['Only the number.','Only the card illustration.','The player’s favourite Pokémon.']);
+// Every non-card topic should be an identifiable teaching objective, never the old one-size-fits-all Observe panel.
+const V3_CUSTOM=new Set(Object.keys(LESSONS));
+// Additional training methods and final chapter have dedicated, distinct examples.
+const SUPPLEMENT={
+'v3-final-one':['Bring the entire reading into focus.','A good reading introduces the question, describes each card in its spread role, explains interactions and closes with a grounded takeaway.','A reader might link a Challenge about uncertainty with a Resource about support, then propose seeking more information.','A connected narrative is more helpful than three unconnected definitions.','Which structure makes a complete reading?','Question → card roles → synthesis → practical takeaway.'],
+'v3-final-two':['Check interpretations against observable evidence.','Tarot offers possibilities; a careful reader separates symbolism, observed facts, unknowns and assumptions.','A reversed card may raise the theme of delay, but a reader should not claim an employer has already rejected someone.','Uncertainty is not evidence for a definite accusation or prediction.','What should you do with an uncertain interpretation?','Present it as a possibility and compare it with available facts.'],
+'v3-final-three':['Communicate an interpretation clearly and ethically.','Summarize a card’s relevant meaning, respect the position, acknowledge uncertainty, and support the questioner’s agency.','Try “This could invite you to examine how you communicate,” not “The cards prove your friend is dishonest.”','You cannot diagnose, reveal secrets or guarantee events with cards.','Which wording respects the client’s agency?','This theme may help you consider your next step.'],
+'v3-final-four':['Review your strengths and plan targeted practice.','Identify what you can explain confidently, which card distinctions still confuse you, and which spread positions need repetition.','Return to your Mistake Notebook and Mastery Review rather than memorizing the entire deck from the start.','A mistake is diagnostic feedback, not a personal failure.','What is the best use of a missed question?','Review the specific concept and practise it again.']};
+for(const [id,[goal,def,ex,contrast,q,ans]] of Object.entries(SUPPLEMENT))teach(id,goal,def,ex,contrast,q,ans,['Ignore the actual question.','Declare a guaranteed prediction.','Repeat unrelated memorized definitions.'],'How can this skill help during a real reading?','It connects symbolism to thoughtful, realistic reflection.',['It gives secret knowledge.','It guarantees a future event.','It eliminates the need for context.']);
+// Suit-story recaps follow fourteen individual card lessons; they introduce no premature card examples.
+const STORIES={
+ Wands:['Ace to Four: a creative spark, planning direction, expansion and establishing a point of celebration.','Five to Eight: competition, recognition, standing your ground and momentum. Nine and Ten: persistence and the weight of responsibilities. The Courts explore learning, pursuing, embodying and directing the suit.'],
+ Cups:['Ace to Four: emotional openings, connection, community and contemplation.','Five to Eight: grief, memories, tempting possibilities and choosing to move on. Nine and Ten: personal contentment and shared fulfillment. Courts explore feeling through different levels of maturity.'],
+ Swords:['Ace to Four: clarity, difficult choices, heartache and recovery.','Five to Eight: conflict, transition, strategy and feeling constrained. Nine and Ten: overwhelming worry and painful endings. The Courts bring inquiry, decisiveness, judgment and leadership.'],
+ Pentacles:['Ace to Four: practical opportunity, balance, teamwork and holding resources.','Five to Eight: hardship, giving and receiving, sustained effort and craft. Nine and Ten: earned independence and long-term legacy. Courts show how practical skills mature.']};
+for(const [name,[first,second]] of Object.entries(STORIES))teach(name.toLowerCase()+'-story',`Link the fourteen ${name} cards into a coherent suit journey.`,first+' '+second,`In a reading, ask how early ${name} cards introduce a situation, how middle ranks complicate it, and how later ranks bring consequences and growth.`, 'These rank patterns summarize a progression; each individual card still has its own artwork, context and reversed meaning.',`What makes a ${name} suit narrative useful?`,'It connects specific meanings across the fourteen studied cards.',['It makes all cards interchangeable.','It guarantees that rank Ten is always good.','It removes the need to interpret positions.'],`How should a Court Card fit the ${name} story?`,'It shows a role or approach shaped by the same suit’s themes.',['It must describe someone of a specific gender.','It always represents the next calendar year.','It automatically cancels the numbered cards.']);
+// Contextual (but not pre-card) lesson material for previously reused templates.
+const MORE={
+ 'read-anatomy':['Learn what the parts of a card do.','A name identifies a card; its imagery offers visual clues. Minor cards also have a suit and rank. The spread position belongs to the reading layout rather than being printed on the card.','An Advice slot asks for a constructive approach regardless of which card lands there.','Name, rank and position are different kinds of information.'],
+ 'read-keywords':['Turn a keyword into an interpretation.','A keyword is not the final reading. Add the question, card position and a realistic implication.','“Patience” in Advice may invite waiting for clearer information before deciding.','One word does not explain how a theme applies to someone’s question.'],
+ 'read-context':['Make the question relevant to the interpretation.','Context affects emphasis: a theme about balance can concern work, friendship, self-care or planning.','At work, balance might concern responsibilities; in friendship, it might concern mutual expectations.','Context changes emphasis; it does not override the documented card meaning.'],
+ 'read-synthesis':['Link meanings into one coherent answer.','Synthesis makes connections among card positions instead of listing independent definitions.','Challenge: uncertainty, Resource: supportive conversation. A synthesis suggests seeking perspective while accepting unanswered questions.','Connections between roles matter more than repeating keyword lists.'],
+ 'found-imagery':['Differentiate visible details from inferred meaning.','An observation describes what actually appears in a picture. An interpretation explains a possible symbolic relevance.','“A path divides” is an observation; “this may suggest a decision” is an interpretation.','An image does not prove external facts or hidden intentions.'],
+ 'court-intro':['Understand Court Cards as roles rather than literal people.','Pages often learn and explore, Knights pursue or act, Queens embody or nurture a quality, and Kings direct or master it. These are interpretive roles, not gender rules.','A Knight can represent someone taking action—or the action you are considering yourself.','A Court Card need not refer to an actual person of the corresponding gender.'],
+ 'minor-courts':['Compare Page, Knight, Queen and King.','Pages explore, Knights actively pursue, Queens integrate and support, and Kings coordinate or lead. Different suits express each rank in different domains.','A Page approaches a skill as a student; a King can signify taking responsibility for using it.','Court ranks are not literal ages or fixed identities.'],
+ 'court-pages':['Compare the four Pages across suits.','A Page explores the suit: Wands experiments creatively, Cups explores feelings, Swords seeks ideas, Pentacles learns practical skills.','Two Pages may share curiosity but differ in what they are curious about.','The shared Page rank does not erase suit differences.'],
+ 'court-knights':['Compare four ways of pursuing a goal.','Knights express active pursuit shaped by suit: adventurous Wands, romantic Cups, decisive Swords and methodical Pentacles.','Consider whether your situation needs a fast response or steady persistence.','A Knight is not automatically a literal visitor.'],
+ 'court-queens':['Compare the four Queens as lived qualities.','Queens integrate suit qualities: confident creativity, emotional understanding, clear judgment and practical care.','Responding to conflict with thoughtful boundaries can resemble a Queen-like maturity without identifying a particular person.','Do not reduce Queens to gender stereotypes.'],
+ 'court-kings':['Compare the Kings as directing influences.','Kings use suit qualities responsibly: vision and energy, emotional steadiness, intellectual discernment and material stewardship.','A King theme might ask you to lead a project responsibly rather than predict the appearance of a man.','Leadership is a role, not a gender prediction.'],
+ 'court-person-role':['Decide whether a Court Card describes a person or a role.','A Court Card can represent a real person, the questioner, a behavioral tendency or an approach the situation requires.','In Advice, a Court Card often asks how to embody a quality rather than who will enter your life.','A person-related card does not provide certainty about someone’s identity.'],
+ 'spread-one':['Build one-card reading skills.','A one-card spread can represent a theme, advice or reflection. Define the single position before interpreting the card.','A “What might help today?” slot frames the selected card as Advice.','One card can be useful without claiming to explain every detail.'],
+ 'spread-three':['Learn three-position relationships.','A three-card spread gives each card a distinct role. Popular examples include Situation–Challenge–Advice or Past–Present–Possible Direction.','Three blank positions named Situation, Resource, Action provide a useful blueprint for later learned cards.','A position label is a prompt, not a guarantee of future events.'],
+ 'spread-choice':['Explore choices responsibly.','A decision spread can compare needs, risks, resources and possible paths without surrendering your agency.','Ask what to consider about option A and B rather than which one the cards guarantee will succeed.','A spread is a tool for reflection, not a substitute for deciding.'],
+ 'spread-rel':['Read relationship topics with boundaries.','Choose positions about communication, needs and actions. Avoid claiming knowledge of another person’s private thoughts.','A You–Them spread can compare perspectives but cannot prove what “Them” is thinking.','An unknown other person’s inner life must remain unknown.'],
+ 'spread-long':['Understand multi-position spreads.','A Horseshoe spread and Celtic Cross expand the number of distinct roles, so positioning and synthesis become especially important.','Start by identifying what each position asks before connecting the cards into an overall pattern.','More cards do not automatically mean a more accurate prediction.'],
+ 'spread-question':['Match layout to the real question.','A single guidance question may need one card; complex decisions may benefit from three or more carefully named roles.','For “How should I approach this meeting?”, Situation–Challenge–Advice can be clearer than an oversized spread.','Choose positions for usefulness, not just for their number.'],
+ 'spread-final':['Connect several cards into one clear narrative.','Respect each position, identify shared or contrasting themes, and phrase the result as a reflection tied to the question.','A challenge of uncertainty and a resource of collaboration together may suggest asking for help while assessing unknowns.','Avoid separate definitions with no connecting idea.']};
+for(const [id,[goal,def,ex,contrast]] of Object.entries(MORE))teach(id,goal,def,ex,contrast,'What best describes the purpose of this skill?',goal.replace(/\.$/,'.'),['Identify secret information about someone.','Guarantee an exact event.','Ignore the reading question.'],'What would make this lesson useful in a reading?',ex,['Make an unsupported prediction.','Use the same response regardless of context.','Skip the spread positions.']);
+// Suit and Major introduction/reviews are kept only after their individual cards are reached.
+teach('major-intro','Understand the Major Arcana as 22 broad archetypal themes.','Major Arcana cards explore larger life experiences, transitions and patterns. Unlike Minor Arcana, they have a numbered series rather than four suits. Study the individual meanings in the lessons that follow.','The idea of change can be a broad Major theme; its precise meaning requires a specific learned card.','A Major card does not make a reading inherently more certain.','How many Major Arcana cards are in the standard Tarot deck?','Twenty-two.',['Fifty-six.','Fourteen.','Sixty.'],'How are the Major Arcana organized?','As a numbered sequence of archetypal cards, not four suits.',['As four suits of fourteen.','As 60 Spirit families.','As sixteen Court Cards.']);
+for(const [id,phase] of [['major-review-1','early'],['major-review-2','middle'],['major-review-3','later']])teach(id,`Connect the ${phase} stages of the Major Arcana journey.`,`You have now studied a group of Major Arcana cards. Compare their documented themes as a development of experience, instead of memorizing disconnected phrases.`, 'Choose two completed cards from this section and explain how their themes could interact in an Advice–Challenge spread.','The Fool’s Journey is a teaching metaphor, not a fixed description of any person’s life.','What is the value of comparing Major Arcana cards?','You learn how their themes connect in a reading.',['You can predict exact dates.','All cards become interchangeable.','You no longer need card meanings.'],'Which cards should you compare?','Cards from the individual lessons you already completed.',['Unstudied cards from future chapters.','Only cards of the same Pokémon type.','Any card selected without context.']);
+const bankPrev=fusionV18TarotQuestionSet;
+const qbank=(l)=>{const d=LESSONS[l?.id];if(!d)return bankPrev(l);const base=[fusionV18ChoiceQuestion(d.question,d.answer,d.wrong,d.definition),fusionV18ChoiceQuestion(l.title+' — '+d.application,d.applicationAnswer,d.other,d.example),fusionV18ChoiceQuestion('Which caveat matters in '+l.title+'?',d.distinction,['Every interpretation guarantees the future.','A card tells you all private thoughts.','Only the artwork matters; context never does.'],d.distinction),fusionV18ChoiceQuestion('What is the learning goal in '+l.title+'?',d.goal,['Memorize answers without understanding.','Skip all questions and meanings.','Use Pokémon types as fortune-telling rules.'],d.definition)];return fusionV18Balance(base);};
+fusionV18TarotQuestionSet=qbank;
+// Keep all individual card renderers from V2.6.2 intact. Use subject-specific concept lessons only.
+const oldLesson=fusionRenderTarotLesson;
+fusionRenderTarotLesson=function(){const a=FUSION_LESSON;if(!a||a.type!=='tarot'||!LESSONS[a.id])return oldLesson();const d=LESSONS[a.id], l=byId.get(a.id)||FUSION_TAROT_COURSE.flatMap(s=>s.lessons).find(x=>x.id===a.id);const step=Math.max(0,Math.min(4,Number(a.step)||0)),names=['Understand','Observe','Experiment','Practise','Remember'];a.step=step;
+ const previous=document.getElementById('modalBody')?.scrollTop||0;const stepChanged=a._ua3Step!==step;
+ const isRefresher=FUSION.ua260?.mode==='refresher';const head=`<div class="ua3-kicker">Tarot Academy · ${e(d.goal)}</div><h2>${e(l?.title||a.id)}</h2><div class="ua260-lesson-bridge"><div class="ua260-row"><b>📖 Learning tools</b><button type="button" class="ua260-gloss-button" data-ua260-open="glossary">Glossary · Tap to define</button><span class="ua260-status">${isRefresher?'Refresher summaries':'Beginner explanations'}</span></div><div class="ua260-terms"><button data-ua260-term="Spread">Spread ⓘ</button><button data-ua260-term="Keyword">Keyword ⓘ</button><button data-ua260-term="Orientation">Orientation ⓘ</button></div></div><div class="ua3-steps">${names.map((n,i)=>`<span class="${step===i?'active':''}">${n}</span>`).join('')}</div>`;
+ let inner='';
+ if(step===0)inner=`<div class="ua3-panel"><h3>${isRefresher?'Quick refresher':'What you’ll learn'}</h3><p>${e(isRefresher?d.definition.slice(0,230)+(d.definition.length>230?'…':''):d.definition)}</p><div class="ua3-example"><b>Your learning goal</b>${e(d.goal)}</div>${isRefresher?'<p>Need the full explanation? Switch to Beginner mode in the Learning tools.</p>':''}</div>`;
+ if(step===1)inner=`<div class="ua3-panel"><h3>See it in context</h3><p>${e(d.example)}</p><div class="ua3-concepts"><article><strong>What the concept means</strong><p>${e(d.definition)}</p></article><article><strong>What not to assume</strong><p>${e(d.distinction)}</p></article></div></div>`;
+ if(step===2)inner=`<div class="ua3-panel"><h3>Experiment · Explain it to your Trainer</h3><p>Use your own words to explain the principle and apply it to a real-life question or situation.</p><div class="ua3-example"><b>Consider this example</b>${e(d.example)}</div><p><label for="ua3-explain-text"><b>Your explanation</b></label></p><textarea id="ua3-explain-text" class="input" style="width:100%;min-height:100px" placeholder="What does this idea mean, and how might you use it?">${e(a._ua3Explain||'')}</textarea><div class="ua3-test-actions"><button type="button" class="ua3-test-button" data-ua3-explain-check>Compare with teaching notes</button></div><div class="ua3-quiz-feedback" id="ua3-explain-feedback" role="status">This is a self-check exercise, not an AI-scored response.</div></div>`;
+ if(step===3){const questions=qbank(l),idx=Math.max(0,Math.min(questions.length-1,Number(a._ua3QuestionIdx)||0)),q=questions[idx];a._ua3ActualQuestion=q;const picked=Number.isInteger(a._ua3Answer)?a._ua3Answer:null;inner=`<div class="ua3-panel"><h3>Apply what you've learned</h3><p><strong>${e(q.q)}</strong></p><div class="ua3-options">${q.options.map((opt,i)=>`<button type="button" data-ua3-answer="${i}" class="${picked===i?'selected':''}">${String.fromCharCode(65+i)} · ${e(opt)}</button>`).join('')}</div><div class="ua3-quiz-feedback" id="ua3-feedback" role="status">${picked===null?'Choose an answer to see why it fits.':`${picked===q.correctIndex?'✓ Correct':'Not quite'} · ${e(q.why)}<p><b>Correct:</b> ${e(q.correctText)}</p>`}</div><button type="button" class="ua3-test-button" data-ua3-other-question>Try a different question</button></div>`;}
+ if(step===4){if(!fusionTarotLegacyDone(a.id)){fusionSetProgress('tarot:'+a.id,false);}inner=`<div class="ua3-panel"><h3>Lesson recap</h3><p>${e(d.goal)}</p><div class="ua3-concepts"><article><strong>Remember</strong><p>${e(d.definition)}</p></article><article><strong>Apply it</strong><p>${e(d.example)}</p></article></div><div class="ua3-example"><b>Watch out for</b>${e(d.distinction)}</div><p>${tester()?'🧪 Beta preview · no XP or progress awarded.':'This lesson is complete. Continue along the Adventure Tree.'}</p><button class="btn" data-fusion-tarot-quiz>⚔ Optional Pop Quiz</button><button class="btn ghost" data-fusion-modal-close>Back to Academy</button></div>`;}
+ const foot=step<4?`<div class="ua3-actions"><button class="btn ghost" data-ua3-step="${step-1}" ${step===0?'disabled':''}>← Back</button><button class="btn" data-ua3-step="${step+1}">${step===3?'Complete Lesson':'Continue'} →</button></div>`:'';
+ fusionTarotLessonFrame(`<div class="ua3-lesson">${tester()?'<div class="ua3-tester-banner">🧪 Tester preview: rewards and completion disabled</div>':''}${head}${inner}${foot}<button type="button" class="ua3-test-button" data-ua3-report>📋 Copy issue report</button></div>`);
+ const body=document.getElementById('modalBody');if(body)body.scrollTop=stepChanged?0:previous;a._ua3Step=step;};
+// Lesson stage actions. Capture prevents legacy delegated handlers from hijacking new controls.
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ua3-step],[data-ua3-answer],[data-ua3-other-question],[data-ua3-report],[data-ua3-explain-check]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();const a=FUSION_LESSON;if(!a)return;
+ if(b.hasAttribute('data-ua3-step')){a.step=Math.max(0,Math.min(4,Number(b.dataset.ua3Step)||0));a._ua3Answer=null;fusionRenderTarotLesson();}
+ if(b.hasAttribute('data-ua3-other-question')){a._ua3QuestionIdx=(Number(a._ua3QuestionIdx)||0)+1;a._ua3Answer=null;fusionRenderTarotLesson();}
+ if(b.hasAttribute('data-ua3-explain-check')){const val=document.getElementById('ua3-explain-text')?.value||'';a._ua3Explain=val;const box=document.getElementById('ua3-explain-feedback');const d=LESSONS[a.id];if(box&&d)box.innerHTML=`<b>Trainer teaching checklist · not an AI grade</b><p>${val.trim().length>35?'✓ You wrote a substantial explanation.':'• Try writing a complete explanation.'}</p><p><b>Compare the essential concept:</b> ${e(d.definition)}</p><p><b>Example to consider:</b> ${e(d.example)}</p><p><b>Boundary to remember:</b> ${e(d.distinction)}</p>`;}
+ if(b.hasAttribute('data-ua3-answer')){a._ua3Answer=Number(b.dataset.ua3Answer);const q=a._ua3ActualQuestion;const chosen=a._ua3Answer;if(q&&chosen!==q.correctIndex&&!tester())window.__ua260RecordWrong?.({question:q.q,answer:q.correctText,options:q.options,why:q.why,source:'Tarot concept practice'});const fb=document.getElementById('ua3-feedback');if(fb&&q)fb.innerHTML=`<strong>${chosen===q.correctIndex?'✓ Correct':'Not quite'}</strong><p>${e(q.why)}</p><p><b>Correct:</b> ${e(q.correctText)}</p>`;document.querySelectorAll('[data-ua3-answer]').forEach(el=>{el.classList.toggle('selected',Number(el.dataset.ua3Answer)===chosen);el.disabled=true})}
+ if(b.hasAttribute('data-ua3-report')){const text=`Pokémon Ultimate Academy V${V}\nPath: ${FUSION_COURSE_TAB}\nLesson: ${a.id}\nStage: ${a.step+1}/5\nIssue: `;try{navigator.clipboard.writeText(text).then(()=>toast('Issue details copied — paste and add what went wrong.')).catch(()=>{prompt('Copy issue details:',text)})}catch(_){prompt('Copy issue details:',text)}}
+},true);
+const tester=()=>!!S.settings.ua3Tester;
+const config=()=>S.settings.ua3TesterOptions||{chapters:true,lessons:true,gyms:true};
+let baseline=null;
+function capture(){return{xp:FUSION.xp,progress:structuredClone(FUSION.progress),mastery:structuredClone(FUSION.mastery),oracleXp:S.xp,completed:structuredClone(S.completed),badges:structuredClone(S.badges)}}
+function restore(){if(!baseline)return;FUSION.xp=baseline.xp;FUSION.progress=structuredClone(baseline.progress);FUSION.mastery=structuredClone(baseline.mastery);S.xp=baseline.oracleXp;S.completed=structuredClone(baseline.completed);S.badges=structuredClone(baseline.badges)}
+if(tester())baseline=capture();
+const persistOracle=save, persistFusion=fusionSave;
+save=function(){if(!tester()||!baseline)return persistOracle();const live={xp:S.xp,completed:S.completed,badges:S.badges};S.xp=baseline.oracleXp;S.completed=baseline.completed;S.badges=baseline.badges;try{return persistOracle()}finally{S.xp=live.xp;S.completed=live.completed;S.badges=live.badges}};
+fusionSave=function(){if(!tester()||!baseline)return persistFusion();const live={xp:FUSION.xp,progress:FUSION.progress,mastery:FUSION.mastery};FUSION.xp=baseline.xp;FUSION.progress=baseline.progress;FUSION.mastery=baseline.mastery;try{return persistFusion()}finally{FUSION.xp=live.xp;FUSION.progress=live.progress;FUSION.mastery=live.mastery}};
+const realSet=fusionSetProgress;
+fusionSetProgress=function(id,mastery){if(tester())return;return realSet(id,mastery)};
+const realUnlock=fusionV20Unlock;
+fusionV20Unlock=function(tab,units,unitIndex,lessonIndex){if(tester()&&(config().lessons || config().chapters&&lessonIndex===0))return true;return realUnlock(tab,units,unitIndex,lessonIndex)};
+const realOracleUnlock=fusionV20OracleUnlock;
+fusionV20OracleUnlock=function(u,i,units,unitIndex){if(tester()&&(config().lessons || config().chapters&&i===0))return true;return realOracleUnlock(u,i,units,unitIndex)};
+const realOraclePrev=fusionV20OraclePreviousComplete;
+fusionV20OraclePreviousComplete=function(units,index){return tester()&&(config().chapters||config().lessons)?true:realOraclePrev(units,index)};
+// Dual previews are the one deliberate exception to lesson prerequisites in Tester Mode.
+// Simulate prerequisites only during the open action and immediately restore the saved state.
+const realDualLesson=fusionDualLesson,realDualQuiz=fusionDualQuiz;
+function dualPreview(fn,id){if(!tester()||!config().lessons)return fn(id);
+ const tarotBefore=FUSION.progress,oracleBefore=S.completed;
+ FUSION.progress={...tarotBefore};S.completed={...oracleBefore};
+ for(const sec of FUSION_TAROT_COURSE)for(const l of sec.lessons)if(l.topic?.startsWith('card:'))FUSION.progress['tarot:'+l.id]=FUSION.progress['tarot:'+l.id]||'BETA-PREVIEW';
+ for(let i=1;i<=60;i++)S.completed['card-'+i]=true;
+ try{return fn(id)}finally{FUSION.progress=tarotBefore;S.completed=oracleBefore}
+}
+fusionDualLesson=function(id){return dualPreview(realDualLesson,id)};
+fusionDualQuiz=function(id){return dualPreview(realDualQuiz,id)};
+const realLegacy=fusionTarotLegacyDone;let bypassGym=false;
+fusionTarotLegacyDone=function(id){return bypassGym&&tester()&&config().gyms?true:realLegacy(id)};
+const introGym=fusionV206TarotGymIntro,startGym=fusionV206StartTarotGym;
+const GYM_TOPICS={foundations:'Tarot origins · structure · suits · spreads · reading ethics',wands:'Wands symbolism · artwork · upright / reversed meanings',cups:'Cups symbolism · artwork · upright / reversed meanings',swords:'Swords symbolism · artwork · upright / reversed meanings',pentacles:'Pentacles symbolism · artwork · upright / reversed meanings',major:'Major Arcana archetypes · learned card meanings',court:'Court ranks · Pages / Knights / Queens / Kings · role vs. person',spreads:'One-, three- and multi-card spreads · positions',interpretation:'Keywords · question context · rank distinctions · synthesis',final:'Complete readings · evidence · reader responsibilities'};
+function gymTopics(sec){const root=document.querySelector('#modalBody .fusion-v206-gymintro');if(!root||!sec)return;const topics=GYM_TOPICS[sec.id];if(!topics)return;const el=document.createElement('p');el.className='ua3-example';el.innerHTML='<b>Battle Topics · '+e(sec.title)+'</b>'+e(topics);root.querySelector('.fusion-v206-gym-actions')?.before(el);}
+
+fusionV206TarotGymIntro=function(sec){if(tester()&&config().gyms){bypassGym=true;try{const r=introGym(sec);gymTopics(sec);return r}finally{bypassGym=false}}const r=introGym(sec);gymTopics(sec);return r};
+fusionV206StartTarotGym=function(sec){if(tester()&&config().gyms){bypassGym=true;try{return startGym(sec)}finally{bypassGym=false}}return startGym(sec)};
+const realV18Finish=fusionV18Finish;
+fusionV18Finish=function(q){if(!tester())return realV18Finish(q);if(q?.checkpoint){stopMusic();const passed=q.score>=6;const percent=(q.questions?.length||8);showModal('Beta Gym Practice · '+(passed?'Passed':'Keep Practising'),`<div class="ua3-panel"><h3>${passed?'Practice Challenge Cleared!':'Try Again, Trainer!'}</h3><p>${q.score}/${percent} correct. This was a Beta Tester preview: no XP, badges or completion records are awarded.</p><div class="ua3-example"><b>What to review</b>${e(FUSION_TAROT_COURSE.find(sec=>sec.id===q.sectionId)?.title||'Chapter learning objectives')}</div><button class="btn" data-fusion-modal-close>Return to Academy</button></div>`);FUSION_TAROT_QUIZ=null;restore();return;}const result=realV18Finish(q);restore();return result};
+function testerPanel(){const o=config();return `<div class="ua3-beta-panel" data-ua3-beta-panel><h3>🧪 Beta Tester Mode</h3><p class="ua3-beta-sub">Preview locked material without permanently unlocking lessons or awarding XP/badges. Turning this off returns to real progression.</p><label><b>Enable Tester Mode</b><input type="checkbox" data-ua3-beta="enabled" ${tester()?'checked':''}></label>${tester()?`<div class="ua3-beta-settings"><label>Unlock all chapters<input type="checkbox" data-ua3-beta="chapters" ${o.chapters?'checked':''}></label><label>Unlock every lesson<input type="checkbox" data-ua3-beta="lessons" ${o.lessons?'checked':''}></label><label>Preview Gym checkpoints<input type="checkbox" data-ua3-beta="gyms" ${o.gyms?'checked':''}></label><p class="ua3-beta-sub">Tester sessions don't save earned XP, badges or completion. Normal saved progress is restored when the mode is disabled.</p></div>`:''}<div class="ua3-test-actions"><button class="ua3-test-button" data-fusion-export>⬇ Export backup</button><button class="ua3-test-button danger" data-ua3-reset>Reset learning progress…</button></div><p class="ua3-beta-sub">Beta resets won't change your chosen Trainer, favourite Pokémon, music, or appearance settings.</p></div>`}
+const settingsBefore=settingsView;
+settingsView=function(){let html=settingsBefore();const block=testerPanel();return html.includes('<div class="settings-categories">')?html.replace('<div class="settings-categories">','<div class="settings-categories">'+block):html+block};
+function resetStudy(kind){if(tester())return toast('Turn off Tester Mode before resetting saved progress.');if(!confirm('Reset '+kind+' learning progress? This removes saved lesson achievements for this beta test. Export a backup first if needed.'))return;
+ if(kind==='tarot'||kind==='all'){for(const k of Object.keys(FUSION.progress))if(/^tarot:|^tarotQuiz:|^tarotCrest:/.test(k))delete FUSION.progress[k];FUSION.xp=0;FUSION.mastery={};try{localStorage.removeItem('tarotCourseV8')}catch(_){}}
+ if(kind==='oracle'||kind==='all'){S.completed={};S.badges={};S.xp=0;}
+ if(kind==='all'){FUSION.ua260.mistakes=[];FUSION.reflections={};}
+ persistOracle();persistFusion();render();toast(kind+' learning progress reset; Trainer appearance and audio preserved.');}
+document.addEventListener('change',ev=>{const b=ev.target.closest('[data-ua3-beta]');if(!b)return;ev.stopImmediatePropagation();const key=b.dataset.ua3Beta;
+ if(key==='enabled'){if(b.checked){baseline=capture();S.settings.ua3Tester=true;if(!S.settings.ua3TesterOptions)S.settings.ua3TesterOptions={chapters:true,lessons:true,gyms:true};persistOracle()}else{restore();S.settings.ua3Tester=false;baseline=null;persistOracle();persistFusion();}}
+ else{S.settings.ua3TesterOptions={...config(),[key]:b.checked};persistOracle()}
+ render();},true);
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ua3-reset],[data-ua3-reset-choice]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();if(b.hasAttribute('data-ua3-reset')){showModal('Beta Progress Reset',`<div class="ua3-panel"><h3>Choose exactly what to reset</h3><p>Only learning progress, badges and quiz records change. Export a backup first if you want a copy. Your profile and music stay untouched.</p><div class="ua3-test-actions"><button class="ua3-test-button" data-fusion-export>⬇ Backup</button><button class="ua3-test-button danger" data-ua3-reset-choice="tarot">Reset Tarot only</button><button class="ua3-test-button danger" data-ua3-reset-choice="oracle">Reset Oracle only</button><button class="ua3-test-button danger" data-ua3-reset-choice="all">Reset all learning</button></div><button class="btn ghost" data-fusion-modal-close>Cancel</button></div>`)}else resetStudy(b.dataset.ua3ResetChoice)},true);
+// Intentional preview display; no silent flag migration or old artwork reinterpretation.
+const originalAcademy=fusionV202Academy;
+fusionV202Academy=function(tab){let html=originalAcademy(tab);
+ if(tab==='tarot'){
+  const idx=Math.max(0,Math.min(9,Number(FUSION_V19_UNIT.tarot)||0)),c=chapters[idx];
+  const resume=c.lessons.find(l=>l.kind!=='practice'&&!realLegacy(l.id));const intro=`<section class="ua3-curriculum-intro"><h3>📘 ${e(c.title)}</h3><p>${idx===0?'Start here: learn Tarot history, symbolism, deck structure and how readings work before meeting individual cards.':idx<5?'Begin with the suit’s purpose; individual cards are taught only in their assigned lessons.':idx===9?'Apply your completed card knowledge to full readings.':'Practice the next skill using only the knowledge taught in this chapter.'}</p>${tester()?'<div class="ua3-tester-banner">🧪 Tester Mode · preview only, no XP or badges</div>':''}${resume?`<button class="ua3-test-button" data-ua3-resume="${e(c.id)}|${e(resume.id)}">▶ Resume: ${e(resume.title)}</button>`:'<span class="ua3-badge">✓ Chapter completed</span>'}<p class="small muted">Your Adventure Tree and Classic List use the same curriculum. Each completed lesson is a learning milestone.</p></section>`;
+  const anchor='<div class="fusion-v20-unit';const at=html.indexOf(anchor);if(at>=0)html=html.slice(0,at)+intro+html.slice(at);
+  // Remove V2.6.0’s obsolete two-unit shortcuts/text, because the new foundation is a single chapter.
+  html=html.replace(/<section class="ua260-start">[\s\S]*?<\/section>/,'');
+ }else if(tab==='oracle'){
+  const expl=`<section class="ua3-curriculum-intro"><h3>🌿 Spirit Oracle · Start Here</h3><p><b>What is Oracle?</b> Oracle decks use creator-defined cards and messages rather than Tarot’s fixed 78-card structure. Our Spirit Oracle has 60 cards in ten themed families.</p><p><b>How does it work?</b> Start with an open question, reflect on the Message, notice an unhelpful Shadow expression, then choose a practical Integration step. An open reading can also explore themes without a question.</p><p><b>Know the boundary:</b> This deck encourages reflection; it cannot prove hidden thoughts or guarantee events.</p>${tester()?'<div class="ua3-tester-banner">🧪 Tester Mode · no XP or emblems awarded</div>':''}</section>`;
+  html=html.replace('<div class="fusion-v202-academy-main">','<div class="fusion-v202-academy-main">'+expl);html=html.replace(/<section class="ua260-start">[\s\S]*?<\/section>/,'');
+ }
+ return html;};
+fusionLearn=function(){return fusionV202Academy(FUSION_COURSE_TAB)};fusionViews['fusion-learn']=fusionLearn;
+// Tester controls for Oracle family checkpoint buttons generated with legacy disabled attributes.
+const viewAcademy=fusionLearn;
+fusionLearn=function(){let x=viewAcademy();if(tester()&&config().gyms&&FUSION_COURSE_TAB==='oracle')x=x.replace(/(data-battle="[^"]+") disabled/g,'$1');return x};fusionViews['fusion-learn']=fusionLearn;
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ua3-resume]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();const [sec,id]=b.dataset.ua3Resume.split('|');if(tester()||FUSION_TAROT_COURSE.find(x=>x.id===sec)?.lessons.findIndex(l=>l.id===id)===0||realLegacy(id)){fusionOpenTarotLessonV13(sec,id)}else{const c=FUSION_TAROT_COURSE.find(x=>x.id===sec),idx=c?.lessons.findIndex(l=>l.id===id);if(c&&idx>=0&&fusionV20Unlock('tarot',FUSION_TAROT_COURSE,FUSION_TAROT_COURSE.indexOf(c),idx))fusionOpenTarotLessonV13(sec,id);else toast('Complete the earlier lessons to unlock this one.')}} ,true);
+const oldNews=fusionNews;
+fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V3.0.0</span><h3>Academy Reborn · Beta</h3><ul><li>Rebuilt the Tarot Adventure Tree and Classic List into ten beginner-to-mastery chapters; every existing Tarot card retains its dedicated lesson.</li><li>Consolidated the opening three theory units into one Foundations chapter. Reorganized suits, Major Arcana, Court comparisons, spreads and final readings.</li><li>New beginner explanations cover Tarot origins, Pokémon symbolism, deck structure, spreads and responsible reading; suit introductions no longer show individual card art.</li><li>Introduced an optional rewards-free Beta Tester Mode in Settings, with chapter/lesson/Gym access and deliberate beta progress reset.</li><li>Added an issue-report shortcut to concept lessons; retained battle art, progression restrictions and scroll fixes from V2.6.2.</li></ul></article>')};fusionViews['fusion-news']=fusionNews;
+// Keep version visible after any navigation rerender.
+const baseRender=render;render=function(...args){if(tester())restore();const out=baseRender.apply(this,args);const lab='TAROT × ORACLE · V'+V;document.querySelectorAll('[data-ultimate-version-label],.ua240-version-label').forEach(node=>node.textContent='V'+V);document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(node=>node.textContent=lab);document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;window.__ultimateAcademyVersion=V;return out;};
+window.__ultimateAcademyVersion=V;
+const ua3ShowModal=showModal;showModal=function(...args){const out=ua3ShowModal.apply(this,args);window.__ultimateAcademyVersion=V;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;return out};
+window.__ua300={version:V,chapters:chapters.map(c=>({id:c.id,title:c.title,count:c.lessons.length})),conceptLessons:Object.keys(LESSONS),tester,capture,restore};
+render();
+})();
+</script>
 </body></html>
