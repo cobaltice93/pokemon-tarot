@@ -3169,11 +3169,11 @@ function fusionV18DualQuestionSet(id){const d=FUSION_DUAL_LESSONS[id],pair=typeo
 function fusionV18BattleActor(quiz){const team=(S.profile?.team||[]).filter(k=>ASSETS.pokemon[k]);const playerKey=team[(quiz.index||0)%Math.max(1,team.length)]||'eevee';const enemies=['gengar','lucario','zoroark','dragonite','absol','arcanine','sceptile','gardevoir','luxray','metagross','espeon','scizor'];return {player:playerKey,enemy:quiz.enemy||enemies[Math.floor(Math.random()*enemies.length)],enemyTrainer:quiz.enemyTrainer||fusionV18Shuffle(['acetrainer','veteran','psychic','scientist','pokemonranger','hexmaniac','dancer','artist'])[0]}}
 function fusionV18Hp(done){return Math.max(0,100-done*34)}
 function fusionV18Field(q,feedback){const act=fusionV18BattleActor(q);q.enemy=act.enemy;q.enemyTrainer=act.enemyTrainer;const ours=fusionV18Hp(q.index-q.score),theirs=fusionV18Hp(q.score),hitClass=feedback?(feedback.correct?'enemy-hit':'ally-hit'):'';
- const sprite=(key)=>ASSETS.pokemon[key]||ASSETS.pokemon.eevee;return `<div class="fusion-v18-field ${hitClass}"><div class="fusion-v18-hpbox fusion-v18-foe-hp"><div><b>${fusionEscape(trainerName(act.enemyTrainer)||'Trainer')}</b><span>${fusionEscape(trainerName(act.enemy))} · ${theirs} HP</span></div><div class="fusion-v18-meter"><i style="width:${theirs}%" class="${theirs<35?'low':''}"></i></div></div><img class="fusion-v18-enemy-trainer" src="${trainerSprite(act.enemyTrainer)}" alt="Opponent Trainer"><img class="fusion-v18-foe" src="${sprite(act.enemy)}" alt="Opponent ${fusionEscape(act.enemy)}"><div class="fusion-v18-ground foe"></div><div class="fusion-v18-ground ally"></div><img class="fusion-v18-player-trainer" src="${trainerSprite(S.profile.avatar)}" alt="Your Trainer"><img class="fusion-v18-ally" src="${sprite(act.player)}" alt="Your Pokémon ${fusionEscape(act.player)}"><div class="fusion-v18-hpbox fusion-v18-player-hp"><div><b>${fusionEscape(S.profile?.nickname||'Trainer')}</b><span>${fusionEscape(trainerName(act.player))} · ${ours} HP</span></div><div class="fusion-v18-meter"><i style="width:${ours}%" class="${ours<35?'low':''}"></i></div></div></div>`}
+ const sprite=(key)=>ASSETS.pokemon[key]||ASSETS.pokemon.eevee;return `<div class="fusion-v18-field ${hitClass}">${window.__ua31BattleIllustration?.(q)||''}<div class="fusion-v18-hpbox fusion-v18-foe-hp"><div><b>${fusionEscape(trainerName(act.enemyTrainer)||'Trainer')}</b><span>${fusionEscape(trainerName(act.enemy))} · ${theirs} HP</span></div><div class="fusion-v18-meter"><i style="width:${theirs}%" class="${theirs<35?'low':''}"></i></div></div><img class="fusion-v18-enemy-trainer" src="${trainerSprite(act.enemyTrainer)}" alt="Opponent Trainer"><img class="fusion-v18-foe" src="${sprite(act.enemy)}" alt="Opponent ${fusionEscape(act.enemy)}"><div class="fusion-v18-ground foe"></div><div class="fusion-v18-ground ally"></div><img class="fusion-v18-player-trainer" src="${trainerSprite(S.profile.avatar)}" alt="Your Trainer"><img class="fusion-v18-ally" src="${sprite(act.player)}" alt="Your Pokémon ${fusionEscape(act.player)}"><div class="fusion-v18-hpbox fusion-v18-player-hp"><div><b>${fusionEscape(S.profile?.nickname||'Trainer')}</b><span>${fusionEscape(trainerName(act.player))} · ${ours} HP</span></div><div class="fusion-v18-meter"><i style="width:${ours}%" class="${ours<35?'low':''}"></i></div></div></div>`}
 function fusionV18Stage(q,title,feedback){const done=q.index>=q.questions.length,one=done?null:q.questions[q.index],prompt=feedback?q.questions[q.index-1]:one;
  let inner=`<div class="fusion-v18-battle"><div class="fusion-v18-status"><span>⚔ ${fusionEscape(title)}</span><span>${Math.min(q.index+(feedback?0:1),q.questions.length)} / ${q.questions.length} · ${q.score} correct</span></div>${fusionV18Field(q,feedback)}`;
  if(feedback){inner+=`<div class="fusion-v18-message ${feedback.correct?'correct':'incorrect'}"><b>${feedback.correct?'Super effective!':'Your Pokémon took a hit!'}</b><p>${fusionEscape(prompt.why)}</p><button class="btn" ${q.mode==='tarot'?'data-fusion-tarot-quiz-next':'data-fusion-quiz-next'}>Continue battle →</button></div>`}
- else{const picture=q.mode==='tarot'&&(q.topic==='found-imagery'||/Eevee|two paths|forked path/i.test(one.q))?FUSION_TAROT_CARDS.find(c=>c.name==='The Fool')?.image:null;inner+=`<div class="fusion-v18-question"><small>Trainer challenge · Choose the strongest interpretation</small>${picture?`<img class="ua3-quiz-art" src="${picture}" alt="The Fool: Eevee beside two paths">`:''}<h3>${fusionEscape(one.q)}</h3></div><div class="fusion-v18-choices">${one.options.map((option,i)=>`<button type="button" ${q.mode==='tarot'?`data-fusion-tarot-answer="${i}"`:`data-fusion-quiz-answer="${i}"`}><span>${'ABCD'[i]}</span><span>${fusionEscape(option)}</span></button>`).join('')}</div><p class="fusion-v18-hint">Choices are shuffled every battle. A correct answer is not tied to any letter.</p>`}
+ else{const picture=null;inner+=`<div class="fusion-v18-question"><small>Trainer challenge · Choose the strongest interpretation</small><h3>${fusionEscape(one.q)}</h3></div><div class="fusion-v18-choices">${one.options.map((option,i)=>`<button type="button" ${q.mode==='tarot'?`data-fusion-tarot-answer="${i}"`:`data-fusion-quiz-answer="${i}"`}><span>${'ABCD'[i]}</span><span>${fusionEscape(option)}</span></button>`).join('')}</div><p class="fusion-v18-hint">Choices are shuffled every battle. A correct answer is not tied to any letter.</p>`}
  inner+='</div>';showModal((q.mode==='tarot'?'Tarot Academy':'Dual Deck Mastery')+' · Pokémon Battle',inner)
 }
 function fusionV18Finish(q){const pass=q.score>=3;if(q.mode==='tarot'){if(pass&&!FUSION.progress['tarotQuiz:'+q.topic]){FUSION.progress['tarotQuiz:'+q.topic]=new Date().toISOString();fusionSave()}}else if(pass)fusionSetProgress('dual:'+q.lesson,true);
@@ -7568,7 +7568,7 @@ html:has(.ua260-overlay){overflow:hidden}
  oracleV2WizardRender=function(...args){
   const result=priorOracleRender.apply(this,args);
   const w=oracleWizard;
-  if(!w||Number(w.step)!==0)return result;
+  if(!w||Number(w.step)!==0||w.kind!=='core'||w.id!==CORE_LESSONS[0][0])return result;
   const parent=document.querySelector('#modalBody .fusion-v204-main, #modalBody .ua230-learning, #modalBody .wizard-body');
   if(parent&&!parent.querySelector('.ua260-lesson-bridge')){
    const primer=`<section class="ua260-lesson-bridge"><h3>${w.kind==='core'?'Start here · What is Spirit Oracle?':'How to read a Spirit Oracle card'}</h3><p>This deck uses 60 cards arranged into ten animal-themed Spirit families. Unlike Tarot, these cards do not need upright or reversed positions.</p><div class="ua260-steps"><article><b>Message</b>A constructive theme to explore</article><article><b>Shadow</b>An unhelpful pattern or fear to notice</article><article><b>Integration</b>One realistic step to practise the message</article></div><button class="ua260-gloss-button" data-ua260-open="glossary">📚 Open Learning Glossary</button></section>`;
@@ -7966,7 +7966,7 @@ render();
 <script id="ua300-curriculum-and-tester">/* Ultimate Academy 3.0 — intentional beta curriculum rebuild, honest rewards-free tester mode */
 (()=>{
 'use strict';
-const V='3.0.0', e=x=>fusionEscape(String(x??''));
+const V='3.1.0', e=x=>fusionEscape(String(x??''));
 const original=FUSION_TAROT_COURSE.map(section=>({...section,lessons:[...section.lessons]}));
 const byId=new Map(original.flatMap(s=>s.lessons).map(l=>[l.id,{...l}]));
 const used=new Set();
@@ -8121,24 +8121,28 @@ fusionV18TarotQuestionSet=qbank;
 // Reuse the named Trainer cast and refresh controls with the current curriculum's teaching notes.
 function ua3TrainerSpeech(lesson,data,step){
  const cast=fusionV17Cast(),trainer=cast[(step+1)%cast.length]||cast[0]||['school-kid','Academy Trainer','academic'];
- const context={subject:lesson.title,lesson:fusionV205TrimSentence(step===1?data.example:data.definition,175),contrast:data.distinction,exercise:data.application};
- let words=fusionV205Voice(trainer[2],step===4?1:step,context);
- if(step===0)words+=' '+data.goal;
- if(step===2)words+=' '+data.distinction;
- if(step===4)words+=' Your takeaway: '+data.goal;
- return fusionV204Speech(trainer[1],trainer[0],words);
+ const prompts=[
+  'Today is about '+lesson.title+'. What do you already know, and what would you like to discover?',
+  'Describe the example before explaining what it suggests. Facts first, interpretation second!',
+  'Give your own explanation. A strong Trainer can apply an idea, not just repeat its wording.',
+  'Choose carefully, then explain why the other choices are less suitable.',
+  'Close the book for a moment. Can you explain this topic from memory?'
+ ];
+ const context={subject:lesson.title,lesson:prompts[step],contrast:'Keep observations separate from assumptions.',exercise:data.application};
+ const voice=fusionV205Voice(trainer[2],step===4?1:step,context);
+ return fusionV204Speech(trainer[1],trainer[0],voice);
 }
 // Keep all individual card renderers from V2.6.2 intact. Use subject-specific concept lessons only.
 const oldLesson=fusionRenderTarotLesson;
 fusionRenderTarotLesson=function(){const a=FUSION_LESSON;if(!a||a.type!=='tarot'||!LESSONS[a.id])return oldLesson();const d=LESSONS[a.id], l=byId.get(a.id)||FUSION_TAROT_COURSE.flatMap(s=>s.lessons).find(x=>x.id===a.id);const step=Math.max(0,Math.min(4,Number(a.step)||0)),names=['Understand','Observe','Experiment','Practise','Remember'];a.step=step;
  const previous=document.getElementById('modalBody')?.scrollTop||0;const stepChanged=a._ua3Step!==step;
- const isRefresher=FUSION.ua260?.mode==='refresher';const head=`<div class="ua3-kicker">Tarot Academy · ${e(d.goal)}</div><h2>${e(l?.title||a.id)}</h2><div class="ua260-lesson-bridge"><div class="ua260-row"><b>📖 Learning tools</b><button type="button" class="ua260-gloss-button" data-ua260-open="glossary">Glossary · Tap to define</button><span class="ua260-status">${isRefresher?'Refresher summaries':'Beginner explanations'}</span></div><div class="ua260-terms"><button data-ua260-term="Spread">Spread ⓘ</button><button data-ua260-term="Keyword">Keyword ⓘ</button><button data-ua260-term="Orientation">Orientation ⓘ</button></div></div><div class="ua3-steps">${names.map((n,i)=>`<span class="${step===i?'active':''}">${n}</span>`).join('')}</div>`;
+ const isRefresher=FUSION.ua260?.mode==='refresher';const head=`<div class="ua3-kicker">Tarot Academy · ${e(d.goal)}</div><h2>${e(l?.title||a.id)}</h2><div class="ua260-lesson-bridge"><div class="ua260-row"><b>📖 Learning tools</b><button type="button" class="ua260-gloss-button" data-ua260-open="glossary">Glossary · Tap to define</button><span class="ua260-status">Learning mode</span><button type="button" data-ua31-mode="beginner" class="ua31-mode ${!isRefresher?'selected':''}">Beginner</button><button type="button" data-ua31-mode="refresher" class="ua31-mode ${isRefresher?'selected':''}">Refresher</button></div><div class="ua260-terms"><button data-ua260-term="Spread">Spread ⓘ</button><button data-ua260-term="Keyword">Keyword ⓘ</button><button data-ua260-term="Orientation">Orientation ⓘ</button></div></div><div class="ua3-steps">${names.map((n,i)=>`<span class="${step===i?'active':''}">${n}</span>`).join('')}</div>`;
  let inner='';
  if(step===0)inner=`<div class="ua3-panel"><h3>${isRefresher?'Quick refresher':'What you’ll learn'}</h3><p>${e(isRefresher?d.definition.slice(0,230)+(d.definition.length>230?'…':''):d.definition)}</p><div class="ua3-example"><b>Your learning goal</b>${e(d.goal)}</div>${isRefresher?'<p>Need the full explanation? Switch to Beginner mode in the Learning tools.</p>':''}</div>`;
- if(step===1)inner=`<div class="ua3-panel"><h3>See it in context</h3><p>${e(d.example)}</p><div class="ua3-concepts"><article><strong>What the concept means</strong><p>${e(d.definition)}</p></article><article><strong>What not to assume</strong><p>${e(d.distinction)}</p></article></div></div>`;
- if(step===2)inner=`<div class="ua3-panel"><h3>Experiment · Explain it to your Trainer</h3><p>Use your own words to explain the principle and apply it to a real-life question or situation.</p><div class="ua3-example"><b>Consider this example</b>${e(d.example)}</div><p><label for="ua3-explain-text"><b>Your explanation</b></label></p><textarea id="ua3-explain-text" class="input" style="width:100%;min-height:100px" placeholder="What does this idea mean, and how might you use it?">${e(a._ua3Explain||'')}</textarea><div class="ua3-test-actions"><button type="button" class="ua3-test-button" data-ua3-explain-check>Compare with teaching notes</button></div><div class="ua3-quiz-feedback" id="ua3-explain-feedback" role="status">This is a self-check exercise, not an AI-scored response.</div></div>`;
+ if(step===1)inner=`<div class="ua3-panel"><h3>Observe · See the idea in action</h3><p>${e(d.example)}</p>${a.id==='minor-overview'?'<div class="ua31-deck-diagram"><div><strong>78</strong><span>Tarot cards</span></div><div><strong>22</strong><span>Major Arcana</span></div><div><strong>56</strong><span>Minor Arcana</span></div><div><strong>4 × 14</strong><span>Four suits</span></div></div>':'<div class="ua31-observation"><b>Look closer</b><p>Which part of this situation is directly observable, and which part is an interpretation? Try describing the difference before moving on.</p></div>'}</div>`;
+ if(step===2)inner=`<div class="ua3-panel"><h3>Experiment · Explain it to your Trainer</h3><p>Use your own words to explain the principle and apply it to a real-life question or situation.</p><div class="ua3-example"><b>Your challenge</b>${e(d.application)}</div><p><label for="ua3-explain-text"><b>Your explanation</b></label></p><textarea id="ua3-explain-text" class="input" style="width:100%;min-height:100px" placeholder="What does this idea mean, and how might you use it?">${e(a._ua3Explain||'')}</textarea><div class="ua3-test-actions"><button type="button" class="ua3-test-button" data-ua3-explain-check>Compare with teaching notes</button></div><div class="ua3-quiz-feedback" id="ua3-explain-feedback" role="status">This is a self-check exercise, not an AI-scored response.</div></div>`;
  if(step===3){const questions=qbank(l),idx=Math.max(0,Math.min(questions.length-1,Number(a._ua3QuestionIdx)||0)),q=questions[idx];a._ua3ActualQuestion=q;const picked=Number.isInteger(a._ua3Answer)?a._ua3Answer:null;inner=`<div class="ua3-panel"><h3>Apply what you've learned</h3><p><strong>${e(q.q)}</strong></p><div class="ua3-options">${q.options.map((opt,i)=>`<button type="button" data-ua3-answer="${i}" class="${picked===i?'selected':''}">${String.fromCharCode(65+i)} · ${e(opt)}</button>`).join('')}</div><div class="ua3-quiz-feedback" id="ua3-feedback" role="status">${picked===null?'Choose an answer to see why it fits.':`${picked===q.correctIndex?'✓ Correct':'Not quite'} · ${e(q.why)}<p><b>Correct:</b> ${e(q.correctText)}</p>`}</div><button type="button" class="ua3-test-button" data-ua3-other-question>Try a different question</button></div>`;}
- if(step===4){if(!fusionTarotLegacyDone(a.id)){fusionSetProgress('tarot:'+a.id,false);}inner=`<div class="ua3-panel"><h3>Lesson recap</h3><p>${e(d.goal)}</p><div class="ua3-concepts"><article><strong>Remember</strong><p>${e(d.definition)}</p></article><article><strong>Apply it</strong><p>${e(d.example)}</p></article></div><div class="ua3-example"><b>Watch out for</b>${e(d.distinction)}</div><p>${tester()?'🧪 Beta preview · no XP or progress awarded.':'This lesson is complete. Continue along the Adventure Tree.'}</p><button class="btn" data-fusion-tarot-quiz>⚔ Optional Pop Quiz</button><button class="btn ghost" data-fusion-modal-close>Back to Academy</button></div>`;}
+ if(step===4){if(!fusionTarotLegacyDone(a.id)){fusionSetProgress('tarot:'+a.id,false);}inner=`<div class="ua3-panel"><h3>Remember · Retrieve it yourself</h3><p>Before revealing the answer, try recalling what you learned without rereading the earlier pages.</p><div class="ua3-example"><b>Self-check</b>${e(d.application)}</div><details class="ua31-recall"><summary>Reveal a model takeaway</summary><p>${e(d.applicationAnswer)}</p></details><div class="ua3-example"><b>One misconception to avoid</b>${e(d.distinction)}</div><p>${tester()?'🧪 Beta preview · no XP or progress awarded.':'This lesson is complete. Continue along the Adventure Tree.'}</p><button class="btn" data-fusion-tarot-quiz>⚔ Optional Pop Quiz</button><button class="btn ghost" data-fusion-modal-close>Back to Academy</button></div>`;}
  const foot=step<4?`<div class="ua3-actions"><button class="btn ghost" data-ua3-step="${step-1}" ${step===0?'disabled':''}>← Back</button><button class="btn" data-ua3-step="${step+1}">${step===3?'Complete Lesson':'Continue'} →</button></div>`:'';
  fusionTarotLessonFrame(`<div class="ua3-lesson">${tester()?'<div class="ua3-tester-banner">🧪 Tester preview: rewards and completion disabled</div>':''}${head}${inner}${ua3TrainerSpeech(l,d,step)}${foot}<button type="button" class="ua3-test-button" data-ua3-report>📋 Copy issue report</button></div>`);
  const body=document.getElementById('modalBody');if(body)body.scrollTop=stepChanged?0:previous;a._ua3Step=step;};
@@ -8214,8 +8218,8 @@ fusionV202Academy=function(tab){let html=originalAcademy(tab);
   // Remove V2.6.0’s obsolete two-unit shortcuts/text, because the new foundation is a single chapter.
   html=html.replace(/<section class="ua260-start">[\s\S]*?<\/section>/,'');
  }else if(tab==='oracle'){
-  const expl=`<section class="ua3-curriculum-intro"><h3>🌿 Spirit Oracle · Start Here</h3><p><b>What is Oracle?</b> Oracle decks use creator-defined cards and messages rather than Tarot’s fixed 78-card structure. Our Spirit Oracle has 60 cards in ten themed families.</p><p><b>How does it work?</b> Start with an open question, reflect on the Message, notice an unhelpful Shadow expression, then choose a practical Integration step. An open reading can also explore themes without a question.</p><p><b>Know the boundary:</b> This deck encourages reflection; it cannot prove hidden thoughts or guarantee events.</p>${tester()?'<div class="ua3-tester-banner">🧪 Tester Mode · no XP or emblems awarded</div>':''}</section>`;
-  html=html.replace('<div class="fusion-v202-academy-main">','<div class="fusion-v202-academy-main">'+expl);html=html.replace(/<section class="ua260-start">[\s\S]*?<\/section>/,'');
+  // The introductory concepts live in Spirit Oracle lessons, not above the Academy.
+  html=html.replace(/<section class="ua260-start">[\s\S]*?<\/section>/,'');
  }
  return html;};
 fusionLearn=function(){return fusionV202Academy(FUSION_COURSE_TAB)};fusionViews['fusion-learn']=fusionLearn;
@@ -8230,6 +8234,108 @@ const baseRender=render;render=function(...args){if(tester())restore();const out
 window.__ultimateAcademyVersion=V;
 const ua3ShowModal=showModal;showModal=function(...args){const out=ua3ShowModal.apply(this,args);window.__ultimateAcademyVersion=V;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;return out};
 window.__ua300={version:V,chapters:chapters.map(c=>({id:c.id,title:c.title,count:c.lessons.length})),conceptLessons:Object.keys(LESSONS),tester,capture,restore};
+render();
+})();
+</script>
+<style id="ua31-css">/* Ultimate Academy V3.1 — visible teaching differences, accessible learning mode, mobile-safe battle artwork */
+.ua31-mode{border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);padding:6px 11px;font-size:11px;font-weight:800;cursor:pointer}
+.ua31-mode.selected{background:var(--gold);color:#172533;border-color:var(--gold)}
+.ua31-deck-diagram{margin-top:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ua31-deck-diagram>div{padding:13px 8px;border:1px solid var(--line);border-radius:12px;text-align:center;background:rgba(122,156,183,.10)}
+.ua31-deck-diagram strong{display:block;font:700 28px Georgia,serif;color:var(--ink)}
+.ua31-deck-diagram span{display:block;margin-top:4px;font-size:11px;color:var(--sub)}
+.ua31-observation{margin-top:14px;border-left:3px solid #5ca68f;background:rgba(90,166,148,.08);padding:12px;border-radius:9px;font-size:13px;line-height:1.5}
+.ua31-observation p{margin:4px 0 0}.ua31-recall{margin-top:12px;border:1px solid var(--line);padding:13px;border-radius:12px;background:rgba(126,151,172,.09)}.ua31-recall summary{cursor:pointer;font-weight:800}.ua31-recall p{margin-top:8px}
+.ua31-settings-mode{grid-column:1/-1!important;padding:13px!important;border:1px solid var(--line)!important;border-radius:12px!important;background:var(--card)!important;color:var(--ink)!important}
+.ua31-settings-mode h3{font-size:17px;margin:0 0 5px}.ua31-settings-mode p{font-size:12px;margin:0 0 10px;color:var(--sub)}.ua31-settings-mode .ua31-mode{min-height:38px;margin-right:6px}
+.ua31-modebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;border:1px solid var(--line);padding:9px 12px;margin-bottom:12px;border-radius:12px;background:var(--card)}
+.ua31-modebar>b{font-size:12px;margin-right:6px}.ua31-modebar>span{font-size:11px;color:var(--sub);margin-left:auto}
+.fusion-v18-field .ua31-battle-illustration{position:absolute;display:block;z-index:3;left:50%;top:42px;transform:translateX(-50%);width:88px;height:157px;object-fit:contain;border:2px solid #e3c987;border-radius:8px;box-shadow:0 4px 12px #0719278a;background:#102c4b}
+@media(max-width:600px){.fusion-v18-field .ua31-battle-illustration{width:60px;height:104px;top:66px;left:51%}.fusion-v18-foe{right:18px!important;top:56px}.fusion-v18-ally{left:25px!important;width:82px!important}.fusion-v18-enemy-trainer{right:0!important;width:36px!important}}
+@media(max-width:400px){.fusion-v18-field .ua31-battle-illustration{width:55px;height:98px;left:49%}.fusion-v18-foe{right:12px!important;width:68px!important}.fusion-v18-ally{width:72px!important}}
+@media(max-width:500px){.ua31-deck-diagram{grid-template-columns:repeat(2,minmax(0,1fr))}.ua31-modebar>span{width:100%;margin:2px 0 0}.ua31-settings-mode{padding:11px!important}}
+
+/* Refresher mode reduces optional Oracle intro scaffolding, without hiding card meanings or exercises. */
+#modalBody.ua31-refresher-lesson .wizard-intro .ua260-lesson-bridge .ua260-steps{display:none}
+#modalBody.ua31-refresher-lesson .wizard-intro .wizard-preview p{display:none}
+</style>
+<script id="ua31-js">/* Ultimate Academy V3.1.0 — Lesson clarity, shared learning mode, navigation and reset reliability */
+(()=>{
+'use strict';
+const VERSION='3.1.0';
+const E=s=>fusionEscape(String(s??''));
+const mode=()=>FUSION.ua260?.mode==='refresher'?'refresher':'beginner';
+const isTester=()=>!!S.settings?.ua3Tester;
+const modes=()=>`<button type="button" class="ua31-mode ${mode()==='beginner'?'selected':''}" data-ua31-mode="beginner">Beginner</button><button type="button" class="ua31-mode ${mode()==='refresher'?'selected':''}" data-ua31-mode="refresher">Refresher</button>`;
+// Shared lesson preference, independent from whether the user studies Tarot, Oracle or Dual.
+const priorSettings=settingsView;
+settingsView=function(){let html=priorSettings();const block=`<section class="ua31-settings-mode"><h3>📚 Learning Experience</h3><p>One setting for Tarot, Spirit Oracle and Dual Mastery. Beginner offers fuller explanations; Refresher gives concise recaps. Both keep the same card and chapter prerequisites.</p><div class="ua260-row">${modes()}</div></section>`;const marker='<div class="settings-categories">';return html.includes(marker)?html.replace(marker,marker+block):html+block;};
+function syncModeButtons(){document.querySelectorAll('[data-ua31-mode],[data-ua260-mode]').forEach(b=>{
+ const value=b.dataset.ua31Mode||b.dataset.ua260Mode;const selected=value===mode();b.classList.toggle('selected',selected);b.dataset.selected=String(selected);
+ });}
+function modalLearningSwitch(){const body=document.querySelector('#modalBody');const box=document.querySelector('#modal.open');if(!body||!box)return;
+ const title=String(document.querySelector('#modalTitle')?.textContent||'');
+ if(!((/\b(?:tarot|oracle|dual|mastery)\b/i.test(title)&&/\blesson\b/i.test(title))||body.querySelector('.lesson-wizard,.fusion-v204-oracle,.fusion-dual-lesson,.ua230-dual')||/oracle foundations/i.test(title)))return;
+ if(body.querySelector('.ua31-mode,.ua31-modebar')){body.classList.toggle('ua31-refresher-lesson',mode()==='refresher');syncModeButtons();return;}
+ body.classList.toggle('ua31-refresher-lesson',mode()==='refresher');const el=document.createElement('div');el.className='ua31-modebar';el.innerHTML=`<b>Learning Mode</b>${modes()}<span>Applies to all three paths · Change anytime</span>`;
+ body.prepend(el);syncModeButtons();
+}
+const prevShowModal=showModal;
+showModal=function(...args){const out=prevShowModal.apply(this,args);modalLearningSwitch();return out;};
+// Mode is not a per-deck setting. It must survive navigation and browser restarts.
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ua31-mode]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();
+ if(!FUSION.ua260)FUSION.ua260={mode:'beginner',mistakes:[]};FUSION.ua260.mode=b.dataset.ua31Mode==='refresher'?'refresher':'beginner';fusionSave();
+ syncModeButtons(); document.getElementById('modalBody')?.classList.toggle('ua31-refresher-lesson',mode()==='refresher');
+ const a=typeof FUSION_LESSON!=='undefined'?FUSION_LESSON:null;
+ if(a?.type==='tarot' && document.querySelector('#modal.open')){const scroll=document.querySelector('#modalBody')?.scrollTop||0;fusionRenderTarotLesson();const mb=document.querySelector('#modalBody');if(mb)mb.scrollTop=scroll;modalLearningSwitch();}
+ else if(document.querySelector('#modal.open')){const el=document.querySelector('.ua31-modebar>span');if(el)el.textContent='Mode saved · updates all lessons on their next stage';}
+ else render();
+},true);
+// Five consistent destinations on mobile, regardless of whether the learner is studying Tarot, Oracle or Dual.
+const navPages=[['fusion-home','⌂','Home'],['fusion-learn','🎓','Learn'],['fusion-read','✦','Read'],['fusion-collection','▦','Cards'],['fusion-trainer','♟','Trainer']];
+function syncMobileNav(){const nav=document.getElementById('bottomNav');if(!nav)return;
+ const current=typeof view!=='undefined'?view:'';
+ const identity=navPages.map(a=>a[0]+'|'+a[2]).join('::');
+ if(nav.dataset.ua31Nav!==identity||nav.children.length!==5){nav.innerHTML=navPages.map(([id,icon,name])=>`<button type="button" class="${current===id?'active':''}" data-go="${id}" aria-label="${name}"><b>${icon}</b>${name}</button>`).join('');nav.dataset.ua31Nav=identity;}
+ [...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('active',b.dataset.go===current));
+}
+const previousRender=render;
+render=function(...args){const out=previousRender.apply(this,args);syncMobileNav();syncModeButtons();const s=document.getElementById('sidebar');if(s){}document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VERSION;window.__ultimateAcademyVersion=VERSION;document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(el=>el.textContent='TAROT × ORACLE · V'+VERSION);return out;};
+// Identify the ACTUAL card from a quiz. No arbitrary Fool/Eevee image may be injected into foundations.
+const cardLesson=(id)=>FUSION_TAROT_COURSE.flatMap(s=>s.lessons).find(l=>l.id===id&&l.topic?.startsWith('card:'))||null;
+const cardImage=(c)=>c?.image||c?.art||null;
+window.__ua31BattleIllustration=function(quiz){if(!quiz||quiz.mode!=='tarot'||quiz.index>=quiz.questions.length)return '';
+ const q=quiz.questions[quiz.index];if(!q)return '';
+ let card=null;const lesson=cardLesson(quiz.topic);
+ if(lesson){const id=String(lesson.topic||'').replace(/^card:/,'');card=FUSION_TAROT_CARDS.find(c=>String(c.id)===id||c.name?.toLowerCase()===id.toLowerCase())||null;}
+ if(!card){const correct=String(q.correctText||'').toLowerCase().trim();card=FUSION_TAROT_CARDS.find(c=>c.name?.toLowerCase()===correct)||null;
+ if(card){const studied=FUSION_TAROT_COURSE.flatMap(s=>s.lessons).some(l=>l.topic?.startsWith('card:')&&fusionTarotLegacyDone(l.id)&&(String(l.topic).toLowerCase().includes(card.name?.toLowerCase().replaceAll(' ','-'))||String(l.title).toLowerCase()===card.name?.toLowerCase()));if(!studied)card=null;}
+ }
+ if(!card||!cardImage(card))return '';
+ const src=cardImage(card);return `<img class="ua31-battle-illustration" src="${src}" alt="${E(card.name)} Tarot illustration">`;
+};
+// Clear stale badge sources when the user explicitly performs a beta progress reset.
+const prevClear=window.__ua3ClearRegionalRewards;
+window.__ua3ClearRegionalRewards=function(scope){prevClear?.(scope);
+ if(scope==='all'||scope==='oracle')S.battles={};
+ if(scope==='all'){
+  if(FUSION.regionalQuest){FUSION.regionalQuest.earned={};FUSION.regionalQuest.attempts={};}
+  for(const key of Object.keys(FUSION.progress||{}))if(/^(?:tarotCrest:|tarotQuiz:|tarot:|dual:|dualQuiz:|oracle:|region:|regional:|league:)/.test(key))delete FUSION.progress[key];
+  try{localStorage.removeItem('tarotCourseV8')}catch(_){}
+ }
+ if(scope==='tarot'||scope==='all')for(const key of Object.keys(FUSION.progress||{}))if(key.startsWith('tarotCrest:'))delete FUSION.progress[key];
+};
+// Reduce stacked generic hints, but keep the leader's own personality and actual chapter topic list.
+const prevGymIntro=fusionV206TarotGymIntro;
+fusionV206TarotGymIntro=function(sec){const result=prevGymIntro(sec);const root=document.querySelector('#modalBody .fusion-v206-gymintro');if(root){
+ const p=[...root.querySelectorAll('p')];for(const el of p){if(el.closest('.ua3-example'))continue;const t=(el.textContent||'').trim();if(/^Battle topics\s*[·:]\s*What to revise/i.test(t)||/^Six questions from foundations and studied/i.test(t))el.remove();}
+ const previews=root.querySelectorAll('.ua3-example');previews.forEach((el,i)=>{if(i>0)el.remove()});
+ }
+ return result;
+};
+const previousNews=fusionNews;
+fusionNews=function(){return previousNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V3.1.0</span><h3>Lesson Quality & Reliability</h3><ul><li>Separated Understand, Observe, Experiment, Practice, and Remember so concept lessons no longer copy the same definition or example across pages.</li><li>Reworked Trainer prompts, added a structural 78-card diagram, and gave Experiment its own practice application.</li><li>Unified Beginner / Refresher Learning Mode across Settings and lesson windows.</li><li>Removed the redundant Spirit Oracle Start Here banner from the Academy page.</li><li>Standardized five mobile navigation buttons; added card-linked quiz artwork inside the battlefield for eligible Tarot card questions.</li><li>Strengthened beta reset handling for badge and Regional Quest records and removed redundant Gym hint blocks.</li></ul></article>');};fusionViews['fusion-news']=fusionNews;
+window.__ua310={version:VERSION,mode,syncMobileNav,illustration:window.__ua31BattleIllustration};
 render();
 })();
 </script>
