@@ -3277,7 +3277,7 @@ function fusionV20CourseSteps(unit,units,tab,unitIndex){const steps=[];unit.less
  steps.push({kind:isCheckpoint?'checkpoint':'study',title:l.title||l[1],done,unlocked,attrs,detail: isCheckpoint?'Unit checkpoint battle': (done?'Completed':'Study · '+(l.mins||5)+' min')});
  if(!isCheckpoint){const quizKey=tab==='tarot'?'tarotQuiz:'+l.id:'dualQuiz:'+l.index;steps.push({kind:'quiz',title:'Pop Quiz',done:!!FUSION.progress[quizKey],unlocked:done,attrs:tab==='tarot'?`data-v20-tarot-quiz="${fusionEscape(unit.id)}|${fusionEscape(l.id)}"`:`data-v20-dual-quiz="${l.index}"`,detail:'Optional · 4 questions'})}
  });return steps}
-function fusionV20ClassicRows(steps){return `<div class="fusion-v19-classic">${steps.map((s,i)=>{if(s.kind==='quiz')return '';const quiz=steps[i+1]?.kind==='quiz'?steps[i+1]:null;return `<div class="fusion-v20-lessonrow"><button ${s.attrs} ${!s.unlocked?'disabled':''}><span>${s.done?'✅':s.unlocked?'✦':'🔒'}</span><div><strong>${fusionEscape(s.title)}</strong><small>${s.done?'Completed':s.unlocked?'Ready to study':'Locked'} · ${fusionEscape(s.detail||'')}</small></div></button>${quiz?`<button class="fusion-v20-list-quiz" ${quiz.attrs} ${!quiz.unlocked?'disabled':''} title="${quiz.unlocked?'Take optional Pop Quiz':'Study the lesson to unlock the optional Pop Quiz'}">${quiz.done?'✓':'⚔'}</button>`:''}</div>`}).join('')}</div>`}
+function fusionV20ClassicRows(steps){return `<div class="fusion-v19-classic">${steps.map((s,i)=>{if(s.kind==='quiz')return '';const quiz=steps[i+1]?.kind==='quiz'?steps[i+1]:null;return `<div class="fusion-v20-lessonrow"><button ${s.attrs} ${!s.unlocked?'disabled':''}><span>${s.done?'✅':s.unlocked?'✦':'🔒'}</span><div><strong>${fusionEscape(s.title)}</strong><small>${s.done?'Completed':s.unlocked?'Ready to study':'Locked'} · ${fusionEscape(s.detail||'')}</small></div></button>${quiz?`<button class="fusion-v20-list-quiz" ${quiz.attrs} ${!quiz.unlocked?'disabled':''} title="${quiz.unlocked?'Start or replay this lesson’s optional Pop Quiz':'Complete this lesson to unlock its optional Pop Quiz'}">⚔</button><span class="ua311-quiz-status ${quiz.done?'done':'pending'}" title="${quiz.done?'Pop Quiz completed':'Pop Quiz not completed'}" aria-label="${quiz.done?'Pop Quiz completed':'Pop Quiz not completed'}">${quiz.done?'✓':'○'}</span>`:''}</div>`}).join('')}</div>`}
 fusionLearn=function(){
  if(FUSION_COURSE_TAB==='oracle')return oracleV2AcademyView();
  const tab=FUSION_COURSE_TAB,units=fusionV19CourseUnits(),mode=fusionCourseLayout(),stored=FUSION_V19_UNIT[tab]||0,index=Math.max(0,Math.min(units.length-1,stored)),unit=units[index],steps=fusionV20CourseSteps(unit,units,tab,index),done=unit.lessons.filter(l=>fusionV20LessonDone(tab,l,unit)).length;
@@ -4344,25 +4344,81 @@ const studied=deck=>{
    ?tarotDoneNames.has(c.name.toLowerCase())
    :!!S.completed?.['card-'+Number(c.id.slice(2))]));
 };
-function conceptBank(){const list=[];const groupLessons={foundations:'found-welcome',reflection:'found-reflection',orientation:'found-orientation',imagery:'found-imagery',questions:'found-question'};
- for(const group of Object.keys(FUSION_V18_CONCEPT_BANK).filter(k=>fusionTarotLegacyDone(groupLessons[k]))){
-  for(const [question,answer,wrong,why] of FUSION_V18_CONCEPT_BANK[group]){
-   const obj=fusionV18ChoiceQuestion(question,answer,wrong,why);
-   const needsVisual=false; // Generic foundation questions do not reference a specific card artwork.
-   const art=needsVisual?tarotVisualFor(question,answer):null;
-   const kind=needsVisual?(group==='imagery'?'scene':'card'):'text';
-   const c=q(obj.q,obj.correctText,obj.options.filter((_,i)=>i!==obj.correctIndex),obj.why,art,kind);
-   if(c)list.push(c);
-  }
- }return list;}
+// V3.1.1: regional questions come ONLY from completed lessons in the current curriculum.
+const UA311_STARTER={
+'found-welcome':[
+ ['In which historical setting did Tarot first develop?','As playing cards in fifteenth-century northern Italy',['As a Pokémon battle system','As an ancient Egyptian scientific instrument','As a modern online personality test'],'Tarot began as playing cards in northern Italy in the 1400s.'],
+ ['Which use came later in Tarot history?','Occult and divinatory interpretation',['Playing card games','Illustrated card decks','Games with suits and ranks'],'Fortune-telling and occult interpretations developed later than Tarot card games.'],
+ ['How can Tarot be used responsibly today?','As a symbolic prompt for reflection and choices',['As proof of a stranger’s thoughts','As a guaranteed medical test','As a certain prediction of the future'],'Tarot can suggest themes but cannot establish hidden facts.'],
+ ['What is an appropriate claim about a Tarot reading?','It may offer ideas to consider',['It always predicts the exact date of an event','It proves what someone else is feeling','It overrides evidence from real life'],'A reading proposes perspectives, not certainty.'],
+ ['What was the original main use of Tarot cards?','Playing card games',['Diagnosing illness','Identifying Pokémon types','Guaranteed prophecy'],'Historical Tarot began as a playing-card tradition.'],
+ ['When a Tarot card suggests a theme, what else matters?','Real information, judgment and personal choice',['Only the card picture','The reader’s certainty about strangers','Ignoring the actual situation'],'Responsible interpretation uses reflection together with real-world information.']
+],
+'v3-pokemon':[
+ ['Why does the Pokémon Tarot deck use Pokémon characters?','To illustrate and help remember Tarot symbolism',['Because Pokémon invented Tarot','To replace traditional Tarot meanings','Because Pokémon types determine the future'],'Pokémon are visual analogies that make existing Tarot concepts easier to recall.'],
+ ['What is the relationship between Pokémon and Tarot history?','Pokémon is a modern creative adaptation of Tarot imagery',['Pokémon originated Tarot in the fifteenth century','Traditional Tarot requires Pokémon','Each Pokémon created a suit of cards'],'The fan deck reimagines an older card system using Pokémon artwork.'],
+ ['What should guide an interpretation of a Pokémon Tarot card?','The traditional card meaning, artwork and question',['Only the Pokémon’s elemental type','Only the Pokémon’s battle statistics','Only the Pokémon’s name'],'Pokémon symbolism illustrates the documented Tarot theme.'],
+ ['Why might a Pokémon pose or setting help a learner?','It can serve as a visual memory cue',['It proves a future outcome','It makes the card’s original meaning irrelevant','It changes the number of Tarot cards'],'Visual analogies support memory without changing Tarot structure.'],
+ ['Does every Pokémon have a universal, fixed Tarot meaning?','No; the fan deck assigns illustrative roles',['Yes; every Pokémon type predicts one future','Yes; every Pokémon has an official Tarot rank','Yes; Pokémon abilities overrule Tarot definitions'],'Pokémon-to-card assignments are creative choices, not universal rules.'],
+ ['Which is a sensible way to study Pokémon Tarot?','Learn a card’s Tarot theme and observe how its Pokémon illustration reflects it',['Memorize battle type advantages instead of Tarot','Treat every Pokémon species as the same Tarot card','Ignore the image and the documented meaning'],'Art, symbolism and the actual Tarot concept should work together.']
+],
+'minor-overview':[
+ ['How many cards are in a traditional Tarot deck?','78',['60','56','22'],'A standard Tarot deck has 78 cards.'],
+ ['How many Major Arcana cards are there?','22',['56','14','40'],'The Major Arcana contains 22 cards.'],
+ ['How many Minor Arcana cards are there?','56',['22','78','16'],'The Minor Arcana contains 56 cards.'],
+ ['How is the Minor Arcana organized?','Four suits with fourteen cards each',['Two suits of eleven','One group of fifty-six without suits','Twenty-two suits'],'The four suits each contain ten numbered cards and four Court Cards.'],
+ ['How many Court Cards belong to one suit?','Four',['Two','Ten','Fourteen'],'Each suit has a Page, Knight, Queen and King.'],
+ ['What does the distinction between Major and Minor Arcana describe?','How the deck is organized and which themes are emphasized',['Which cards always win','Which cards guarantee happiness','Which Pokémon are strongest'],'The division is structural; neither group automatically overrides the other.']
+],
+'minor-suits':[
+ ['Which Tarot suit is associated with emotion and relationships?','Cups',['Wands','Swords','Pentacles'],'Cups is traditionally linked with Water and emotional experience.'],
+ ['Which suit is associated with action and creative drive?','Wands',['Cups','Swords','Pentacles'],'Wands is associated with Fire, initiative and creativity.'],
+ ['Which suit is associated with thinking and communication?','Swords',['Cups','Wands','Pentacles'],'Swords is associated with Air and the mental domain.'],
+ ['Which suit is associated with work and material resources?','Pentacles',['Swords','Wands','Cups'],'Pentacles is associated with Earth and practical resources.']
+],
+'found-orientation':[
+ ['What does a reversed Tarot card mean physically?','The card appears upside down',['It has changed suit','It has disappeared from the deck','It has lost its picture'],'Reversed describes the card’s orientation.'],
+ ['How should a reversal generally be considered?','As a possible change in how the theme is expressed',['As an automatic disaster','As guaranteed success','As a different Pokémon type'],'Reversals can signal delay, blockage, exaggeration or inward focus.'],
+ ['Does an upright card automatically promise a positive outcome?','No; context and the specific meaning still matter',['Yes; upright always means good','Yes; the suit never matters','Yes; every upright card is the Sun'],'Orientation alone is not a prediction.']
+],
+'read-position':[
+ ['What is a Tarot spread?','An arrangement of card positions that organize a reading',['A fifth Tarot suit','A card’s fixed name','A Pokémon attack'],'Positions assign roles to cards in the reading.'],
+ ['Which spread position usually suggests a constructive approach?','Advice',['Challenge','Past','Background'],'Advice explores possible responses.'],
+ ['What does a Challenge position help describe?','What complicates or tests the situation',['The guaranteed outcome','The deck’s history','The Pokémon’s species'],'Positions shape the question each card helps explore.']
+],
+'found-question':[
+ ['Which question leaves room for personal choices?','What can I do to prepare for a difficult conversation?',['What exact date am I guaranteed to win?','Can the cards prove a stranger is lying?','What private thoughts are definitely in someone else’s head?'],'Reflective questions focus on insight and choices.'],
+ ['What is an open Tarot reading?','Exploring themes without a specific question',['Always predicting an exact event','Reading someone’s mind','Only using one particular suit'],'An open reading does not require a written question.'],
+ ['Which is the better question for Tarot reflection?','What should I consider about this decision?',['Will my plan absolutely succeed?','Does this prove someone loves me?','Can Tarot replace a professional diagnosis?'],'Good reflective questions allow uncertainty and practical agency.']
+],
+'found-reflection':[
+ ['Which statement respects Tarot reading boundaries?','This might be a theme worth reflecting on',['This proves someone secretly fears you','This replaces medical advice','This guarantees the exact future'],'Careful readings acknowledge what remains uncertain.'],
+ ['Can Tarot demonstrate another person’s hidden thoughts as fact?','No',['Always','Only when upright','Only when the art is vivid'],'A card image cannot prove private mental states.'],
+ ['How should a reader present spiritual beliefs?','As optional perspectives, not compulsory facts',['As scientifically established diagnoses','As rules everyone must accept','As proof of an event'],'People can approach Tarot spiritually or reflectively.']
+]
+};
+function ua311MappedQuestion(id,row){const item=q(row[0],row[1],row[2],row[3],null,'text');if(item){item.ua311Lesson=id;item.ua311Topic=id;}return item}
+function conceptBank(allowed){
+ const finished=FUSION_TAROT_COURSE.flatMap(u=>u.lessons).filter(l=>l.kind!=='practice'&&!String(l.topic||'').startsWith('card:')&&fusionTarotLegacyDone(l.id)&&(!allowed||allowed.has(l.id)));
+ const bank=window.__ua311ConceptLessons?.()||{};const qs=[];
+ for(const l of finished){
+   const rows=UA311_STARTER[l.id];
+   if(rows){for(const row of rows){const item=ua311MappedQuestion(l.id,row);if(item)qs.push(item);}continue;}
+   const d=bank[l.id];if(!d)continue;
+   const item=ua311MappedQuestion(l.id,[d.question,d.answer,d.wrong||[],d.definition||d.applicationAnswer||'']);if(item)qs.push(item);
+   if(d.other&&d.applicationAnswer&&Array.isArray(d.other)&&d.other.length>=3){const extra=ua311MappedQuestion(l.id,[d.application,d.applicationAnswer,d.other,d.distinction||'']);if(extra)qs.push(extra);}
+ }
+ return qs;
+}
 function cardQuestions(deck,onlyStudied=true){const pool=studied(deck),result=[];
  if(pool.length<4)return result;
  for(const c of shuffle(pool)){
   for(const [field,label] of deck==='tarot'?[['theme','upright'],['shadow','reversed']]:[['theme','message'],['shadow','shadow'],['action','integration']]){
    const val=String(c[field]||'').trim();if(!val)continue;
-   const prompt=(deck==='tarot'?`Which studied Tarot card matches this ${label} meaning?`:`Which studied Spirit Oracle card matches this ${label}?`)+' '+val.slice(0,180);
-   const wrong=shuffle(pool.filter(x=>x.id!==c.id)).slice(0,3).map(x=>x.name);
-   const item=q(prompt,c.name,wrong,`${c.name}: ${val.slice(0,220)}`,null,'text');
+   const prompt=deck==='tarot'?`Look at the Tarot card shown. Which ${label} meaning fits its illustration?`:`Look at the Spirit Oracle card shown. Which ${label} guidance fits it?`;
+   const wrong=shuffle(pool.filter(x=>x.id!==c.id).map(x=>String(x[field]||'').trim()).filter(Boolean)).slice(0,3).map(x=>x.slice(0,160));
+   const item=q(prompt,val.slice(0,160),wrong,`${c.name}: ${val.slice(0,220)}`,c.img,'card');
+   if(item){item.ua311Lesson='card:'+c.name;item.ua311Topic='card:'+c.name;}
    if(item)result.push(item);
   }
  }return result;}
@@ -4376,13 +4432,41 @@ function chemistryQuestions(onlyStudied=true){const t=studied('tarot'),o=studied
  return available;
 }
 window.__ua260RegionalPreview=(region)=>relevantQuestions(region);
-function relevantQuestions(region){
- const basic=conceptBank(),tarot=cardQuestions('tarot',true),oracle=cardQuestions('oracle',true);
- const mixed=region==='Kanto'?basic:region==='Alola'?oracle:region==='Galar'||region==='Paldea'?[...tarot,...oracle,...chemistryQuestions(true)]:tarot;
- // Spread positions are covered later in the curriculum.
- const spreadReady=fusionTarotLegacyDone('spread-one');
- return shuffle([...mixed,...basic].filter(item=>spreadReady||!/(?:spread|position)/i.test(item.question)));
+function ua311BadgeLessons(b){
+ const all=FUSION_TAROT_COURSE.flatMap(s=>s.lessons).filter(l=>l.kind!=='practice');
+ if(!b)return all.filter(l=>fusionTarotLegacyDone(l.id));
+ // Kanto–Kalos follow the successive Tarot learning milestones.
+ const count=b.regionIndex<6 ? b.regionIndex*8+b.position+2 : b.regionIndex===7 ? 48+b.position*6 : b.regionIndex===8 ? 55+b.position*7 : all.length;
+ return all.slice(0,count).filter(l=>fusionTarotLegacyDone(l.id));
 }
+function relevantQuestions(region,badge){
+ const lessons=ua311BadgeLessons(badge),allowed=new Set(lessons.map(l=>l.id));
+ const basics=conceptBank(allowed);
+ const allowedCards=new Set(lessons.filter(l=>String(l.topic||'').startsWith('card:')).map(l=>String(l.topic).slice(5).toLowerCase()));
+ const tarot=cardQuestions('tarot',true).filter(q=>allowedCards.has(String(q.ua311Lesson||'').slice(5).toLowerCase()));
+ const oracle=cardQuestions('oracle',true);
+ const mixed=region==='Alola'?[...oracle,...basics]:region==='Galar'||region==='Paldea'?[...tarot,...oracle,...basics]:[...basics,...tarot];
+ return shuffle(mixed.filter(item=>item&&item.question));
+}
+// Rotate across completed lessons so early Gym battles never test just one topic.
+const ua311RecentRegional=new Map();
+function ua311LeagueQuestions(pool,key,amount=6){
+ const unique=new Map();for(const item of pool){const str=String(item?.question||'').trim().toLowerCase();if(str&&!unique.has(str))unique.set(str,item)}
+ const history=new Set(ua311RecentRegional.get(key)||[]);const groups=new Map();
+ for(const item of unique.values()){const id=item.ua311Lesson||'general';if(!groups.has(id))groups.set(id,[]);groups.get(id).push(item)}
+ const ids=shuffle([...groups.keys()]);for(const id of ids)groups.get(id).sort((a,b)=>Number(history.has(a.question))-Number(history.has(b.question)));
+ const out=[];while(out.length<amount){let changed=false;for(const id of ids){const item=groups.get(id).shift();if(item){out.push(item);changed=true;if(out.length===amount)break;}}if(!changed)break;}
+ ua311RecentRegional.set(key,out.map(item=>item.question));return out;
+}
+window.__ua311RegionalTopics=(badgeTitle)=>{
+ const badge=leaders.find(b=>String(b.region+' · '+b.badge)===String(badgeTitle||''));
+ const got=ua311BadgeLessons(badge);
+ const basics=got.filter(l=>!String(l.topic||'').startsWith('card:')).map(l=>l.title);
+ const cards=got.filter(l=>String(l.topic||'').startsWith('card:')).length;
+ const oracle=Object.keys(S.completed||{}).filter(k=>/^card-\d+$/.test(k)&&S.completed[k]).length;
+ const topics=basics.slice(-6);if(cards)topics.push(`${cards} studied Tarot card${cards===1?'':'s'}`);if(oracle)topics.push(`${oracle} studied Oracle card${oracle===1?'':'s'}`);
+ return topics;
+};
 const evolutionQuestions=()=>{
  const evos=shuffle(ORACLE_EVOLUTIONS.filter(([a,b])=>ASSETS.pokemon[slug(a)]&&ASSETS.pokemon[slug(b)]));const arr=[];
  for(const [from,to] of evos){const wrong=shuffle(evos.filter(x=>x[1]!==to)).slice(0,3).map(x=>x[1]);
@@ -4408,7 +4492,7 @@ function arcadeQuestions(mode){if(mode==='evolve')return evolutionQuestions();if
 function eligibleBadge(b){const totalT=FUSION_TAROT_COURSE.reduce((n,unit)=>n+unit.lessons.filter(l=>l.kind!=='practice'&&fusionTarotLegacyDone(l.id)).length,0);
  const totalO=Object.keys(S.completed||{}).filter(k=>/^card-\d+$/.test(k)&&S.completed[k]).length;
  const [ri,i]=[b.regionIndex,b.position];
- if(ri<6){const needed=ri===0?2+i:ri*8+i+2;return {ok:totalT>=needed,need:`Tarot lessons: ${totalT}/${needed}`,count:totalT,threshold:needed}};
+ if(ri<6){const needed=ri===0?2+i:ri*8+i+2;const first=FUSION_TAROT_COURSE.flatMap(s=>s.lessons).filter(l=>l.kind!=='practice').slice(0,needed);const ready=first.filter(l=>fusionTarotLegacyDone(l.id)).length;return {ok:ready>=needed,need:`Tarot lessons in sequence: ${ready}/${needed}`,count:ready,threshold:needed}};
  if(ri===6)return {ok:totalO>=4+i*6,need:`Spirit Oracle cards: ${totalO}/${4+i*6}`,count:totalO,threshold:4+i*6};
  if(ri===7)return {ok:totalT>=48+i*6&&totalO>=12+i*4,need:`Tarot ${totalT}/${48+i*6} · Oracle ${totalO}/${12+i*4}`,count:totalT,threshold:48+i*6};
  return {ok:totalT>=55+i*7&&totalO>=24+i*5,need:`Tarot ${totalT}/${55+i*7} · Oracle ${totalO}/${24+i*5}`,count:totalT,threshold:55+i*7};
@@ -4480,11 +4564,11 @@ function launch(mode, badgeId){let questions=[],opp,region=null;
  if(mode==='region'){
   region=leaders[badgeId];if(!region)return;
   const unlocked=eligibleBadge(region),historic=!!earnedRecord(region);if(!historic&&!unlocked.ok)return toast('Study more Academy lessons to unlock this Regional Challenge.');
-  opp={name:region.leader,key:region.key,ace:region.ace};questions=relevantQuestions(region.region);
+  opp={name:region.leader,key:region.key,ace:region.ace};questions=relevantQuestions(region.region,region);
  }else{opp=randTrainer();questions=arcadeQuestions(mode);}
  if(questions.length<6){const explanation=mode==='chemistry'?'Study more matching Tarot and Spirit Oracle cards before starting Card Chemistry.':mode==='scene'||mode==='match'||mode==='shadow'?'Study at least four Tarot or Spirit Oracle cards first.':'Not enough eligible questions are available yet.';
   showModal('Challenge not ready',`<div class="fusion-tile"><h3>More knowledge needed</h3><p>${h(explanation)}</p><button class="btn" data-v21-close>Okay</button></div>`);return;}
- battle={mode,badge:region,opponent:opp,questions:(mode==='region'?ua25DiverseQuestions(questions,'regional:'+region.region,6):ua2110BattleQuestions(questions,'arcade:'+mode,6)),index:0,score:0,history:[],answered:null,player:activeProfilePokemon(),allyHp:100,foeHp:100};
+ battle={mode,badge:region,opponent:opp,questions:(mode==='region'?ua311LeagueQuestions(questions,'regional:'+region.region,6):ua2110BattleQuestions(questions,'arcade:'+mode,6)),index:0,score:0,history:[],answered:null,player:activeProfilePokemon(),allyHp:100,foeHp:100};
  const music=fusionV206Track(mode==='region'?'regionalGym':'mini');if(music==='off')stopMusic();else musicPlay(music,true,true);
  battleRender();
 }
@@ -7966,7 +8050,7 @@ render();
 <script id="ua300-curriculum-and-tester">/* Ultimate Academy 3.0 — intentional beta curriculum rebuild, honest rewards-free tester mode */
 (()=>{
 'use strict';
-const V='3.1.0', e=x=>fusionEscape(String(x??''));
+const V='3.1.1', e=x=>fusionEscape(String(x??''));
 const original=FUSION_TAROT_COURSE.map(section=>({...section,lessons:[...section.lessons]}));
 const byId=new Map(original.flatMap(s=>s.lessons).map(l=>[l.id,{...l}]));
 const used=new Set();
@@ -8233,6 +8317,7 @@ fusionNews=function(){return oldNews().replace('<div class="fusion-news-list">',
 const baseRender=render;render=function(...args){if(tester())restore();const out=baseRender.apply(this,args);const lab='TAROT × ORACLE · V'+V;document.querySelectorAll('[data-ultimate-version-label],.ua240-version-label').forEach(node=>node.textContent='V'+V);document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(node=>node.textContent=lab);document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;window.__ultimateAcademyVersion=V;return out;};
 window.__ultimateAcademyVersion=V;
 const ua3ShowModal=showModal;showModal=function(...args){const out=ua3ShowModal.apply(this,args);window.__ultimateAcademyVersion=V;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+V;return out};
+window.__ua311ConceptLessons=()=>LESSONS;
 window.__ua300={version:V,chapters:chapters.map(c=>({id:c.id,title:c.title,count:c.lessons.length})),conceptLessons:Object.keys(LESSONS),tester,capture,restore};
 render();
 })();
@@ -8337,6 +8422,43 @@ const previousNews=fusionNews;
 fusionNews=function(){return previousNews().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V3.1.0</span><h3>Lesson Quality & Reliability</h3><ul><li>Separated Understand, Observe, Experiment, Practice, and Remember so concept lessons no longer copy the same definition or example across pages.</li><li>Reworked Trainer prompts, added a structural 78-card diagram, and gave Experiment its own practice application.</li><li>Unified Beginner / Refresher Learning Mode across Settings and lesson windows.</li><li>Removed the redundant Spirit Oracle Start Here banner from the Academy page.</li><li>Standardized five mobile navigation buttons; added card-linked quiz artwork inside the battlefield for eligible Tarot card questions.</li><li>Strengthened beta reset handling for badge and Regional Quest records and removed redundant Gym hint blocks.</li></ul></article>');};fusionViews['fusion-news']=fusionNews;
 window.__ua310={version:VERSION,mode,syncMobileNav,illustration:window.__ua31BattleIllustration};
 render();
+})();
+</script>
+<style id="ua311-css">
+/* Regional progress-linked battles and Classic List independent controls */
+.ua311-quiz-status{display:grid;place-items:center;flex:none;width:39px;height:43px;border:1px solid #694b9b;background:#392850;color:#cfc2e5;border-radius:11px;font-weight:900;font-size:16px}
+.ua311-quiz-status.done{background:#7954a5;color:white;border-color:#9b78c0}
+.fusion-v20-lessonrow>.fusion-v20-list-quiz{order:3;max-width:43px!important;width:43px!important;min-width:43px!important}
+.fusion-v20-lessonrow>.ua311-quiz-status{order:2}
+.fusion-v20-lessonrow>button:first-child{order:1}
+.ua311-topic-panel{margin:15px auto;max-width:600px;padding:14px 16px;border:1px solid #a9824d;background:#1b384e;color:#eff4f8;border-radius:13px;text-align:left}
+.ua311-topic-panel strong{color:#f2c777}
+.ua311-topic-panel p{margin:6px 0 0;font-size:12px;line-height:1.6}
+.ua311-topic-panel ul{margin:8px 0 0;padding-left:20px;display:grid;gap:5px;font-size:12px}
+@media(max-width:480px){.fusion-v20-lessonrow{gap:5px}.ua311-quiz-status{width:32px;height:39px}.fusion-v20-lessonrow>.fusion-v20-list-quiz{min-width:38px!important;width:38px!important;min-height:39px!important}}
+</style>
+<script id="ua311-eligible-topics">
+(()=>{'use strict';const VERSION='3.1.1';const prev=showModal;
+showModal=function(title,html,...args){
+ if(typeof html==='string' && html.includes('class="v21-badge-detail"')){
+   const topics=window.__ua311RegionalTopics?.(title)||[];
+   html=html.replace(/<div class="ua260-tip">[\s\S]*?<\/div>/g,'').replace(/<div class="ua250-prep">[\s\S]*?<\/div>/g,'');
+   html=html.replace(/<p>Six questions from foundations and studied Tarot\/Oracle material\. Earn at least five correct answers\.<\/p>/g,'');
+   const item=topics.length?'<ul>'+topics.map(s=>'<li>'+fusionEscape(s)+'</li>').join('')+'</ul>':'<p>Complete Academy lessons to add eligible quiz subjects.</p>';
+   const panel='<section class="ua311-topic-panel"><strong>📚 Your eligible lesson topics</strong>'+item+'<p>Six questions will be selected only from learned material; five correct answers earn the badge. Rematches rotate eligible questions.</p></section>';
+   html=html.replace('<div class="v21-actions">',panel+'<div class="v21-actions">');
+ }
+ const res=prev(title,html,...args);
+ // Earlier modal wrappers add their generic topic guesses AFTER receiving our HTML.
+ // Remove those rendered duplicates so learners see only the actual completed lessons.
+ if(typeof html==='string' && html.includes('class="v21-badge-detail"')){
+   document.querySelectorAll('#modalBody .ua260-tip,#modalBody .ua250-prep').forEach(el=>el.remove());
+ }
+ return res;
+};
+// 3.1.1 labels; gameplay data is unchanged except for curriculum-filtered regional question pools.
+const news=fusionNews;fusionNews=function(){return news().replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">ULTIMATE ACADEMY V3.1.1</span><h3>Regional League · Curriculum-Safe Quiz Patch</h3><ul><li>Regional quiz questions and topic previews now depend on completed lesson IDs, not region-wide generic banks.</li><li>Brock’s first challenge draws only from the first two completed Foundations lessons.</li><li>Every studied card question now includes its own illustration and tests its interpretation instead of showing a giveaway name.</li><li>Classic List separately displays quiz completion status and the repeatable ⚔ Pop Quiz button.</li></ul></article>')};fusionViews['fusion-news']=fusionNews;
+window.__ultimateAcademyVersion=VERSION;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VERSION;
 })();
 </script>
 </body></html>
