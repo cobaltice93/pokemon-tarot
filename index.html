@@ -8977,4 +8977,355 @@ const lastRender=render;render=function(...args){const result=lastRender.apply(t
 window.__ua340={version:VER,lessonCount:Object.keys(lessons).length,examples:three,stages};
 window.__ultimateAcademyVersion=VER;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VER;
 })();
+</script><style id="ua350-css">/* V3.5 — unified interactive teaching, native controls and responsive layout */
+#modal:has(.ua35-root) .modal-box{background:#131f37;color:#e9f0fa;max-height:96dvh;overflow:hidden}
+#modal:has(.ua35-root) .modal-body{background:#131f37!important;padding:0!important;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#modal:has(.ua35-root) .modal-head{background:#08283b}
+.ua35-top{flex:none!important;background:#10253c!important;color:#fff;border-bottom:1px solid #324664;z-index:30;padding:12px clamp(12px,3vw,28px);box-shadow:0 3px 12px #050e2180}
+.ua35-bar{height:8px;background:#33435e;border-radius:99px;overflow:hidden}.ua35-bar>span{display:block;height:100%;background:linear-gradient(90deg,#4ba994,#dbac57);border-radius:99px}
+.ua35-progress{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;margin:7px 0 9px;color:#d4e0ef}.ua35-progress strong{font-size:13px;color:#fff}
+.ua35-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.ua35-layout{display:flex;flex-wrap:wrap;background:#070f25;border-radius:10px;padding:3px;gap:3px}.ua35-layout button,.ua35-tools summary,.ua35-toolbox button{background:transparent;border:1px solid transparent;border-radius:8px;padding:7px 10px;color:#e4ecfb;font-weight:800;font-size:11px;cursor:pointer}.ua35-layout button.active,.ua35-toolbox button.active{background:#164260;border-color:#3b6d7d}.ua35-tools details{position:relative}.ua35-tools summary{list-style:none;border:1px solid #456177}.ua35-toolbox{display:flex;gap:5px;padding:8px;background:#122f45;border:1px solid #537086;border-radius:10px;flex-wrap:wrap;margin-top:5px}.ua35-toolbox button{border:1px solid #58738a}
+.ua35-main{padding:clamp(14px,3vw,26px);color:#edf2ff;max-width:1060px;margin:0 auto;font-size:14px;line-height:1.55}
+.ua35-label{font:bold clamp(18px,3.5vw,27px)/1.15 Georgia,serif;margin-bottom:11px;color:#f1edeb}
+.ua35-stage-dots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:12px 0 18px}.ua35-stage-dots span{padding:7px 3px;border-bottom:4px solid #465475;font-size:10px;text-align:center;color:#b8cbdf;overflow-wrap:anywhere}.ua35-stage-dots span.active{color:white;font-weight:900;border-bottom-color:#ddb160}.ua35-stage-dots span.done{border-color:#4fa891}
+.ua35-teach{border:1px solid #3f5775;border-radius:13px;background:#192e47;padding:14px;margin-bottom:13px}.ua35-teach b{color:#f0ca84;font-size:14px}.ua35-teach p{margin:6px 0 0}.ua35-goal{padding:8px 10px;border-left:3px solid #e0b46a;background:#ffffff08;border-radius:6px}
+.ua35-work{display:grid;gap:15px}.ua35-work.with-art{grid-template-columns:minmax(115px,.35fr) minmax(0,1fr)}.ua35-sideart{width:100%;height:auto;max-height:330px;object-fit:contain}.ua35-task{min-width:0}
+.ua35-practice-card{border:1px solid #354969;border-radius:15px;background:#091329;padding:18px;min-width:0}.ua35-practice-card h3{font:700 clamp(17px,2.8vw,23px)/1.28 Georgia,serif;color:#fff;margin:0 0 15px}.ua35-scenario{margin:0 0 13px;padding:13px;border:1px solid #4c6a7a;background:#153146;border-radius:12px}.ua35-scenario b{color:#edc77f}.ua35-scenario p{margin:4px 0}
+.ua35-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ua35-options button{display:flex;align-items:flex-start;gap:8px;min-height:65px;text-align:left;padding:11px;border:2px solid #3c5574;border-radius:12px;background:#132139;color:#eef2fb;font-size:13px;line-height:1.45;cursor:pointer}.ua35-options button.selected{background:#15445a;border-color:#d6ac64}.ua35-options button:focus-visible,.ua35-layout button:focus-visible,.ua35-footer button:focus-visible{outline:3px solid #f8d47e;outline-offset:2px}.ua35-options button:disabled{cursor:default;opacity:1}.ua35-option-letter{border-radius:6px;background:#0a314a;color:white;min-width:24px;height:24px;display:grid;place-items:center;font-size:11px;font-weight:900}
+.ua35-pair-grid{display:grid;gap:10px}.ua35-pair-grid label{display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,.5fr);gap:13px;align-items:center;padding:10px;background:#14273d;border:1px solid #415d78;border-radius:10px;font-size:13px}.ua35-pair-grid select{max-width:100%;width:100%;min-height:40px;background:#263d54;color:white;border:1px solid #6e8da6;border-radius:8px;padding:6px}.ua35-practice-card textarea{display:block;width:100%;min-height:90px;margin-top:8px;background:#172a43;color:#fff;border:1px solid #748da3;border-radius:9px;padding:11px;resize:vertical}
+.ua35-images{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:4px 0 16px}.ua35-images img{height:min(245px,34vh);max-width:45%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px #0005}.ua35-scene-caption{font-size:12px;color:#a9bed5;text-align:center;margin:0 0 10px}
+.ua35-feedback{margin:12px 0;border:1px solid #5b957d;background:#193e38;padding:13px;border-radius:10px;color:#ecf7ed;line-height:1.55}.ua35-feedback.retry{background:#462a31;border-color:#af7776}.ua35-feedback b,.ua35-feedback strong{color:#ffe5ad}.ua35-feedback p{margin:5px 0 0}.ua35-corrections{margin-top:7px}.ua35-corrections p{border-bottom:1px solid #ffffff21;padding-bottom:5px}
+.ua35-trainer{display:flex;align-items:center;gap:12px;margin:16px 0}.ua35-trainer img{width:50px;height:65px;object-fit:contain;flex:none}.ua35-trainer p{flex:1;background:#c2d2d1;color:#0a3748;padding:12px;border-radius:13px;margin:0;font-size:12px}.ua35-footer{display:flex;justify-content:space-between;align-items:center;gap:9px;border-top:1px solid #3a4a63;padding:16px 0;margin-top:13px}.ua35-footer-right{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.ua35-footer .btn{min-height:40px;padding:9px 13px}.ua35-footer button:disabled{opacity:.45;cursor:not-allowed}.ua35-small{font-size:11px;color:#aac0d4;margin:7px 0 0}.ua35-complete{text-align:center;max-width:700px;margin:auto}.ua35-complete h2{color:#fff;font-size:30px}.ua35-trophy{font-size:56px}.ua35-summary{text-align:left;background:#182c45;border:1px solid #425e7b;padding:13px;margin:12px 0;border-radius:10px}.ua35-summary b{color:#edd29c}.ua35-summary p{margin:6px 0}.ua35-summary ul{margin:7px 0}.ua35-reward{color:#efd18b;font-weight:700}.ua35-finish-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:14px}.ua35-finish-actions .btn{min-height:40px}
+.ua35-missions{border:1px solid var(--line);padding:16px;border-radius:15px;background:var(--card);margin:12px 0 20px}.ua35-missions h2{font:700 24px Georgia,serif;margin-bottom:8px}.ua35-missions>p{font-size:13px;color:var(--sub);margin:5px 0 12px}.ua35-mission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:9px}.ua35-mission-grid button{text-align:left;display:grid;gap:6px;border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--paper);color:var(--ink);min-height:85px;cursor:pointer}.ua35-mission-grid strong{font-size:15px}.ua35-mission-grid span{font-size:11px;color:var(--sub)}.ua35-mission-grid button:hover{border-color:var(--gold)}
+@media(max-width:650px){.ua35-stage-dots span{font-size:9px}.ua35-options{grid-template-columns:1fr}.ua35-work.with-art{grid-template-columns:1fr}.ua35-sideart{max-height:230px;width:auto;margin:auto}.ua35-pair-grid label{grid-template-columns:1fr;gap:6px}.ua35-practice-card{padding:12px}.ua35-main{padding:13px}.ua35-top{padding:9px 12px}.ua35-footer{flex-wrap:wrap}.ua35-footer-right{flex:1;justify-content:flex-end}.ua35-footer .btn{font-size:11px;padding:8px}.ua35-images img{height:200px}.ua35-tools{gap:5px}}
+
+.ua35-artstrip{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;color:#c9d5e5;font-size:12px}.ua35-artstrip button{padding:6px 9px;border-radius:8px;border:1px solid #456a85;background:#1b354b;color:white;font-size:11px}.ua35-artstrip b{color:#f0c77e}.ua35-prereq{padding:22px;color:var(--ink)}.ua35-prereq h2{font:700 25px Georgia,serif;margin:0 0 10px}.ua35-prereq ul{margin:10px 0}
+
+.ua35-timer{font-size:11px;margin-top:6px;color:#f2cb7b;font-weight:700}.ua35-daily-cta{border:1px solid var(--line);padding:16px;margin-top:13px;border-radius:14px;background:var(--card)}.ua35-daily-cta b{font:700 18px Georgia,serif}.ua35-daily-cta p{font-size:12px;color:var(--sub);margin:6px 0 12px}
+
+.ua35-layout-focus .ua35-work.with-art{grid-template-columns:minmax(0,1fr)}.ua35-layout-focus .ua35-sideart{max-width:280px;margin:0 auto}.ua35-layout-gallery .ua35-work.with-art{display:flex;flex-direction:column}.ua35-layout-gallery .ua35-sideart{max-height:360px;width:auto;align-self:center}.ua35-notes{margin:12px 0;border:1px solid #425975;border-radius:10px;background:#10283e;padding:10px 12px}.ua35-notes summary{cursor:pointer;font-weight:800;color:#e4c37e}.ua35-notes label{display:block;margin-top:10px;font-size:12px}.ua35-notes textarea{width:100%;margin-top:5px;padding:9px;min-height:85px;background:#152e45;border:1px solid #6386a4;border-radius:9px;color:white}.ua35-report{background:transparent;color:#cbdce8;border:1px solid #597089;border-radius:9px;padding:7px 10px;font-size:11px;cursor:pointer;margin-top:8px}
+
+.ua35-mission-intro{font-size:13px;color:#c8d8e7;margin:0 0 14px;background:#193046;border-radius:9px;padding:10px}
+</style><script id="ua350-engine">/* Ultimate Academy V3.5.0 — one assessed learning activity engine shared by Tarot, Spirit Oracle and Dual.
+   Source of truth remains existing lesson data, art, saves and progress gates. */
+(()=>{'use strict';
+const VER='3.5.0';
+const esc=x=>fusionEscape(String(x??''));
+const tester=()=>!!S.settings?.ua3Tester;
+const refresher=()=>FUSION.ua260?.mode==='refresher';
+const STAGES=['Understand','Observe','Experiment','Practise','Remember'];
+const lessonMap=window.__ua311ConceptLessons?.()||{};
+const oracleFoundation=window.__ua320?.foundations||{};
+const oracleQuiz=window.__ua320?.quizData||{};
+const flatLessons=FUSION_TAROT_COURSE.flatMap(x=>x.lessons);
+const findLesson=id=>flatLessons.find(x=>x.id===id);
+const learnedTarot=c=>{if(!c)return false;const l=flatLessons.find(l=>l.topic==='card:'+c.name);return !!l&&fusionTarotLegacyDone(l.id)};
+const learnedOracle=c=>!!(c&&S.completed?.['card-'+c.number]);
+const one=(x)=>String(x??'').trim();
+const short=(x,n=200)=>{const s=one(x).replace(/\s+/g,' ');return s.length>n?s.slice(0,n).replace(/\s+\S*$/,'')+'…':s};
+const first=x=>one(x).split(/(?<=\.)\s+/)[0]||one(x);
+const plainChoice=(prompt,correct,others,why,options={})=>{
+ const opts=[correct,...(others||[])].map(one).filter(Boolean);const seen=new Set(),list=opts.filter(x=>{let k=x.toLowerCase();if(seen.has(k))return false;seen.add(k);return true}).slice(0,4);
+ for(const fill of ['The image guarantees an exact outcome.','Assume every card has the same meaning.','Ignore the question and the observed evidence.'])if(list.length<3&&!seen.has(fill.toLowerCase())){seen.add(fill.toLowerCase());list.push(fill)}
+ const ordered=list.map((x,i)=>({text:x,correct:i===0}));
+ // Stable rotation by prompt, so the correct option isn't always A.
+ const off=[...prompt].reduce((n,c)=>n+c.charCodeAt(0),0)%ordered.length;
+ const shifted=ordered.slice(off).concat(ordered.slice(0,off));
+ return {kind:'choice',prompt,options:shifted.map(x=>x.text),answer:shifted.findIndex(x=>x.correct),why:one(why)||one(correct),...options};
+};
+const sortTask=(prompt,items,groups,why)=>({kind:'sort',prompt,items,groups,why});
+const matchTask=(prompt,items,groups,why)=>({kind:'match',prompt,items,groups,why});
+const reflectTask=(prompt,model,why)=>({kind:'reflect',prompt,model,why});
+const exploreTask=(heading,scenario,point,alternatives)=>plainChoice(`What does “${heading}” illustrate in this situation?`,point,alternatives,point,{scene:scenario,shortTitle:heading});
+const imageTask=(prompt,image,scene)=>plainChoice(prompt,short(scene,155),[
+ 'The figure secretly knows the future outcome.','The image proves someone else’s unspoken feelings.','Everything in the scene must have only one fixed meaning.'
+ ],`The observable detail is: ${short(scene,180)}. The other choices claim things we cannot see.`,{image,sceneLabel:'Look carefully at the actual illustration; separate visible details from guesses.'});
+const normalizeQuestions=(raw)=>Array.isArray(raw)?raw:[];
+const studyModel=(kind,subject,record,stages,extras={})=>({kind,subject,record,stages,...extras});
+function tarotConcept(l){const d=lessonMap[l.id];if(!d)return null;const e=window.__ua340?.examples?.(d,l.id)||[
+ ['A real situation',d.example,d.distinction],['Applying the idea',d.application,d.applicationAnswer],['A useful caution',d.distinction,d.distinction]];
+ const alt=[e[0][2],e[1][2],e[2][2]].filter(Boolean),bad=d.wrong||[];
+ const foundationExample=exploreTask(e[0][0],e[0][1],e[0][2],[...alt.slice(1),...bad]);
+ const otherExample=exploreTask(e[1][0],e[1][1],e[1][2],[e[0][2],e[2][2],...bad]);
+ const thirdExample=exploreTask(e[2][0],e[2][1],e[2][2],[e[0][2],e[1][2],...bad]);
+ const q0=plainChoice(d.question,d.answer,bad,d.distinction);
+ const p1=plainChoice(`Which statement avoids a common misunderstanding about ${l.title}?`,d.distinction,bad,`${d.distinction} ${d.applicationAnswer}`);
+ const p2=plainChoice(`How would the lesson guide this situation? ${short(d.application,165)}`,d.applicationAnswer,[...bad,d.answer],`${d.applicationAnswer}`);
+ const recall=plainChoice('Which principle should you remember?',d.goal,[...bad,...alt.slice(0,1)],d.distinction);
+ let experiment=sortTask('Classify each statement: a responsible lesson principle or an unsupported assumption?',[
+ {text:short(d.goal,135),group:0},{text:short(bad[0],130),group:1},{text:short(d.distinction,135),group:0},{text:short(bad[1]||'The cards guarantee exact future facts.',130),group:1}
+ ],['Supported','Unsupported'],d.distinction);
+ if(l.id==='minor-suits'||l.id==='minor-overview'||/introducing the (wands|cups|swords|pentacles)/i.test(l.title)){
+  experiment=sortTask('Match the everyday themes to the four Tarot suits.',[
+   {text:'Taking initiative on a creative project',group:0},{text:'Acknowledging feelings in a relationship',group:1},
+   {text:'Analyzing evidence before a difficult decision',group:2},{text:'Planning time and financial resources',group:3}
+  ],['Wands','Cups','Swords','Pentacles'],'Wands = action; Cups = emotional life; Swords = thinking and conflict; Pentacles = practical resources.');
+ }
+ return studyModel('tarot','Tarot · '+l.title,l.id,[
+  [q0], [foundationExample,otherExample,thirdExample], [experiment], [p1,p2], [recall]
+ ],{definition:d.definition,goal:d.goal,summary:d.distinction,art:null,lesson:l});
+}
+function tarotCard(l,c){const up=one(c.upright),rv=one(c.reversed),keys=Array.isArray(c.keywords)?c.keywords:[],scene=one(c.scenery)||'Describe the actual Pokémon pose, setting and meaningful symbols without claiming hidden thoughts.';
+ const contexts=c.ua33Contexts||{};
+ const q0=plainChoice(`Which description most closely matches ${c.name} upright?`,first(up),[first(rv),'It always guarantees a result regardless of the question.','It only has meaning if its Pokémon type wins a battle.'],up);
+ const pic=imageTask('Which description is directly supported by the artwork?',c.image,scene);
+ const orient=matchTask(`Compare ${c.name} in two orientations. Match each interpretive lens to its documented meaning.`,[
+  {text:`${c.name} · Upright`,group:0},{text:`${c.name} · Reversed`,group:1}
+ ],[short(up,150),short(rv,150)],'Upright and reversed are two expressions of the same card, not automatically “good” versus “bad”.');
+ const position=plainChoice(`If ${c.name} appears as Advice, which approach respects the card and its position?`,
+ `Use the theme of ${keys.slice(0,2).join(' and ')||c.name} to consider a choice within your control.`,[
+ 'Assume the card reveals exactly what another person is thinking.','Treat the Advice position as proof of a fixed future.','Ignore both the spread position and the question.'
+ ],`As Advice, ${c.name} suggests a practical response; its upright focus is ${short(up,170)}`);
+ const caseQ=plainChoice(`In a relationship reading, which response fits ${c.name} without claiming certainty?`,short(contexts.love||up,205),[
+ 'This card proves what the other person secretly feels.','Whatever happens next is guaranteed by the picture.',short(rv,200)
+ ],short(contexts.love||up,240));
+ const recall=plainChoice(`Which summary is most consistent with ${c.name} reversed?`,first(rv),[
+ first(up),'All reversed cards are necessarily negative.','The artwork alone guarantees a prediction.'
+ ],rv);
+ return studyModel('tarot','Tarot Card · '+c.name,l.id,[[q0],[pic],[orient],[position,caseQ],[recall]],{
+ definition:up,goal:`Learn ${c.name}'s upright and reversed meanings and connect its Pokémon symbolism to the question.`,summary:`Upright: ${short(up,240)} Reversed: ${short(rv,240)}`,art:c.image,scene,lesson:l,card:c});
+}
+function oracleCore(id){const d=oracleFoundation[id];if(!d)return null;const bank=normalizeQuestions(oracleQuiz[id]);let qs=bank.map(([q,correct,bad,why])=>plainChoice(q,correct,bad,why));
+ const tri=(d.experiment||[]).map((x,i)=>exploreTask(x[0],x[1],x[1],[d.experiment[(i+1)%3][1],d.experiment[(i+2)%3][1],d.insight]));
+ const supp=sortTask('Sort these ideas into an evidence-based observation or an unsupported claim.',[
+ {text:'State what the illustration or printed guidance actually contains.',group:0},
+ {text:'Claim the card proves somebody’s secret intentions.',group:1},
+ {text:'Describe the card’s theme as a possibility to explore.',group:0},
+ {text:'Treat a symbol as a guaranteed prediction.',group:1}
+ ],['Responsible','Unsupported'],d.insight);
+ if(id==='found-4')return studyModel('oracle','Oracle Foundations · '+d.title,id,[
+ [qs[0]],[...tri],[matchTask('Match the three Oracle lenses to their jobs.',[
+ {text:'Message',group:0},{text:'Shadow',group:1},{text:'Integration',group:2}
+ ],['Constructive expression of a theme','Blocked, unbalanced or difficult expression','A manageable response or next action'],d.definition)],
+ [qs[1],qs[2]],[plainChoice('Which rule should guide a three-lens reading?',d.insight,qs[0]?.options?.filter((_,i)=>i!==qs[0]?.answer)||[],d.insight)]
+ ],{definition:d.definition,goal:d.title,summary:d.recall});
+ return studyModel('oracle','Oracle Foundations · '+d.title,id,[
+ [qs[0]],[...tri],[supp],[qs[1]||qs[0],qs[2]||qs[3]||qs[0]],[plainChoice(`Recall the key distinction: ${d.title}`,d.insight,qs[0]?.options?.filter((_,i)=>i!==qs[0]?.answer)||[],d.recall)]
+ ],{definition:d.definition,goal:d.title,summary:d.recall});
+}
+function oracleCard(c,artIndex=0){const message=one(c.message_draft),shadow=one(c.shadow_draft),integration=one(c.integration_draft),scene=one(oracleScene(c,artIndex)||c.teaching_scenario)||'Use the pictured Pokémon pose and surroundings as evidence, not a prediction.';
+ const art=ASSETS.cards?.[c.number]?.[artIndex]||ASSETS.cards?.[c.number]?.[0];const lenses=[message,shadow,integration];
+ return studyModel('oracle','Spirit Oracle · '+c.title,'card-'+c.number,[
+ [plainChoice(`Which sentence expresses ${c.title}'s constructive Message?`,message,[shadow,integration,'The Pokémon’s game type provides a guaranteed prediction.'],message)],
+ [imageTask(`Which description is grounded in this ${c.title} illustration?`,art,scene)],
+ [matchTask(`Match ${c.title}'s three interpretive lenses to their meanings.`,[
+  {text:'Message',group:0},{text:'Shadow',group:1},{text:'Integration',group:2}
+ ],lenses,'Message is constructive, Shadow names the difficult expression, and Integration proposes a manageable response.')],
+ [plainChoice(`Your Trainer faces this situation: ${short(c.teaching_scenario||'They want to reflect on this card.',230)} What would help most?`,integration,[shadow,message,'Assume the card proves what will happen.'],integration),
+ plainChoice(`When ${c.title} becomes unbalanced, which statement captures the Shadow?`,shadow,[message,integration,'The card is invalid if it is upside down.'],shadow)],
+ [plainChoice(`Which response represents Integration for ${c.title}?`,integration,[message,shadow,'Avoid making any choice until the card predicts an outcome.'],integration)]
+ ],{definition:message,goal:`Understand ${c.title}: Message, Shadow and Integration.`,summary:`Message: ${short(message,170)} Shadow: ${short(shadow,170)} Integration: ${short(integration,170)}`,art,oracleCard:c,scene});
+}
+function dualModel(id){const d=FUSION_DUAL_LESSONS[id],pair=fusionV14DualPair(id,0)||[],c=pair[0],o=pair[1];if(!d||!c||!o)return null;
+ const up=one(c.upright),message=one(o.message_draft),shadow=one(o.shadow_draft),integration=one(o.integration_draft);
+ const situation=typeof fusionV17DualScenario==='function'?fusionV17DualScenario(id):'A Trainer wants insight into a difficult decision.';
+ const read=`${c.name} describes ${short(up,110)}. ${o.title} adds ${short(message,110)}. A useful next step is ${short(integration,115)}.`;
+ return studyModel('dual','Dual Mastery · '+d[1],String(id),[
+ [plainChoice(`What does ${d[1]} teach about using Tarot with Oracle?`,d[2],[
+ 'Both decks use identical rules, suits and reversal meanings.','The second deck proves the first card predicts the future.','Only Pokémon types determine the meaning of a combined reading.'
+ ],d[2])],
+ [plainChoice(`Which statement respects the roles of ${c.name} and ${o.title}?`,
+ `Tarot offers ${short(up,110)}; Oracle explores ${short(message,110)}.`,[
+ 'Oracle requires the Four Tarot suits to interpret its cards.','The Tarot card must always predict the exact outcome.','Neither picture can contribute meaning to the question.'
+ ],`${c.name}: ${up} ${o.title}: ${message}`,{image:c.image,secondImage:ASSETS.cards?.[o.number]?.[0]})],
+ [matchTask('Match the concepts to their respective interpretation.',[
+ {text:`Tarot · ${c.name} upright`,group:0},{text:`Oracle · ${o.title} Message`,group:1},{text:`Oracle · ${o.title} Shadow`,group:2}
+ ],[short(up,155),short(message,155),short(shadow,155)],'A Tarot reversal and an Oracle Shadow are different kinds of interpretation.')],
+ [plainChoice(`Trainer case: ${short(situation,210)} Which interpretation connects the cards responsibly?`,read,[
+ 'The two cards prove exactly what someone else thinks.','Use either card alone and disregard the assigned position.','Both decks have to describe the same idea or the reading has failed.'
+ ],read),reflectTask('How would you connect the two perspectives into one helpful reading?',read,'Compare your reasoning with the worked reading; personal writing is not automatically graded.')],
+ [plainChoice('Which is the correct way to close this combined reading?',
+ 'Distinguish each deck’s role, connect the themes and identify one practical choice.',[
+ 'Use the Oracle Shadow as if it were a Tarot reversal.','State a guaranteed prediction about another person.','Repeat both definitions without relating them to the question.'
+ ],read)]
+ ],{definition:d[2],goal:d[1],summary:read,art:c.image,secondArt:ASSETS.cards?.[o.number]?.[0],pair});
+}
+function getLessonState(kind,ref){if(!ref)return null;if(!ref._ua35||ref._ua35.kind!==kind||ref._ua35.record!==String(kind==='dual'?ref.id:kind==='oracle'?ref.id:ref.id)){
+ ref._ua35={kind,record:String(ref.id),stage:0,task:0,selected:null,checked:false,feedback:null,history:[],misses:[],started:Date.now(),complete:false};
+ }return ref._ua35;}
+function getContext(){if(oracleWizard&&document.querySelector('#modal .ua35-root[data-kind="oracle"]'))return {kind:'oracle',ref:oracleWizard};const a=FUSION_LESSON;if(a&&document.querySelector('#modal .ua35-root')&&document.querySelector('#modal .ua35-root')?.dataset.kind===a.type)return {kind:a.type,ref:a};return null;}
+function produceModel(kind,ref){if(kind==='tarot'){const l=findLesson(ref.id);if(!l)return null;if(l.topic?.startsWith('card:'))return tarotCard(l,FUSION_TAROT_CARDS.find(c=>c.name===l.topic.slice(5)));return tarotConcept(l)}
+ if(kind==='oracle')return ref.kind==='core'?oracleCore(ref.id):oracleCard(cardById[ref.cardId],ref.art||0);
+ if(kind==='dual')return dualModel(ref.id);return null;}
+function currentTask(model,state){const group=model.stages?.[state.stage]||[];return group[state.task]||null;}
+function reward(kind,ref,model,state){if(state.complete)return;if(state.writing?.trim()&&!tester())persistNote(kind,ref,state.writing.trim());state.complete=true;const key=kind==='tarot'?'tarot:'+ref.id:kind==='dual'?'dual:'+ref.id:ref.id;
+ if(!tester()){
+  if(kind==='oracle'){if(!S.completed[key]){S.completed[key]=true;S.xp+=15;save();state.gained=15}else state.gained=0}
+  else if(!FUSION.progress[key]){fusionSetProgress(key,false);state.gained=15}else state.gained=0;
+ }else state.gained=0;
+ state.finishedAt=Date.now();}
+function conceptMistake(task){return task?.kind==='choice'||task?.kind==='sort'||task?.kind==='match';}
+function recordWrong(model,task){if(tester()||!conceptMistake(task))return;let answer='';let opts=[];if(task.kind==='choice'){answer=task.options[task.answer];opts=task.options}else{answer=task.items.map(x=>x.text+' → '+task.groups[x.group]).join('; ');opts=task.groups}
+ try{window.__ua260RecordWrong?.({question:task.prompt,answer,options:opts,why:task.why,source:model.subject})}catch(_){}}
+function checkAnswer(task,pick){if(task.kind==='reflect')return {right:true,body:`<b>Compare your response with a worked interpretation.</b><p>${esc(task.model)}</p><p>${esc(task.why)}</p><p>Your reflection is optional and is not machine-graded.</p>`};
+ if(task.kind==='choice'){const right=Number(pick)===Number(task.answer);return {right,body:`<b>${right?'✓ Supported answer':'Not quite—compare the reasoning.'}</b><p><strong>Best supported answer:</strong> ${esc(task.options[task.answer])}</p><p>${esc(task.why)}</p>`};}
+ const answers=Array.isArray(pick)?pick:[];const right=task.items.every((it,i)=>Number(answers[i])===it.group);
+ return {right,body:`<b>${right?'✓ All connections fit':'Review the connections'}</b><div class="ua35-corrections">${task.items.map(it=>`<p>${esc(it.text)} → <b>${esc(task.groups[it.group])}</b></p>`).join('')}</div><p>${esc(task.why)}</p>`};}
+function canCheck(task,selection){if(!task)return false;if(task.kind==='reflect')return true;if(task.kind==='choice')return Number.isInteger(selection);return Array.isArray(selection)&&selection.length===task.items.length&&selection.every(Number.isInteger);}
+function renderTask(task,st){if(!task)return '<p>No activity is available for this lesson.</p>';
+ let image='';if(task.image||task.secondImage)image=`<div class="ua35-images">${task.image?`<img src="${task.image}" alt="Question artwork">`:''}${task.secondImage?`<img src="${task.secondImage}" alt="Second deck artwork">`:''}</div>${task.sceneLabel?`<p class="ua35-scene-caption">${esc(task.sceneLabel)}</p>`:''}`;
+ const selected=st.selected;
+ if(task.kind==='reflect')return `${image}<div class="ua35-practice-card"><h3>${esc(task.prompt)}</h3><label>Your ideas (optional)<textarea data-ua35-writing rows="4" placeholder="Describe a supported interpretation, and a concrete next step…">${esc(st.writing||'')}</textarea></label><p class="small muted">Self-reflection is not graded by keyword matching.</p></div>`;
+ if(task.kind==='choice')return `${image}${task.scene?`<div class="ua35-scenario"><b>Trainer's scenario</b><p>${esc(task.scene)}</p></div>`:''}<div class="ua35-practice-card"><h3>${esc(task.prompt)}</h3><div class="ua35-options" role="group" aria-label="Choose one answer">${task.options.map((o,i)=>`<button type="button" data-ua35-pick="${i}" ${st.checked?'disabled':''} aria-pressed="${selected===i?'true':'false'}" class="${selected===i?'selected':''}"><span class="ua35-option-letter">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div></div>`;
+ return `${image}<div class="ua35-practice-card"><h3>${esc(task.prompt)}</h3><div class="ua35-pair-grid">${task.items.map((it,i)=>`<label><span>${esc(it.text)}</span><select data-ua35-pair="${i}" ${st.checked?'disabled':''} aria-label="Match ${esc(it.text)}"><option value="">Choose a category</option>${task.groups.map((g,j)=>`<option value="${j}" ${Array.isArray(selected)&&selected[i]===j?'selected':''}>${esc(g)}</option>`).join('')}</select></label>`).join('')}</div></div>`;
+}
+function noteKey(kind,ref){return kind==='tarot'?'tarot:'+ref.id:kind==='dual'?'dual:'+ref.id:ref.id;}
+function getNote(kind,ref){const key=noteKey(kind,ref);return kind==='oracle'?S.notes?.[key]||S.lessonReflections?.[key]||'':FUSION.reflections?.[key]||'';}
+function persistNote(kind,ref,value){const key=noteKey(kind,ref);if(kind==='oracle'){S.notes=S.notes||{};S.notes[key]=value;save();}else{FUSION.reflections=FUSION.reflections||{};FUSION.reflections[key]=value;fusionSave();}}
+function versionTitle(){window.__ultimateAcademyVersion=VER;document.title='Pokémon Tarot × Spirit Oracle — Ultimate Academy V'+VER;}
+let mission=null;
+function sessionInfo(){if(mission&&document.querySelector('#modal .ua35-root[data-kind="mission"]'))return {kind:'mission',ref:mission,model:mission.model,state:mission.state};const ctx=getContext();if(!ctx)return null;const state=getLessonState(ctx.kind,ctx.ref);if(!state.model)state.model=produceModel(ctx.kind,ctx.ref);return {kind:ctx.kind,ref:ctx.ref,model:state.model,state};}
+function introForStage(model,state){const s=state.stage;if(s===0)return `<div class="ua35-teach"><b>Understand</b><p>${esc(refresher()?short(model.definition,230):model.definition)}</p><p class="ua35-goal"><strong>Learning goal:</strong> ${esc(model.goal)}</p></div>`;
+ if(s===1)return `<div class="ua35-teach"><b>Observe</b><p>Study the scenario or artwork. Decide what is actually supported by the details before checking the explanation.</p></div>`;
+ if(s===2)return `<div class="ua35-teach"><b>Experiment</b><p>Try matching or sorting different meanings. Notice how an orientation, context or interpretive lens changes the emphasis.</p></div>`;
+ if(s===3)return `<div class="ua35-teach"><b>Practise</b><p>Apply what you learned. You may retry after receiving an explanation; mistakes can enter your review notebook.</p></div>`;
+ return `<div class="ua35-teach"><b>Remember</b><p>Recall the essential idea without rereading the definition. The recap and reward appear <strong>after</strong> you check your answer.</p></div>`;
+}
+function stageUI(kind,ref,model,state){const arr=model.stages[state.stage],task=currentTask(model,state);if(!arr?.length)return '';
+ const done=state.history.length;const currentNo=arr.slice(0,state.task).length+1;const total=model.stages.reduce((n,t)=>n+t.length,0);
+ const completedTasks=Math.min(total,model.stages.slice(0,state.stage).reduce((n,t)=>n+t.length,0)+state.task+(state.checked?1:0));
+ const summaryProgress=Math.round(100*completedTasks/Math.max(1,total));
+ let art='';if(model.art&&state.stage!==1&&task?.kind!=='choice')art=`<img class="ua35-sideart" src="${model.art}" alt="${esc(model.subject)} illustration">`;
+ const tabs=`<div class="ua35-tools"><div class="ua35-layout">${['focus','split','gallery'].map(k=>`<button type="button" data-ua35-layout="${k}" class="${(ref.layout||S.settings.lessonLayout||'split')===k?'active':''}">${k==='focus'?'☰ Focus':k==='split'?'◧ Split':'▦ Gallery'}</button>`).join('')}</div><details><summary>📚 Learning tools</summary><div class="ua35-toolbox"><button type="button" data-ua35-mode="beginner" class="${!refresher()?'active':''}">Beginner</button><button type="button" data-ua35-mode="refresher" class="${refresher()?'active':''}">Refresher</button><button type="button" data-ua260-open="glossary">Glossary</button><button type="button" data-ua260-open="mistakes">Mistake Notebook</button></div></details></div>`;
+ const top=`<div class="ua35-top"><div class="ua35-bar"><span style="width:${summaryProgress}%"></span></div><div class="ua35-progress"><strong>${kind==='mission'?'Trainer Mission':STAGES[state.stage]}</strong><span>Activity ${currentNo} of ${arr.length} · ${completedTasks}/${total} attempted</span></div>${kind==='mission'?'':tabs}</div>`;
+ const artSelect=kind==='oracle'&&ref.kind==='card'?`<div class="ua35-artstrip"><span>Card artwork</span><button type="button" data-ua35-art="-1" aria-label="Previous Oracle card illustration">← Previous</button><b>${(ref.art||0)+1} / 3</b><button type="button" data-ua35-art="1" aria-label="Next Oracle card illustration">Next →</button></div>`:'';
+ const header=`<div class="ua35-label">${esc(model.subject)}</div>${artSelect}${kind==='mission'?'':`<div class="ua35-stage-dots">${STAGES.map((s,i)=>`<span class="${state.stage===i?'active':i<state.stage?'done':''}">${esc(s)}</span>`).join('')}</div>`}`;
+ const feedback=state.checked?`<section class="ua35-feedback ${state.feedback?.right?'good':'retry'}" role="status" aria-live="polite">${state.feedback.body}</section>`:'';
+ const trainer=(()=>{try{const c=fusionV17Cast();const t=c[(state.stage+state.task)%c.length];const prompts=['Explain the main idea before answering.','What details can you actually observe?','Changing one factor can change the interpretation.','Use evidence and context, not just a memorized keyword.','Try retrieving the distinction yourself before reviewing.'];return `<div class="ua35-trainer"><img src="${trainerSprite(t[0])}" alt="Trainer"><p><b>${esc(t[1])}:</b> ${esc(prompts[state.stage])}</p></div>`}catch(_){return ''}})();
+ const nextLabel=state.stage===4&&state.task===arr.length-1?'Finish & review':state.task===arr.length-1?`Continue to ${STAGES[state.stage+1]}`:'Next activity';
+ const notes=kind==='mission'?'':`<details class="ua35-notes"><summary>📝 My lesson notes</summary><label>Personal notes (saved locally)<textarea data-ua35-note rows="3" placeholder="Your own questions, connections or reflections…">${esc(getNote(kind,ref))}</textarea></label></details>`;
+ const footer=`<div class="ua35-footer"><button type="button" class="btn ghost" data-ua35-back ${state.stage===0&&state.task===0?'disabled':''}>← Back</button><div class="ua35-footer-right"><button type="button" class="btn ghost" data-ua35-check ${state.checked||!canCheck(task,state.selected)?'disabled':''}>Check</button><button type="button" class="btn" data-ua35-next ${!state.checked?'disabled':''}>${nextLabel} →</button></div></div>`;
+ return {html:`<div class="ua34-lesson ua35-root ua35-layout-${esc(ref.layout||S.settings.lessonLayout||'split')}" data-kind="${kind}" data-record="${esc(model.record)}">${top}<main class="ua35-main">${header}${kind==='mission'?'<p class="ua35-mission-intro">Choose an answer, press Check, review why it fits, then continue. This mission is optional.</p>':introForStage(model,state)}<div class="ua35-work ${art?'with-art':''}">${art}<div class="ua35-task">${renderTask(task,state)}${feedback}</div></div>${trainer}${notes}${footer}${kind==='mission'?'':'<button class="ua35-report" data-ua3-report>📋 Copy issue report</button>'}<p class="ua35-small">${tester()?'🧪 Tester preview: no XP, completion or badges.':'Feedback comes before advancing. Personal writing is optional.'}</p></main></div>`,top};
+}
+function finishUI(kind,ref,model,state){const hist=state.history,miss=hist.filter(x=>!x.right),progress=hist.length;
+ const rewardMsg=tester()?'Tester Mode · no permanent XP or badge changes.':state.gained?'+'+state.gained+' XP on first completion.':'Replayed lesson · no duplicate XP.';
+ const attempts=hist.map(h=>h.stage).filter((x,i,a)=>a.indexOf(x)===i).map(x=>STAGES[x]).join(' · ');
+ const report=miss.length?miss.map(x=>x.prompt).slice(0,3).map(x=>`<li>${esc(short(x,150))}</li>`).join(''):'<li>No missed core activities in this attempt.</li>';
+ const quiz=kind==='tarot'?`<button class="btn ghost" data-ua35-finish="quiz">⚔ Optional Pop Quiz</button>`:kind==='oracle'?`<button class="btn ghost" data-ua35-finish="quiz">⚔ Optional Pop Quiz</button>`:kind==='dual'?`<button class="btn ghost" data-ua35-finish="quiz">⚔ Optional Pop Quiz</button>`:'';
+ return `<div class="ua34-lesson ua35-root" data-kind="${kind}" data-record="${esc(model.record)}"><main class="ua35-main"><div class="ua35-complete"><div class="ua35-trophy">🏆</div><h2>Lesson complete</h2><p>${esc(model.subject)}</p><div class="ua35-summary"><b>What you practised</b><p>${esc(attempts)} · ${progress} activities checked</p><p>${esc(model.summary)}</p></div><div class="ua35-summary"><b>What to review</b><ul>${report}</ul></div><p class="ua35-reward">${esc(rewardMsg)}</p><div class="ua35-finish-actions"><button class="btn" data-ua35-finish="next">Continue to next eligible lesson →</button><button class="btn ghost" data-ua35-finish="review">↻ Review lesson</button>${quiz}<button class="btn ghost" data-ua35-finish="academy">Return to Academy</button></div></div></main></div>`;
+}
+const showOriginal=showModal;
+showModal=function(...args){document.querySelectorAll('#modal .ua35-top').forEach(n=>n.remove());const out=showOriginal.apply(this,args);return out;};
+function openLesson(kind,ref,model,state){if(!model)return;
+ const html=state.complete?finishUI(kind,ref,model,state):stageUI(kind,ref,model,state).html;
+ const body=document.getElementById('modalBody');const prev=body?.scrollTop||0;
+ const priorKey=state._lastKey;const key=state.stage+'-'+state.task+'-'+state.complete;
+ showModal(model.subject,html);
+ document.getElementById('modal')?.classList.add('wizard-modal');
+ const newBody=document.getElementById('modalBody');
+ // One opaque, non-scrolling toolbar outside the lesson scrollport.
+ const top=newBody?.querySelector('.ua35-top');if(top&&newBody?.parentElement){top.remove();newBody.parentElement.insertBefore(top,newBody)}
+ if(newBody)newBody.scrollTop=key===priorKey?prev:0;
+ state._lastKey=key;versionTitle();
+}
+function renderTarot(){const a=FUSION_LESSON;if(!a||a.type!=='tarot')return;if(a?.id&&findLesson(a.id)?.kind==='practice')return;const st=getLessonState('tarot',a);if(!st.model)st.model=produceModel('tarot',a);if(st.model)openLesson('tarot',a,st.model,st);}
+function renderOracle(){const w=oracleWizard;if(!w)return;const st=getLessonState('oracle',w);if(!st.model)st.model=produceModel('oracle',w);if(st.model)openLesson('oracle',w,st.model,st);}
+function renderDual(){const a=FUSION_LESSON;if(!a||a.type!=='dual')return;const pair=fusionV14DualPair(a.id,0);if(!tester()&&pair&&(!learnedTarot(pair[0])||!learnedOracle(pair[1]))){const missing=[!learnedTarot(pair[0])?'Tarot: '+pair[0].name:null,!learnedOracle(pair[1])?'Oracle: '+pair[1].title:null].filter(Boolean);showModal('Dual Mastery · Prerequisites',`<div class="ua35-prereq"><h2>Learn these cards first</h2><p>Dual lessons compare cards already introduced in their own Tarot and Oracle chapters.</p><ul>${missing.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p>Complete the individual lessons, or enable Beta Tester Mode for a no-reward preview.</p><button class="btn" data-fusion-modal-close>Return to Academy</button></div>`);return;}const st=getLessonState('dual',a);if(!st.model)st.model=produceModel('dual',a);if(st.model)openLesson('dual',a,st.model,st);}
+// Override the actual render entry points, not a second “lesson demo” window.
+fusionRenderTarotLesson=renderTarot;
+oracleV2WizardRender=renderOracle;
+fusionRenderDualLesson=renderDual;
+// Preserve old quit/menu route controls and remove our separate lesson toolbar on any exit.
+window.addEventListener('click',ev=>{const b=ev.target.closest?.('#modalClose,[data-fusion-modal-close],[data-ua35-finish]');if(b?.matches('#modalClose,[data-fusion-modal-close]')){mission=null;stopMatchTimer();try{stopMusic()}catch(_){}}},true);
+// Shared keyboard/touch-friendly input selection.
+window.addEventListener('click',ev=>{const root=ev.target.closest?.('.ua35-root')||(ev.target.closest?.('.ua35-top')?document.querySelector('#modal .ua35-root'):null);if(!root)return;const btn=ev.target.closest?.('[data-ua35-pick],[data-ua35-check],[data-ua35-next],[data-ua35-back],[data-ua35-finish],[data-ua35-mode],[data-ua35-layout],[data-ua35-art]');if(!btn)return;ev.preventDefault();ev.stopImmediatePropagation();
+ const ctx=root.dataset.kind==='mission'?mission&&{kind:'mission',ref:mission,model:mission.model,state:mission.state}:getContext()&&sessionInfo();if(!ctx)return;const {kind,ref,model,state}=ctx;
+ const redraw=()=>kind==='mission'?renderMission():openLesson(kind,ref,model,state);
+ if(btn.hasAttribute('data-ua35-pick')){if(state.checked)return;state.selected=Number(btn.dataset.ua35Pick);root.querySelectorAll('[data-ua35-pick]').forEach(x=>{x.classList.toggle('selected',Number(x.dataset.ua35Pick)===state.selected);x.setAttribute('aria-pressed',String(Number(x.dataset.ua35Pick)===state.selected))});const check=root.querySelector('[data-ua35-check]');if(check)check.disabled=false;return}
+ if(btn.hasAttribute('data-ua35-mode')){if(!FUSION.ua260)FUSION.ua260={mode:'beginner',mistakes:[]};FUSION.ua260.mode=btn.dataset.ua35Mode==='refresher'?'refresher':'beginner';fusionSave();redraw();return}
+ if(btn.hasAttribute('data-ua35-art')){if(kind==='oracle'&&ref.kind==='card'){ref.art=((ref.art||0)+Number(btn.dataset.ua35Art)+3)%3;state.model=produceModel(kind,ref);if(state.stage===1){state.selected=null;state.checked=false;state.feedback=null;}openLesson(kind,ref,state.model,state);}return;}
+ if(btn.hasAttribute('data-ua35-layout')){const val=btn.dataset.ua35Layout;if(kind==='tarot'||kind==='dual'){ref.layout=val;S.settings.tarotLessonLayout=val}else S.settings.lessonLayout=val;save();redraw();return}
+ if(btn.hasAttribute('data-ua35-check')){const task=currentTask(model,state);if(!canCheck(task,state.selected)||state.checked)return;state.feedback=checkAnswer(task,state.selected);
+ if(kind==='mission'&&mission?.id==='adventure'&&state.task<2){const nextTask=model.stages[0][state.task+1];if(nextTask){const lead=state.feedback.right?'The Trainer appreciates your thoughtful approach. ':'Your Trainer reconsiders an unsupported assumption. ';if(!nextTask._ua35Branch){nextTask._ua35Branch=true;nextTask.prompt=lead+nextTask.prompt;}}}state.checked=true;
+ state.history.push({stage:state.stage,prompt:task.prompt,right:state.feedback.right});if(!state.feedback.right){state.misses.push(task.prompt);recordWrong(model,task)}
+ try{playSfx(state.feedback.right?'clickA':'clickB')}catch(_){}
+ redraw();return;}
+ if(btn.hasAttribute('data-ua35-back')){if(state.task>0)state.task--;else if(state.stage>0){state.stage--;state.task=(model.stages[state.stage]?.length||1)-1}else return;state.selected=null;state.checked=false;state.feedback=null;redraw();return;}
+ if(btn.hasAttribute('data-ua35-next')){if(!state.checked)return;const count=model.stages[state.stage].length;if(state.task<count-1)state.task++;else if(state.stage<model.stages.length-1){state.stage++;state.task=0}else{if(kind!=='mission')reward(kind,ref,model,state);else state.complete=true}
+ state.selected=null;state.checked=false;state.feedback=null;redraw();return;}
+ if(btn.hasAttribute('data-ua35-finish')){const act=btn.dataset.ua35Finish;
+ if(act==='review'){state.stage=0;state.task=0;state.selected=null;state.checked=false;state.feedback=null;state.complete=false;state.history=[];state.misses=[];state._lastKey='';redraw();return;}
+ if(kind==='mission'){mission=null;stopMatchTimer();closeModalSilently();setView('fusion-activities');return}
+ const old=kind==='tarot'?{...ref}:null;
+ if(act==='quiz'){
+  if(tester()){toast('Tester Mode: optional quizzes use earned lesson progress.');return}
+  if(kind==='tarot'){const l=findLesson(ref.id);if(l){FUSION_LESSON=old;closeModalSilently();fusionTarotQuiz();return}}
+  if(kind==='oracle'){const w=ref;oracleWizard=null;closeModalSilently();if(w.kind==='core')battleOpen(null,null,false,w.id);else battleOpen(null,w.cardId,false);return}
+  if(kind==='dual'){let idx=Number(ref.id);closeModalSilently();fusionDualQuiz?.(idx);return}
+ }
+ if(act==='next'){
+  if(kind==='tarot'){const flat=FUSION_TAROT_COURSE.flatMap(c=>c.lessons.filter(l=>l.kind!=='practice'));let n=flat.findIndex(x=>x.id===ref.id),next=flat[n+1];if(next){const unit=FUSION_TAROT_COURSE.find(c=>c.lessons.includes(next));const prevUnit=FUSION_TAROT_COURSE.find(c=>c.lessons.some(x=>x.id===ref.id));if(unit&&unit.id!==prevUnit?.id){toast('Complete your chapter checkpoint before entering the next chapter.');closeModalSilently();setView('fusion-learn');return}if(next&&!tester()&&!fusionTarotLegacyDone(ref.id)){toast('Complete your current lesson first.');return}if(unit){FUSION_LESSON={type:'tarot',section:unit.id,id:next.id,step:0,layout:ref.layout||'split'};renderTarot();return}}}
+  if(kind==='oracle'){let w=ref;let nodes=oracleV2UnitData().flatMap(u=>u.nodes);let n=nodes.findIndex(x=>x.key===w.id);let next=nodes[n+1];if(next&&n>=0){const curUnit=oracleV2UnitData().find(u=>u.nodes.some(x=>x.key===w.id));const newUnit=oracleV2UnitData().find(u=>u.nodes.includes(next));if(curUnit?.id===newUnit?.id){oracleWizard=null;oracleV2StartWizard(next.type==='foundation'?'core':'card',next.type==='foundation'?next.id:next.cardId);return}}}
+  if(kind==='dual'){let n=Number(ref.id)+1;if(FUSION_DUAL_LESSONS[n]){FUSION_LESSON={type:'dual',id:n,step:0,layout:ref.layout||'split'};renderDual();return}}
+ }
+ if(kind==='oracle'){oracleWizard=null;document.getElementById('modal')?.classList.remove('wizard-modal')}
+ closeModalSilently();FUSION_COURSE_TAB=kind==='dual'?'dual':kind;setView('fusion-learn');return;
+ }
+},true);
+window.addEventListener('change',ev=>{const note=ev.target.closest?.('[data-ua35-note]');if(note){const ctx=getContext();if(ctx)persistNote(ctx.kind,ctx.ref,note.value);return;}const b=ev.target.closest?.('[data-ua35-pair]');if(!b)return;const ctx=sessionInfo();if(!ctx)return;const st=ctx.state,task=currentTask(ctx.model,st);if(st.checked||!(task?.kind==='sort'||task?.kind==='match'))return;
+ if(!Array.isArray(st.selected))st.selected=Array(task.items.length).fill(null);st.selected[Number(b.dataset.ua35Pair)]=b.value===''?null:Number(b.value);const check=document.querySelector('.ua35-root [data-ua35-check]');if(check)check.disabled=!canCheck(task,st.selected);},true);
+window.addEventListener('input',ev=>{const b=ev.target.closest?.('[data-ua35-writing]');if(!b)return;const ctx=sessionInfo();if(!ctx)return;ctx.state.writing=b.value;},true);
+// Learning missions expand existing Arcade rather than replacing the original games.
+function sampleCards(){const tarot=FUSION_TAROT_CARDS.filter(learnedTarot);const oracle=DATA.cards.filter(learnedOracle);return {tarot,oracle};}
+function missionModel(mode){const {tarot,oracle}=sampleCards();const all=[...tarot.map(c=>({deck:'Tarot',c})),...oracle.map(c=>({deck:'Oracle',c}))];let tasks=[];let subject='';const noCards=()=>plainChoice('Why must a card be studied before it appears in a card-identification game?',
+ 'So practice only tests material that has actually been taught.',[
+ 'Because only rare Pokémon cards are valid.','Because guesses count as completed lessons.','Because Tarot requires memorizing the entire deck before any activity.'
+ ],'Finish an individual card lesson to unlock its card for learning games.');
+ if(mode==='match'||mode==='match-timed'){subject=mode==='match-timed'?'Card Match · 90-second challenge':'Card Match · Learned themes';const picks=all.slice(0,Math.min(4,all.length));tasks=picks.map(x=>x.deck==='Tarot'?plainChoice(`Which theme belongs to ${x.c.name}?`,short(x.c.upright,165),[short(x.c.reversed,165),'The card always guarantees an exact future event.','Its Pokémon type replaces the Tarot card meaning.'],x.c.upright,{image:x.c.image}):plainChoice(`Match ${x.c.title} to its constructive Oracle Message.`,short(x.c.message_draft,170),[short(x.c.shadow_draft,170),short(x.c.integration_draft,170),'It predicts one unavoidable future.'],x.c.message_draft,{image:ASSETS.cards?.[x.c.number]?.[0]}));}
+ else if(mode==='scene'){subject='Scene Detective · What can you really see?';tasks=all.slice(0,3).map(x=>x.deck==='Tarot'?imageTask(`What detail is actually visible on the ${x.c.name} artwork?`,x.c.image,x.c.scenery||'Look closely at the main subject and background.'):imageTask(`What is shown in the ${x.c.title} Oracle artwork?`,ASSETS.cards?.[x.c.number]?.[0],oracleScene(x.c,0)||x.c.teaching_scenario));}
+ else if(mode==='chemistry'){subject='Card Chemistry · Connected meanings';const [a,b]=tarot;if(a&&b){tasks=[plainChoice(`In a two-card spread, ${a.name} is Situation and ${b.name} is Advice. Which reading is best supported?`,
+ `${a.name}: ${short(a.upright,110)} As Advice, ${b.name} suggests ${short(b.upright,115)}`,['Both cards prove exactly what another person thinks.','The second card must cancel the first.','The Pokémon elements alone determine the spread.'],`Position changes each card’s role. ${a.name}: ${a.upright}. ${b.name}: ${b.upright}.`,{image:a.image,secondImage:b.image})];}
+ else if(tarot[0]&&oracle[0]){const a=tarot[0],b=oracle[0];tasks=[plainChoice(`How do ${a.name} and ${b.title} work together?`,
+ `${a.name} describes ${short(a.upright,105)}; ${b.title} invites ${short(b.integration_draft,105)}`,[
+ 'The Oracle card has the same reversal as Tarot.','The cards predict another person’s thoughts.','The two decks must always mean the identical thing.'
+ ],'Tarot and Oracle can contribute complementary perspectives rather than identical verdicts.',{image:a.image,secondImage:ASSETS.cards?.[b.number]?.[0]})]}
+ }
+ else if(mode==='adventure'){subject='Trainer Adventure · A choice-based scenario';const t=tarot[0];tasks=[plainChoice('A Trainer is nervous about an important conversation. Which question is most constructive?',
+ 'What would help me prepare and communicate clearly?',['What private thought is the other person hiding?','Can the cards guarantee the conversation outcome?','Who is destined to win the argument?'],'Reflective questions focus on choices and observable behavior.'),
+ plainChoice('Which two-card spread is best suited to a practical reflection?','Challenge → Advice',['Guaranteed Future → Secret Thought','Winner → Loser','Pokémon Type → Battle Damage'],'A spread can distinguish difficulties from useful approaches.'),
+ ...(t?[plainChoice(`The learned card ${t.name} appears in Advice. How can you use it?`,
+ `Consider ${short(t.upright,160)} while choosing a practical next step.`,[
+ 'Assume it proves the other person is dishonest.','Treat it as an exact date prediction.','Ignore the question and circumstances.'],t.upright,{image:t.image})]:[plainChoice('Without a learned individual card, what is the safe next step?',
+ 'Practise the question and spread structure; individual-card meaning comes in its own lesson.',['Memorize random cards from future units.','Treat Pokémon types as Tarot card meanings.','Pick an unknown card as a correct answer.'],'The Academy keeps unseen card meanings out of normal quizzes.')])];}
+ else if(mode==='story'){subject='Story Readings · Build a coherent explanation';tasks=[plainChoice('A story reading begins with a character feeling uncertain. What should you establish first?',
+ 'The question, observable context and purpose of each spread position.',['A guaranteed outcome before drawing.','The hidden thoughts of everyone involved.','Which Pokémon has the highest attack.'],'The question and position establish the interpretive context.'),
+ plainChoice('Two learned themes seem to disagree. What makes a coherent reading?',
+ 'Describe how each theme plays a different role and connect them to the question.',[
+ 'Discard the less positive card.','Read both definitions separately without any connection.','Assume the cards prove contradictory futures.'
+ ],'A connected reading can include tensions and different emphases.'),
+ reflectTask('Explain the story in your own words. What could the character reasonably do next?',
+ 'The character can acknowledge uncertainty, identify what is known, and choose a manageable action supported by the reading.','Personal writing is a self-check, not an automatic right/wrong grade.')];}
+ else if(mode==='review'){subject='Targeted Review · Your Mistake Notebook';const misses=Array.isArray(FUSION.ua260?.mistakes)?FUSION.ua260.mistakes:[];tasks=misses.slice(0,4).filter(x=>x.question&&x.answer).map(x=>plainChoice(x.question,x.answer,(x.options||[]).filter(y=>String(y)!==String(x.answer)),x.why||'Compare the correct answer with the prompt.'));}
+ if(!tasks.length)tasks=[noCards()];
+ const stageGroups=[tasks];
+ return studyModel('mission',subject,mode,stageGroups,{goal:'Practice relevant learned material.',definition:'No energy limit, no compulsory timer. These activities preserve your normal progress.',summary:'Review the feedback, then choose another mission.'});
+}
+function launchMission(mode){mission={id:mode,step:0,deadline:mode==='match-timed'?Date.now()+90000:null};mission.model=missionModel(mode);mission.state={kind:'mission',record:mode,stage:0,task:0,selected:null,checked:false,feedback:null,history:[],misses:[],complete:false};renderMission();}
+let matchTimer=null;
+function stopMatchTimer(){if(matchTimer){clearInterval(matchTimer);matchTimer=null}}
+function renderMission(){if(!mission){stopMatchTimer();return;}const m=mission; if(m.deadline&&Date.now()>=m.deadline){m.state.complete=true;stopMatchTimer();}const state=m.state,model=m.model;const html=state.complete?`<div class="ua34-lesson ua35-root" data-kind="mission"><main class="ua35-main ua35-complete"><h2>Mission complete</h2><p>${esc(model.subject)} · ${state.history.length} activities attempted.</p><p>No XP or badge awarded for optional mission practice.</p><div class="ua35-finish-actions"><button class="btn" data-ua35-finish="review">Play again</button><button class="btn ghost" data-ua35-finish="academy">Return to Arcade</button></div></main></div>`:stageUI('mission',m,model,state).html;
+ showModal(model.subject,html);
+ const body=document.getElementById('modalBody');const bar=body?.querySelector('.ua35-top');if(bar){bar.remove();body.parentElement.insertBefore(bar,body)}
+ if(m.deadline){if(!document.getElementById('ua35-timer')&&bar)bar.insertAdjacentHTML('beforeend','<div id="ua35-timer" class="ua35-timer" aria-live="polite"></div>');const update=()=>{if(!mission||mission!==m){stopMatchTimer();return;}const remaining=Math.max(0,Math.ceil((m.deadline-Date.now())/1000));const clock=document.getElementById('ua35-timer');if(clock)clock.textContent=remaining+'s remaining · Optional timed challenge';if(remaining===0&&!m.state.complete){m.state.complete=true;stopMatchTimer();renderMission()}}; update(); if(!matchTimer&&!m.state.complete)matchTimer=setInterval(update,1000)}else stopMatchTimer();versionTitle();}
+const previousActivities=fusionActivities;
+fusionActivities=function(){const html=previousActivities();const cards=sampleCards();const learned=cards.tarot.length+cards.oracle.length;const section=`<section class="ua35-missions"><h2>🎓 Learning Missions</h2><p>Short, feedback-driven practice based on cards you have actually studied. No forced timer, energy limit or duplicate XP.</p><div class="ua35-mission-grid">${[
+ ['match','🧩 Card Match','Relaxed practice with the themes of learned cards'],
+ ['match-timed','⏱ Timed Card Match','Optional 90-second challenge, with no energy penalty'],
+ ['scene','🔎 Scene Detective+','Observe real card art before making an inference'],
+ ['chemistry','⚗ Card Chemistry+','Connect two learned meanings in one reading'],
+ ['adventure','🧭 Trainer Adventures','A branching question → spread → interpretation scenario'],
+ ['story','📖 Story Readings','Build a coherent reading through story decisions'],
+ ['review','📝 Targeted Review','Short exercises drawn from your Mistake Notebook']
+ ].map(([id,icon,desc])=>`<button type="button" data-ua35-mission="${id}"><strong>${icon}</strong><span>${desc}</span></button>`).join('')}</div><p class="small muted">${learned} card(s) eligible from completed individual-card lessons. Existing Pokémon Arcade games remain available below.</p></section>`;
+ return html.replace(/(<div class="fusion-grid")/,section+'$1');};fusionViews['fusion-activities']=fusionActivities;
+const previousDaily=fusionDaily;fusionDaily=function(...args){return previousDaily.apply(this,args)+`<section class="ua35-daily-cta"><b>🎓 Daily learning activity</b><p>Practise a guided reading using only the concepts and cards you have studied. This is optional and earns no duplicate XP.</p><button class="btn" data-ua35-mission="story">Start a short Story Reading →</button></section>`;};fusionViews['fusion-daily']=fusionDaily;
+window.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-ua35-mission]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();launchMission(b.dataset.ua35Mission);},true);
+// Expose audit helpers for beta diagnostics and tests; no new online services.
+window.__ua350={version:VER,stages:STAGES,makeTarotConcept:tarotConcept,makeTarotCard:tarotCard,makeOracleCore:oracleCore,makeOracleCard:oracleCard,makeDual:dualModel,eligible:sampleCards,launchMission,active:()=>sessionInfo()};
+const prevNews=fusionNews;
+fusionNews=function(...args){return prevNews.apply(this,args).replace('<div class="fusion-news-list">','<div class="fusion-news-list"><article class="fusion-news-entry"><span class="kicker">V3.5.0 · Interactive Academy Activities</span><h3>Assessed learning across all three paths</h3><p>One task at a time with explicit selection, Check, explanatory feedback, Continue and Back. Understand, Observe, Experiment, Practise and Remember now require attempted core tasks before lesson completion. A five-stage Oracle Remember activity happens before XP. Includes lesson-specific sorting, matching, card-art observation, contextual comparisons, optional self-reflection and six learning missions in the existing Card Training page. Preserves existing XP, badge and testing controls; no duplicate replay rewards.</p></article>');};fusionViews['fusion-news']=fusionNews;
+const oldRender=render;
+render=function(...args){const val=oldRender.apply(this,args);versionTitle();document.querySelectorAll('#sidebar .brand small,.tree-brand small').forEach(x=>x.textContent='TAROT × ORACLE · V'+VER);return val};
+versionTitle();
+})();
 </script></body></html>
